@@ -1,0 +1,46 @@
+{
+  "collected_at": "2026-10-12",
+  "source": "https://www.gong-cha.co.kr",
+  "data": [
+    {
+      "seq": 35,
+      "poster_images": [
+        "https://www.gong-cha.co.kr/upload/new/12bb55f34bc182a81a3dfa000b49b1c2.jpg"
+      ],
+      "text": [],
+      "source_url": "https://www.gong-cha.co.kr/brand/menu/new_menu_detail?seq=35"
+    },
+    {
+      "seq": 34,
+      "poster_images": [
+        "https://www.gong-cha.co.kr/upload/new/51ec9fe819def8e8714c19aca3fd9e72.jpg"
+      ],
+      "text": [],
+      "source_url": "https://www.gong-cha.co.kr/brand/menu/new_menu_detail?seq=34"
+    },
+    {
+      "seq": 33,
+      "poster_images": [
+        "https://www.gong-cha.co.kr/upload/new/a5bfac9241a3e9bbb7395edad2cfad7f.jpg"
+      ],
+      "text": [],
+      "source_url": "https://www.gong-cha.co.kr/brand/menu/new_menu_detail?seq=33"
+    },
+    {
+      "seq": 32,
+      "poster_images": [
+        "https://www.gong-cha.co.kr/upload/new/3e1a7c097378be34da08ce0ca7eb4c8e.jpg"
+      ],
+      "text": [],
+      "source_url": "https://www.gong-cha.co.kr/brand/menu/new_menu_detail?seq=32"
+    },
+    {
+      "seq": 31,
+      "poster_images": [
+        "https://www.gong-cha.co.kr/upload/new/4cef10339705ed291cc5932c7079d1a8.jpg"
+      ],
+      "text": [],
+      "source_url": "https://www.gong-cha.co.kr/brand/menu/new_menu_detail?seq=31"
+    }
+  ]
+}

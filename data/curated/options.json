@@ -1,0 +1,69 @@
+{
+  "_note": "손으로 정리한 옵션 데이터. verified=false 인 값은 매장 키오스크에서 직접 확인해야 한다.",
+  "sugar": {
+    "label": "당도",
+    "levels": [
+      {"value": 0, "label": "0%"},
+      {"value": 30, "label": "30%"},
+      {"value": 50, "label": "50%"},
+      {"value": 70, "label": "70%"},
+      {"value": 100, "label": "100%"}
+    ],
+    "extra_price": 0,
+    "rule": "메뉴마다 추천 당도가 다르다(menu.json 의 options.sugar.recommended). 'Sugar고정' 메뉴(스무디·크러쉬·브라운슈가 쥬얼리 등)는 당도를 바꿀 수 없다.",
+    "verified": true,
+    "source": "배달의민족 공차 시흥배곧점 옵션 화면(2026-10-12 캡처) + 공식 주문방법 페이지(5가지 당도)"
+  },
+  "ice": {
+    "label": "얼음량",
+    "levels": [
+      {"value": "none", "label": "얼음 없이", "label_en": "No Ice", "verified": false},
+      {"value": "less", "label": "얼음 적게", "label_en": "Less Ice", "verified": true},
+      {"value": "regular", "label": "얼음 보통", "label_en": "Regular Ice", "verified": true, "default": true},
+      {"value": "full", "label": "얼음 많이", "label_en": "Full Ice", "verified": false}
+    ],
+    "extra_price": 0,
+    "rule": "'Ice고정' 메뉴(스무디·크러쉬·커피·쥬얼리·제주그린/피스타치오/미니펄 계열 등)는 얼음량을 바꿀 수 없다. HOT 음료에는 얼음 옵션이 없다.",
+    "verified": false,
+    "source": "배민 메뉴 표기 'Regular Ice (얼음 보통)' 와 가게 공지 '얼음 제외 주문 불가, 대신 적게(less ice)' 로 보통/적게만 확인. 없이/많이는 매장 키오스크 확인 필요"
+  },
+  "toppings": {
+    "label": "토핑",
+    "max_count": 3,
+    "max_count_source": "공식 주문방법 페이지: 7가지 토핑 중 최대 3가지 선택 가능",
+    "items": [
+      {"id": "pearl", "name": "펄", "name_en": "Pearl", "price": 600, "description": "카사바 뿌리의 녹말로 만든 쫀득쫀득한 식감의 토핑 (타피오카)", "basic": true},
+      {"id": "mini_pearl", "name": "미니펄", "name_en": "Mini Pearl", "price": 700, "description": "타피오카 전분으로 만든 작은 알모양 형태의 쫀득한 식감의 토핑", "basic": true},
+      {"id": "white_pearl", "name": "화이트펄", "name_en": "White Pearl", "price": 700, "description": "해초추출물로 만들어 꼬들꼬들한 토핑", "basic": true},
+      {"id": "aloe", "name": "알로에", "name_en": "Aloe", "price": 700, "description": "신선하고 사각사각한 토핑", "basic": true},
+      {"id": "coconut", "name": "코코넛", "name_en": "Coconut", "price": 700, "description": "달콤한 코코넛으로 만들어진 쫄깃쫄깃한 젤리", "basic": true},
+      {"id": "milk_foam", "name": "밀크폼", "name_en": "Milk Foam", "price": 700, "description": "깊고 부드러운 맛을 내는 달콤 짭쪼름한 토핑", "basic": true, "allergens_assumed": ["우유"]},
+      {"id": "cheese_foam", "name": "치즈폼", "name_en": "Cheese Foam", "price": 900, "description": "진한 치즈 풍미를 더해 감칠맛이 나는 달콤 짭쪼름한 토핑", "basic": true, "allergens_assumed": ["우유"]},
+      {"id": "extra_shot", "name": "샷추가", "name_en": "Extra Shot", "price": 500, "description": "에스프레소 샷 추가", "basic": false}
+    ],
+    "verified": true,
+    "source": "가격: 배민 공차 시흥배곧점 '공차슈페너' 옵션 화면(2026-10-12 캡처, 배달가). 설명·영문명: 공식 주문방법 페이지",
+    "caveats": [
+      "토핑 가격은 공차슈페너 1개 메뉴의 옵션 화면에서 확인한 값이다. 다른 메뉴도 같은 가격표를 쓴다고 가정했다.",
+      "공차슈페너는 배민에서 토핑 '최대 1개 선택' 이었다. 메뉴별 최대 개수는 다를 수 있다(공식 안내는 최대 3가지).",
+      "샷추가가 커피 외 메뉴에도 되는지는 미확인.",
+      "allergens_assumed 는 공식 표기가 아니라 재료로 추정한 값이다."
+    ]
+  },
+  "sizes": {
+    "label": "사이즈",
+    "items": [
+      {"id": "L", "name": "라지", "name_en": "Large"},
+      {"id": "J", "name": "점보", "name_en": "Jumbo"},
+      {"id": "G", "name": "기가", "name_en": "Giga"}
+    ],
+    "rule": "메뉴마다 가능한 사이즈가 다르다. 용량(ml)은 build_dataset.py 가 공식 영양정보 표에서 채운다.",
+    "source": "공식 메뉴 상세 영양정보 표. 사이즈 한글 명칭(라지/점보/기가)은 공식 페이지에 없어 관용 표기를 썼다(미확인)"
+  },
+  "temperature": {
+    "label": "HOT/ICE",
+    "rule": "공식 영양정보 표에 HOT 행이 있는 메뉴만 HOT 주문이 가능하다고 보았다. 쥬얼리·스무디·크러쉬·요구르트류는 ICE 전용.",
+    "source": "공식 주문방법 페이지(오리지널 티·밀크티·프룻티 Hot & Iced, 쥬얼리 Iced only) + 메뉴별 영양정보 표",
+    "caveat": "배민 캡처 가격은 HOT/ICE 구분이 없다. HOT 가격은 ICE 와 같다고 가정(미확인)."
+  }
+}

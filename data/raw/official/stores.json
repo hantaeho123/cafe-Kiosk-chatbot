@@ -1,0 +1,31 @@
+{
+  "collected_at": "2026-10-12",
+  "source": "https://www.gong-cha.co.kr",
+  "data": [
+    {
+      "seq": 627,
+      "name": "시흥배곧점",
+      "address": "경기도 시흥시 서울대학로 278번길34",
+      "tel": "031-365-5687",
+      "facilities": [
+        "seat",
+        "toilet",
+        "parking",
+        "wifi"
+      ],
+      "search_keyword": "시흥배곧",
+      "detail": {
+        "sido": "경기도",
+        "gugun": "시흥시",
+        "lat": "37.3682047072201",
+        "lng": "126.728938399307",
+        "time": "(평일/주말) 10:30 ~ 22:00",
+        "holiday": "연중무휴",
+        "station": "시흥배곧 아브뉴프랑 센트럴 옐로우",
+        "convenience": "10,20,30,40",
+        "new_yn": "n"
+      },
+      "source_url": "https://www.gong-cha.co.kr/brand/store/list?keyword=시흥배곧"
+    }
+  ]
+}

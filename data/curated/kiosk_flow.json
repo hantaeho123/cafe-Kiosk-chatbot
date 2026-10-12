@@ -1,0 +1,34 @@
+{
+  "_note": "키오스크 화면 흐름과 매장 운영 정보. 온라인으로는 확인할 수 없어서 대부분 verified=false(가정값)이다. 매장 키오스크를 보고 고쳐 쓸 것.",
+  "order_steps": [
+    {"step": 1, "id": "language", "title": "언어 선택", "verified": false},
+    {"step": 2, "id": "dine_option", "title": "매장 / 포장 선택", "choices": ["매장에서 먹고 가기", "포장하기"], "verified": false},
+    {"step": 3, "id": "menu", "title": "음료 선택", "detail": "취향에 맞게 공차의 음료를 고른다.", "verified": true, "source": "공식 주문방법 STEP 1"},
+    {"step": 4, "id": "size_temp", "title": "사이즈 · HOT/ICE 선택", "verified": false},
+    {"step": 5, "id": "ice_sugar", "title": "얼음량 · 당도 선택", "detail": "얼음량과 당도를 원하는대로 조절한다.", "verified": true, "source": "공식 주문방법 STEP 2"},
+    {"step": 6, "id": "topping", "title": "토핑 선택", "detail": "7가지 토핑 중 원하는 토핑을 선택한다 (최대 3가지).", "verified": true, "source": "공식 주문방법 STEP 3"},
+    {"step": 7, "id": "cart", "title": "장바구니 확인", "verified": false},
+    {"step": 8, "id": "discount", "title": "적립 · 할인 (멤버십 스탬프, 통신사 제휴)", "verified": false},
+    {"step": 9, "id": "payment", "title": "결제", "verified": false},
+    {"step": 10, "id": "receipt", "title": "주문번호 · 영수증", "verified": false}
+  ],
+  "languages": {"value": ["한국어", "English", "中文", "日本語"], "verified": false, "note": "일반적인 키오스크 구성을 가정한 값"},
+  "payment_methods": [
+    {"id": "card", "name": "신용/체크카드", "verified": false},
+    {"id": "kakaopay", "name": "카카오페이", "verified": true, "source": "공식 결제사 제휴 페이지"},
+    {"id": "payco", "name": "페이코", "verified": true, "source": "공식 결제사 제휴 페이지"},
+    {"id": "mobile_voucher", "name": "모바일 상품권(금액권/메뉴권)", "verified": true, "source": "공식 통신사 제휴 이용안내에 금액권·메뉴권 언급"},
+    {"id": "samsungpay", "name": "삼성페이", "verified": false},
+    {"id": "naverpay", "name": "네이버페이", "verified": false},
+    {"id": "cash", "name": "현금 (카운터 결제)", "verified": false}
+  ],
+  "tumbler": {"allowed": null, "discount": null, "verified": false, "note": "개인 텀블러 사용 가능 여부·할인 금액은 매장 문의 필요"},
+  "packaging": {"options": ["빨대", "캐리어", "컵홀더"], "verified": false},
+  "receipt": {"options": ["영수증 출력", "출력 안 함"], "order_number": "결제 후 주문번호 표시", "verified": false},
+  "delivery_reference": {
+    "min_order": 12000,
+    "note": "배달의민족 최소주문금액. 키오스크(매장) 주문에는 해당 없음",
+    "store_notice": "배달 특성상 얼음 제외 주문은 불가합니다. 대신 적게(less ice) ...",
+    "source": "배민 공차 시흥배곧점 화면(2026-10-12 캡처)"
+  }
+}
