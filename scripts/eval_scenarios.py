@@ -228,7 +228,7 @@ SCENARIOS = [
             ("화면 언어가 중국어로 바뀐다", lambda t, c: t.session.language == "zh"),
             ("메뉴판과 같은 중국어 이름으로 추천한다", lambda t, c: remember_menus(t, c) and all(
                 t.catalog.names(t.catalog.resolve(m)[0])["zh"] in t.reply for m in t.menus)),
-            ("가격을 ₩ 로 쓴다", lambda t, c: "₩" in t.reply and amounts_ok(t, c)),
+            ("가격을 ₩ 로 쓰고 한글을 섞지 않는다", lambda t, c: "₩" in t.reply and amounts_ok(t, c) and not says(t, "[가-힣]")),
         ]),
         ("第一个要大杯冰的", [
             ("첫째 메뉴를 올린다", lambda t, c: [a["name"] for a in t.added()] == c["menus"][:1]),
@@ -244,7 +244,7 @@ SCENARIOS = [
     ("Daniel 영어 주문", "내 언어로 입력하기 (L9)", [
         ("Hi, could you recommend something without caffeine?", [
             ("화면 언어가 영어로 바뀐다", lambda t, c: t.session.language == "en"),
-            ("영어로 답하되 메뉴명은 한글 이름을 함께 쓴다", lambda t, c: remember_menus(t, c) and says(t, r"\b(recommend|caffeine|would|you)\b")),
+            ("영어로 답하고 한글을 섞지 않는다", lambda t, c: remember_menus(t, c) and says(t, r"\b(recommend|caffeine|would|you)\b") and not says(t, "[가-힣]")),
             ("추천한 메뉴가 모두 무카페인이다", lambda t, c: all(t.tag(m)["caffeine_level"] == "무카페인" for m in t.menus)),
         ]),
         ("I'll take the first one, large and iced please", [

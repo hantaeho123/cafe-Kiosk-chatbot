@@ -133,8 +133,9 @@ class KioskAgent:
                 yield event
         session.ask_first = None
         new_note = bool(self._note_ids(session) - notes_before)
-        reply = yield from self._verify(session, user_text, "\n\n".join(parts), messages, new_note, unapplied)
-        yield from self._finish(session, user_text, reply, need, waiting)
+        written = "\n\n".join(parts)
+        reply = yield from self._verify(session, user_text, written, messages, new_note, unapplied)
+        yield from self._finish(session, user_text, reply, need, waiting, written)
 
     def _fixed_options(self, user_text):
         """손님이 말한 얼음량·당도가 그 메뉴에서는 고정일 때 미리 알려 준다. 모델이 도구를 부르기 전에 '가능해요'라고 답하지 않게."""
@@ -176,9 +177,11 @@ class KioskAgent:
                 reply += "\n\n" + notice
                 report["allergy_notice"] = "added"
                 yield {"type": "delta", "text": "\n\n" + notice}
-        if session.language != "ko" and checks.foreign_prices(reply) != reply:  # 외국어 답변의 "5,500원" → ₩5,500 (화면과 같은 표기)
-            reply = checks.foreign_prices(reply)
-            yield {"type": "replace", "text": reply}
+        if session.language != "ko":  # 외국어 답변: "5,500원" → ₩5,500, 메뉴 이름 뒤의 한글 괄호는 뺀다 (화면과 같은 표기)
+            cleaned = checks.without_korean_parens(checks.foreign_prices(reply))
+            if cleaned != reply:
+                reply = cleaned
+                yield {"type": "replace", "text": reply}
         if unapplied and session.pending() and reply:  # 손님이 말한 옵션을 반영하지 못했는데 답변이 밝히지 않았을 때
             report["unapplied"] = "model"
             if not checks.mentions_fixed(reply, session.language):
@@ -213,12 +216,13 @@ class KioskAgent:
             log.warning("답변 다시 쓰기 실패", exc_info=True)
             return None
 
-    def _finish(self, session, user_text, reply, need, waiting=None):
+    def _finish(self, session, user_text, reply, need, waiting=None, written=None):
         if reply:  # 모델이 아무 글도 내지 않은 턴은 기록하지 않는다
             session.history += [{"role": "user", "content": user_text}, {"role": "assistant", "content": reply}]
             session.events.clear()  # 화면 조작 내역은 이번 턴에 모델에게 전했다
         # "블랙 밀크티 하나 주세요처럼 말씀해 주세요" 같은 예시 문장 속 메뉴는 카드로 띄우지 않는다.
-        spoken = re.sub(r'"[^"\n]*"|“[^”\n]*”', " ", reply)
+        # 어떤 메뉴를 말했는지는 다듬기 전의 글(written)에서 찾는다. 한글 괄호를 뺀 뒤에는 모델이 제멋대로 번역한 이름을 알아볼 수 없다.
+        spoken = re.sub(r'"[^"\n]*"|“[^”\n]*”', " ", f"{written or ''}\n{reply}")
         mentioned = self.catalog.find_mentions(spoken, limit=5)
         if mentioned:
             session.shown = [m["name"] for m in mentioned]

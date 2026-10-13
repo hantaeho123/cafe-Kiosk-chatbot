@@ -127,3 +127,11 @@ _WON = re.compile(rf"({_NUMBER})\s*원")
 def foreign_prices(reply):
     """외국어 답변에 한국어 표기로 남은 금액("5,500원")을 화면과 같은 표기(₩5,500)로 바꾼다."""
     return _WON.sub(lambda m: f"₩{m.group(1)}", reply)
+
+
+_KOREAN_IN_PARENS = re.compile(r"\s*[(（][^()（）\n]*[가-힣][^()（）\n]*[)）]")
+
+
+def without_korean_parens(reply):
+    """외국어 답변에서 메뉴 이름 뒤에 붙은 "(타로 밀크티)" 같은 한글 괄호를 뺀다. 손님에게는 읽을 수 없는 글자다."""
+    return _KOREAN_IN_PARENS.sub("", reply)

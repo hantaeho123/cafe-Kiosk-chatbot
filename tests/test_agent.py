@@ -458,7 +458,9 @@ def test_foreign_reply_uses_the_screens_names_and_price_format(talk):
                                    text_chunks("**Taro Milk Tea with Pearls** (타로 밀크티 + 펄) is L 5,500원."))
     menus = tool_result(client)["menus"]
     assert menus[0]["name"] == "타로 밀크티 + 펄" and menus[0]["name_local"] == "Taro Milk Tea with Pearls"  # 메뉴판과 같은 이름을 준다
-    assert of(events, "replace")[-1]["text"].endswith("is L ₩5,500.") and "원" not in session.history[-1]["content"]
-    assert '"이 언어의 이름 (공식 한글 이름)"' in client.requests[0]["messages"][-1]["content"]
+    # 가격은 ₩ 로, 메뉴 이름 뒤의 한글 괄호는 뺀다. 그래도 어떤 메뉴를 말했는지는 기억한다
+    assert session.history[-1]["content"] == "**Taro Milk Tea with Pearls** is L ₩5,500."
+    assert session.shown == ["타로 밀크티 + 펄"] and of(events, "cards")[0]["items"][0]["name"] == "타로 밀크티 + 펄"
+    assert "이 언어의 이름만 쓴다" in client.requests[0]["messages"][-1]["content"]
     _, _, client = talk("타로 밀크티 얼마예요?", text_chunks("**타로 밀크티**는 L 4,900원이에요."))
     assert session.history[-1]["content"].endswith("4,900원이에요.")  # 한국어 답변은 그대로
