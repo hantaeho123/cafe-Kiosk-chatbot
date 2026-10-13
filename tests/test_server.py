@@ -261,3 +261,41 @@ def test_without_api_key_the_screen_still_opens(tmp_path, monkeypatch):
     post(client, "/api/order/item", menu_id=menu_id(client, "아메리카노"), size="L", temperature="HOT")
     post(client, "/api/pay/start")
     assert post(client, "/api/pay/tender", method="nfc").json()["order"]["status"] == "paid"
+
+
+# ---------------------------------------------------------------- 공개 주소로 올렸을 때의 보호 장치
+
+def test_chat_is_rate_limited_per_customer(tmp_path, monkeypatch):
+    monkeypatch.setattr("app.config.CHAT_LIMIT_PER_SESSION", 2)
+    fake = FakeClient([text_chunks("네."), text_chunks("네.")])
+    client = TestClient(create_app(client=fake, index_dir=tmp_path))
+    assert [chat(client, "안녕")[-1]["type"] for _ in range(2)] == ["done", "done"]
+    events = chat(client, "안녕")
+    assert events[0]["type"] == "error" and "대화가 많아" in events[0]["message"] and len(fake.requests) == 2
+    # 다른 손님은 영향을 받지 않고, 화면 버튼 주문은 계속 된다
+    assert client.post("/api/session", json={"session_id": "another-customer"}).status_code == 200
+    assert client.get("/api/menu").status_code == 200
+
+
+def test_password_protects_every_screen_when_set(tmp_path, monkeypatch):
+    monkeypatch.setattr("app.config.ACCESS_PASSWORD", "tea-time")
+    client = TestClient(create_app(client=FakeClient(), index_dir=tmp_path))
+    for path in ("/", "/staff", "/api/menu", "/api/staff/board", "/static/app.js"):
+        denied = client.get(path)
+        assert denied.status_code == 401 and denied.headers["www-authenticate"].startswith("Basic"), path
+    assert client.get("/api/config").status_code == 200  # 배포 서버의 상태 확인용
+    assert client.get("/", auth=("anyone", "wrong")).status_code == 401
+    assert client.get("/", auth=("anyone", "tea-time")).status_code == 200
+    assert client.post("/api/session", json=SESSION, auth=("kiosk", "tea-time")).status_code == 200
+
+
+def test_old_sessions_are_dropped_first(catalog, monkeypatch):
+    from app.session import SessionStore
+    monkeypatch.setattr("app.session.MAX_SESSIONS", 3)
+    store = SessionStore(catalog)
+    first = store.get("a")
+    for sid in ("b", "c"):
+        store.get(sid)
+    store.get("a")  # 다시 쓴 세션은 최근 것이 된다
+    store.get("d")
+    assert store.get("a") is first and list(store._sessions) == ["c", "d", "a"]

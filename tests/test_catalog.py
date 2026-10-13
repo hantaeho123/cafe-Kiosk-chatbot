@@ -77,3 +77,11 @@ def test_detect_language():
     assert detect_language("有什么推荐的吗") == "zh"
     assert detect_language("아메리카노 Large 하나요") == "ko"
     assert [detect_language(t) for t in ("ICE L", "ok", "ㅁㄴㅇㄹ", "1", "americano")] == [None] * 5
+
+
+def test_menus_can_be_found_by_their_english_names(catalog):
+    assert catalog.resolve("Black Milk Tea with Pearls")[0]["name"] == "블랙 밀크티 + 펄"
+    assert [m["name"] for m in catalog.find_mentions("One Americano and a Taro Milk Tea, please")] == ["아메리카노", "타로 밀크티"]
+    card = catalog.card(catalog.resolve("타로 밀크티")[0])
+    assert card["name"] == "타로 밀크티" and card["name_en"] == "Taro Milk Tea"  # 화면은 외국어일 때 영문명을 먼저 보여 준다
+    assert all(m["name_en"] for m in catalog.items)

@@ -23,6 +23,15 @@ function t(key, vars = {}) {
   return text.replace(/\{(\w+)\}/g, (_, name) => vars[name] ?? "");
 }
 
+// 다른 언어 화면에서는 번역한 메뉴명을 먼저 보여 주고, 공식 한글 이름을 작게 붙인다 (메뉴 영문명은 번역 데이터).
+function menuName(item) {
+  return state.lang !== "ko" && item.name_en ? item.name_en : item.name;
+}
+
+function nativeName(item) {
+  return state.lang !== "ko" && item.name_en ? el("small", { class: "native-name" }, item.name) : null;
+}
+
 function money(amount) {
   return state.lang === "ko" ? `${amount.toLocaleString("ko-KR")}원` : `₩${amount.toLocaleString("en-US")}`;
 }
@@ -233,7 +242,7 @@ function menuCard(item, onPick) {
     el("div", { class: "badges" }, item.badges.map((b) => el("span", { class: "badge" + (b.startsWith("인기") ? "" : " soft") }, badgeLabel(b)))),
     el("div", { class: "photo" }, item.image && el("img", { src: item.image, alt: "", loading: "lazy" }),
       item.sold_out && el("span", { class: "sold-out-mark" }, t("sold_out"))),
-    el("div", { class: "info" }, el("div", { class: "name" }, item.name), el("div", { class: "price" }, price)));
+    el("div", { class: "info" }, el("div", { class: "name" }, menuName(item)), nativeName(item), el("div", { class: "price" }, price)));
 }
 
 function renderBoard() {
@@ -408,7 +417,7 @@ async function openDetail(id, line = null, { draft = false, fromSuggestion = fal
     onclick: () => { close(); send(t("ask_template", { name: item.name })); } }, t("ask_menu"));
   const header = [
     el("div", { class: "photo" }, item.image && el("img", { src: item.image, alt: item.name })),
-    el("h3", {}, item.name),
+    el("h3", {}, menuName(item), nativeName(item)),
     el("div", { class: "muted" }, item.category),
     item.description && el("p", { class: "description" }, item.description),
     // 가격·칼로리·카페인은 펼치지 않아도 바로 보인다
@@ -534,7 +543,7 @@ function renderCart() {
     el("div", { class: "line" + (line.sold_out ? " sold-out" : ""), "data-line": line.line_id },
       line.image ? el("img", { src: line.image, alt: "" }) : el("span"),
       el("div", {},
-        el("div", { class: "name" }, line.name,
+        el("div", { class: "name" }, menuName(line), nativeName(line),
           line.voucher && el("span", { class: "tag" }, t("voucher_tag")),
           line.sold_out && el("span", { class: "tag warn" }, t("line_sold_out"))),
         el("div", { class: "options" }, optionText(line)),
@@ -643,18 +652,18 @@ function changeCard(change) {
   const who = (note) => note.line_name || t("request_for_order");
   switch (change.type) {
     case "add":
-      return el("li", { class: "change" }, head("add", t("change_add"), change.after.name, money(change.after.line_total - change.after.covered)),
+      return el("li", { class: "change" }, head("add", t("change_add"), menuName(change.after), money(change.after.line_total - change.after.covered)),
         el("div", { class: "options" }, optionText(change.after), " · ", t("cups_unit", { n: change.after.quantity })),
         lineNotes(change.after), editButton(change.after));
     case "update":
       return el("li", { class: "change" },
-        head("update", t("change_update"), change.after.name,
+        head("update", t("change_update"), menuName(change.after),
           change.before.line_total !== change.after.line_total ? `${money(change.before.line_total)} → ${money(change.after.line_total)}` : money(change.after.line_total)),
         el("ul", { class: "fields" }, change.fields.map((f) => fieldChange(f, change.before, change.after))),
         el("div", { class: "options muted" }, optionText(change.after), " · ", t("cups_unit", { n: change.after.quantity })),
         editButton(change.after));
     case "remove":
-      return el("li", { class: "change removed" }, head("remove", t("change_remove"), change.before.name, `−${money(change.before.line_total - change.before.covered)}`),
+      return el("li", { class: "change removed" }, head("remove", t("change_remove"), menuName(change.before), `−${money(change.before.line_total - change.before.covered)}`),
         el("div", { class: "options" }, optionText(change.before), " · ", t("cups_unit", { n: change.before.quantity })));
     case "note_add":
     case "note_remove":
@@ -765,15 +774,25 @@ function renderChips(chips) {
 }
 
 // "근거 보기"를 켜면 답변마다 어떤 문서를 찾았고 어떤 도구를 불렀는지 보여 준다.
+// 답변을 코드로 다시 확인한 결과(금액·알레르기 안내·요청 메모 안내)를 한 줄로.
+function verifiedRow(v) {
+  if (!v) return null;
+  const parts = [v.rewritten ? t("verify_rewritten") : v.amounts === "ok" ? t("verify_amounts_ok")
+    : t("verify_amounts_unknown", { amounts: v.amounts.map(money).join(", ") })];
+  if (v.allergy_notice) parts.push(t(v.allergy_notice === "added" ? "verify_allergy_added" : "verify_allergy_ok"));
+  if (v.note_notice) parts.push(t(v.note_notice === "added" ? "verify_note_added" : "verify_note_ok"));
+  return el("li", {}, el("span", { class: "tag" }, t("verify_tag")), ` ${parts.join(" · ")}`);
+}
+
 function evidence(message) {
-  if (!message.sources.length && !message.tools.length) return null;
+  if (!message.sources.length && !message.tools.length && !message.verified) return null;
   const sourceRow = (s) => el("li", {},
     el("span", { class: "tag" }, (s.match === "vector" ? "" : `${t(`match_${s.match}`)} `) + s.score.toFixed(2)),
     ` ${s.title} (${s.type})${s.query ? ` ← "${s.query}"` : ""}`);
   const toolRow = (c) => el("li", {}, el("code", {}, `${c.ok ? "✓" : "✗"} ${c.name}(${JSON.stringify(c.args)})`));
   return el("details", { class: "evidence" },
     el("summary", {}, t("evidence_summary", { docs: message.sources.length, tools: message.tools.length })),
-    el("ul", {}, message.sources.map(sourceRow), message.tools.map(toolRow)));
+    el("ul", {}, message.sources.map(sourceRow), message.tools.map(toolRow), verifiedRow(message.verified)));
 }
 
 // 메뉴끼리 비교해 물으면 답변 아래에 나란히 놓은 표가 붙는다.
@@ -786,7 +805,7 @@ function compareTable(items) {
   return el("div", { class: "compare" },
     el("table", {},
       el("thead", {}, el("tr", {}, el("th", {}), items.map((m) => el("th", {},
-        m.image && el("img", { src: m.image, alt: "" }), el("div", {}, m.name), m.sold_out && el("span", { class: "tag warn" }, t("sold_out")))))),
+        m.image && el("img", { src: m.image, alt: "" }), el("div", {}, menuName(m)), m.sold_out && el("span", { class: "tag warn" }, t("sold_out")))))),
       el("tbody", {},
         row(t("cmp_price"), (m) => (m.prices.length ? m.prices.map((p) => `${p.size} ${money(p.price)}`).join(" / ") : t("price_ask"))),
         row(t("cmp_flavor"), (m) => (m.flavors || []).join(", ") || "-"),
@@ -805,6 +824,13 @@ function handleEvent(event, message) {
       message.raw += event.text;
       message.status = null;
       paint(message);
+      break;
+    case "replace":  // 답변 검증에 걸려 서버가 다시 쓴 답변
+      message.raw = event.text;
+      paint(message);
+      break;
+    case "verified":
+      message.verified = event;
       break;
     case "status": {
       const key = PROPOSE_TOOLS.includes(event.name) ? "status_propose" : `status_${event.name}`;

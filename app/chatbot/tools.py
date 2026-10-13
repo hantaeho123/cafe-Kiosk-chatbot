@@ -10,9 +10,23 @@ from app.i18n import LANGUAGES
 from app.order import Order, OrderError, won
 
 SEARCH_TOOL = "search_knowledge"
+# 데이터의 맛 태그 '시원한'은 스무디·크러쉬류에 붙은 것인데, 모델이 손님의 "시원한 거"(= 차갑게)를 이 태그로 걸어
+# 맞는 메뉴가 없다고 답하는 일이 있었다. 도구에는 '스무디류'라는 이름으로 보여 준다.
+FLAVOR_ALIAS = {"시원한": "스무디류"}
+FLAVOR_TAG = {alias: tag for tag, alias in FLAVOR_ALIAS.items()}
+# find_menus 의 조건 이름 (조건을 하나 빼고 다시 찾았을 때 무엇을 뺐는지 알려 주는 데 쓴다)
+CONDITION_NAMES = {"flavor": "맛", "caffeine": "카페인", "no_milk": "우유 없음", "exclude_allergens": "알레르기 성분 제외",
+                   "sugar_adjustable": "당도 조절 가능", "low_sugar": "저당 시리즈", "hot": "HOT 가능", "iced": "ICE 가능",
+                   "category": "종류", "max_price": "가격 상한", "max_kcal": "열량 상한"}
 # 주문(변경안)을 고치는 도구. 결제 화면이 열려 있으면 쓸 수 없다.
 ORDER_TOOLS = {"add_to_cart", "update_cart_item", "remove_cart_item", "add_request_note", "remove_request_note",
                "set_order_options", "undo_last_change"}
+NOTE_RULE = ("요청 메모는 직원에게 전달될 뿐입니다. 들어줄 수 있다고 약속하지 말고, 답변에 '메모로 전달해 드릴게요. "
+             "매장 사정에 따라 어려울 수 있어요'라는 뜻을 반드시 넣으세요.")
+SAY_RULE = ("답변에서는 손님이 한 말이 아니라 proposed 에 적힌 실제 옵션(사이즈, HOT/ICE, 당도, 얼음)을 말하세요. "
+            "손님이 말한 것과 달라진 점(반영하지 못한 옵션, 없는 사이즈를 다른 사이즈로 바꾼 것)이 있으면 그것부터 밝힙니다.")
+SUBSTITUTE_RULE = ("손님이 고르지 않은 다른 메뉴를 대신 올리지 마세요. 이 메뉴는 주문할 수 없다고 알리고, 비슷한 메뉴를 1~2개 "
+                   "제안한 뒤 손님이 고르면 그때 올립니다.")
 NEXT_STEP = ("아직 주문에 반영되지 않았습니다. 변경 확인 화면을 띄웠으니, 바뀌는 내용과 금액을 한두 문장으로 알리고 "
              "화면에서 [확인]을 눌러 달라고 안내하세요. '담았습니다', '바꿨습니다'라고 말하지 않습니다.")
 
@@ -34,7 +48,7 @@ class ToolBox:
     def specs(self):
         cat = self.catalog
         toppings = ", ".join(f"{tid}={t['name']}" for tid, t in cat.toppings.items())
-        flavors = sorted({f for m in cat.items if m["kind"] == "drink" for f in m["tags"]["flavors"]})
+        flavors = sorted({FLAVOR_ALIAS.get(f, f) for m in cat.items if m["kind"] == "drink" for f in m["tags"]["flavors"]})
         item_options = {
             "size": {"type": "string", "enum": ["L", "J"], "description": "사이즈. 손님이 말하지 않았으면 넣지 않는다."},
             "temperature": {"type": "string", "enum": ["ICE", "HOT"], "description": "손님이 말하지 않았으면 넣지 않는다."},
@@ -62,14 +76,18 @@ class ToolBox:
             _fn("find_menus",
                 "조건에 맞는, 지금 주문할 수 있는(품절이 아닌) 음료를 메뉴판 데이터에서 정확하게 골라 준다. 조건이 두 개 이상이거나 "
                 "가격·칼로리·카페인·예산처럼 수치로 따지는 추천에는 반드시 이 도구를 쓴다. 필요한 조건만 넣는다.",
-                {"flavor": {"type": "string", "enum": flavors, "description": "맛 특징"},
+                {"flavor": {"type": "string", "enum": flavors,
+                            "description": "맛 특징. '스무디류'는 스무디·크러쉬처럼 얼음을 갈아 만든 음료다. "
+                                           "손님이 '시원한 거', '차가운 거'라고 한 것은 맛이 아니라 온도이므로 여기가 아니라 temperature=ICE 에 넣는다"},
+                 "temperature": {"type": "string", "enum": ["ICE", "HOT"],
+                                 "description": "차갑게(ICE) 또는 따뜻하게(HOT) 주문할 수 있는 음료만"},
                  "caffeine": {"type": "string", "enum": ["none", "low"], "description": "none=카페인 0mg, low=50mg 미만"},
                  "no_milk": {"type": "boolean", "description": "우유가 들어가지 않은 음료만"},
                  "exclude_allergens": {"type": "array", "items": {"type": "string", "enum": cat.allergens},
                                        "description": "알레르기 유발물질 표기에 이 성분이 있는 음료를 뺀다"},
-                 "sugar_adjustable": {"type": "boolean", "description": "당도를 낮춰 주문할 수 있는 음료만 ('덜 단 거')"},
+                 "sugar_adjustable": {"type": "boolean",
+                                      "description": "당도를 낮춰 주문할 수 있는 음료만 ('덜 단 거', '너무 달지 않은 거'). 조건을 걸 때만 true 로 넣는다"},
                  "low_sugar": {"type": "boolean", "description": "저당·제로 시리즈 메뉴만"},
-                 "hot": {"type": "boolean", "description": "따뜻하게(HOT) 주문할 수 있는 음료만"},
                  "category": {"type": "string", "enum": DRINK_TABS},
                  "max_price": {"type": "integer", "description": "가장 작은 사이즈 가격이 이 금액(원) 이하"},
                  "total_budget": {"type": "integer",
@@ -77,8 +95,8 @@ class ToolBox:
                                                  "예: '2만 원으로 셋이' → total_budget=20000, people=3"},
                  "people": {"type": "integer", "minimum": 1, "description": "인원 수(= 음료 잔 수). total_budget 과 함께 넣는다"},
                  "max_kcal": {"type": "integer", "description": "열량이 이 값(kcal) 이하"},
-                 "sort": {"type": "string", "enum": ["popular", "price", "kcal", "caffeine"],
-                          "description": "정렬: 인기순(기본), 가격·열량·카페인 낮은 순"}}),
+                 "sort": {"type": "string", "enum": ["popular", "price", "kcal", "caffeine", "sugar"],
+                          "description": "정렬: 인기순(기본), 가격·열량·카페인·당류(당도 0% 기준) 낮은 순"}}),
             _fn("compare_menus",
                 "메뉴 2~3개를 나란히 비교할 값(맛, 카페인, 열량, 당류, 가격, HOT 가능 여부, 알레르기)을 가져온다. "
                 "손님이 메뉴끼리 차이를 물으면 호출한다. 화면에도 비교표가 뜬다.",
@@ -103,7 +121,9 @@ class ToolBox:
                 "메뉴를 담는 변경안을 변경 확인 화면에 올린다(손님이 [확인]을 눌러야 담긴다). 사이즈·HOT/ICE 가 빠졌고 선택지가 여러 개면 "
                 "올리지 않고 need 로 알려 준다. 여러 메뉴는 메뉴마다 한 번씩 호출한다.",
                 {"menu_name": {"type": "string", "description": "메뉴판의 공식 메뉴명. 예: '블랙 밀크티 + 펄'"}, **item_options,
-                 "request_note": {"type": "string", "description": "이 메뉴에 붙일 요청 메모(옵션으로 고를 수 없는 요청만, 60자 이내)"}},
+                 "request_note": {"type": "string", "description": "이 메뉴에 붙일 요청 메모(옵션으로 고를 수 없는 요청만, 60자 이내)"},
+                 "dine_option": {"type": "string", "enum": ["매장", "포장"],
+                                 "description": "손님이 이번 말에서 매장에서 먹는지 포장인지 말했으면 넣는다(컵만 바꾸지 말고 이것을 넣는다)"}},
                 ["menu_name"]),
             _fn("update_cart_item",
                 "주문의 한 줄을 고치는 변경안을 올린다(수량, 사이즈, HOT/ICE, 당도, 얼음, 토핑, 컵). 바꿀 항목만 넣는다. "
@@ -128,7 +148,9 @@ class ToolBox:
             _fn("undo_last_change",
                 "손님이 '아니 그거 말고', '방금 거 취소'처럼 직전 변경을 무르려 할 때 호출한다. 확인을 기다리는 변경안이 있으면 그것을 버리고, "
                 "없으면 직전에 반영된 변경을 되돌리는 변경안을 올린다. 그다음 손님이 원한 것을 새로 올린다.", {}),
-            _fn("call_staff", "직원을 호출한다. 손님이 직원을 찾거나 키오스크로 해결할 수 없는 일일 때.",
+            _fn("call_staff",
+                "직원을 호출한다(직원 화면에 바로 뜬다). 손님이 직원을 불러 달라고 했거나, 직원 호출을 제안했을 때 손님이 동의한 경우에만 호출한다. "
+                "할인·적립·결제 방법처럼 안내로 답할 수 있는 질문에는 호출하지 않는다.",
                 {"reason": {"type": "string", "description": "직원에게 전달할 호출 사유(한국어, 한 문장)"}}, ["reason"]),
             _fn("set_language", "화면과 대화 언어를 바꾼다.",
                 {"language": {"type": "string", "enum": list(LANGUAGES)}}, ["language"]),
@@ -174,27 +196,67 @@ class ToolBox:
                 "results": [{"title": h.doc["title"], "type": h.doc["type"], "text": h.doc["text"],
                              **({"sold_out": True} if h.doc["metadata"].get("menu_id") in sold_out else {})} for h in hits]}
 
-    def _find_menus(self, session, limit=8, total_budget=None, people=None, **conditions):
+    def _menu_row(self, m):
+        return {
+            "name": m["name"], "category": m["category"],
+            "price": ", ".join(f"{s['size']} {s['price']:,}원" for s in m["sizes"]),
+            "flavors": m["tags"]["flavors"], "caffeine_mg": m["tags"]["caffeine_mg_ref"], "kcal": m["tags"]["kcal_ref"],
+            "sugar_g": m["tags"]["sugar_g_ref"], "temperatures": m["temperatures"], "contains_milk": m["tags"]["contains_milk"],
+            "sugar_adjustable": m["options"]["sugar"]["adjustable"], "recommended_sugar": m["options"]["sugar"]["recommended"],
+            "allergens": m["allergens"], "badges": self.catalog.card(m)["badges"],
+        }
+
+    def _relaxed(self, conditions, sold_out):
+        """조건을 하나씩 빼 보고 무엇을 빼면 메뉴가 나오는지 알려 준다. 모델이 '맞는 메뉴가 없어요'로 끝내지 않게 하려는 것이다."""
+        active = [k for k, v in conditions.items() if k != "sort" and v not in (None, False, [], ())]
+        options = []
+        for key in active:
+            found = self.catalog.find_drinks(exclude_ids=sold_out, **{k: v for k, v in conditions.items() if k != key})
+            if found:
+                options.append({"without": f"{CONDITION_NAMES.get(key, key)} ({conditions[key]})", "total": len(found),
+                                "menus": [self._menu_row(m) for m in found[:3]]})
+        if not options:
+            return {"message": "조건을 모두 만족하는 음료가 없습니다. 손님에게 알리고 어떤 조건이 가장 중요한지 물어보세요."}
+        return {"message": "조건을 모두 만족하는 음료는 없습니다. '없다'로 끝내지 말고, relaxed 를 보고 어떤 조건을 빼면 "
+                           "어떤 메뉴가 있는지 손님에게 알려 주어 고르게 하세요.",
+                "relaxed": sorted(options, key=lambda o: -o["total"])}
+
+    def _example(self, session, found, people, total_budget):
+        """예산 추천: 인기순으로 한 잔씩 고른 예시 조합의 합계를 POS 로 계산해 함께 준다(모델이 직접 더하지 않도록)."""
+        picks = [found[i % len(found)] for i in range(people)]
+        try:
+            priced = self._calculate_price(session, [{"menu_name": m["name"]} for m in picks], budget=total_budget)
+        except OrderError:
+            return None
+        return {"lines": priced["lines"], "total": priced["total"], "budget": priced["budget"],
+                "note": "인기순으로 한 잔씩 고른 예시 조합입니다. 합계와 남는 금액은 POS 가 계산한 값이니 숫자를 바꾸지 말고 그대로 안내하세요. "
+                        "다른 조합을 제안하려면 calculate_price 로 다시 계산합니다."}
+
+    def _find_menus(self, session, limit=8, total_budget=None, people=None, temperature=None, **conditions):
         result = {"ok": True}
+        if temperature:
+            conditions["hot" if str(temperature).upper() == "HOT" else "iced"] = True
+        flavor = conditions.get("flavor")
+        if flavor == "시원한":  # 맛이 아니라 '차갑게'라는 뜻으로 넣은 것
+            del conditions["flavor"]
+            conditions["iced"] = True
+        elif flavor in FLAVOR_TAG:
+            conditions["flavor"] = FLAVOR_TAG[flavor]
         if total_budget is not None:
             people = max(int(people or 1), 1)
             share = int(total_budget) // people  # 나누기도 모델이 아니라 코드가 한다
             conditions["max_price"] = min(share, conditions.get("max_price") or share)
             result["budget"] = {"total": won(int(total_budget)), "people": people, "per_person": won(share),
-                                "note": "한 사람 몫 안에서 고른 것입니다. 실제 조합의 합계는 calculate_price 로 확인하세요."}
+                                "note": "한 사람 몫 안에서 고른 것입니다. 예시 조합의 합계와 남는 금액은 example 에 있습니다."}
         sold_out = session.stock.ids() if session.stock else []
         found = self.catalog.find_drinks(exclude_ids=sold_out, **conditions)
         if not found:
-            return {**result, "total": 0, "message": "조건을 모두 만족하는 음료가 없습니다. 손님에게 알리고 조건을 하나 줄여 다시 찾아보세요."}
-        return {**result, "total": len(found), "basis": "카페인·열량은 가장 작은 ICE 사이즈, 당도 0% 기준. 품절 메뉴는 빠져 있음",
-                "menus": [{
-                    "name": m["name"], "category": m["category"],
-                    "price": ", ".join(f"{s['size']} {s['price']:,}원" for s in m["sizes"]),
-                    "flavors": m["tags"]["flavors"], "caffeine_mg": m["tags"]["caffeine_mg_ref"], "kcal": m["tags"]["kcal_ref"],
-                    "hot_available": m["tags"]["hot_available"], "contains_milk": m["tags"]["contains_milk"],
-                    "sugar_adjustable": m["options"]["sugar"]["adjustable"], "allergens": m["allergens"],
-                    "badges": self.catalog.card(m)["badges"],
-                } for m in found[:limit]]}
+            return {**result, "total": 0, **self._relaxed(conditions, sold_out)}
+        if total_budget is not None:
+            result["example"] = self._example(session, found, people, int(total_budget))
+        return {**result, "total": len(found),
+                "basis": "카페인·열량·당류(sugar_g)는 가장 작은 ICE 사이즈, 당도 0% 기준. 당도를 올리면 당류와 열량이 늘어난다. 품절 메뉴는 빠져 있음",
+                "menus": [self._menu_row(m) for m in found[:limit]]}
 
     def _compare_menus(self, session, menu_names):
         menus = list({m["id"]: m for m in map(self._find_menu, menu_names)}.values())
@@ -202,7 +264,7 @@ class ToolBox:
             raise OrderError("bad_arguments", "서로 다른 메뉴가 두 개 이상 필요합니다.")
         facts = [self.catalog.facts(m, self._sold_out(session, m)) for m in menus]
         cards = [self.catalog.card(m) for m in menus]
-        view = [{**f, "id": m["id"], "image": c["image"], "prices": c["prices"],
+        view = [{**f, "id": m["id"], "name_en": m.get("name_en"), "image": c["image"], "prices": c["prices"],
                  "sugar": m["options"]["sugar"] if m["kind"] == "drink" else {"adjustable": None, "recommended": None}}
                 for f, m, c in zip(facts, menus, cards)]
         return {"ok": True, "menus": facts, "view": {"items": view},
@@ -274,27 +336,73 @@ class ToolBox:
         return [f"이 메뉴에는 {', '.join(doubled)}이(가) 이미 들어 있는데 같은 토핑을 한 번 더 추가했습니다(추가 요금이 붙음). "
                 "손님이 '더 추가'를 원한 것이 아니면 update_cart_item 으로 그 토핑을 빼세요."]
 
+    def _already(self, session, menu, line):
+        """이미 주문에 있는 메뉴를 또 담았을 때의 안내. '고쳐 달라'는 말을 '하나 더'로 잘못 처리했을 때 모델이 바로잡게 한다."""
+        existing = [l for l in session.order.lines if l["menu_id"] == menu["id"]]
+        if not existing:
+            return []
+        ids = ", ".join(f"#{l['line_id']}" for l in existing)
+        merged = next((l for l in existing if l["line_id"] == line["line_id"]), None)
+        if merged:
+            fix = (f"같은 옵션이라 #{line['line_id']} 줄의 수량이 {merged['quantity']}잔에서 {line['quantity']}잔으로 늘어나는 변경안입니다. "
+                   f"더 담으려던 것이 아니면 update_cart_item(line_id={line['line_id']}, quantity={merged['quantity']})에 바꿀 옵션을 넣어 고치세요.")
+        else:
+            fix = (f"새 줄 #{line['line_id']}로 더 담는 변경안입니다. 더 담으려던 것이 아니라 이미 담긴 줄({ids})을 바꾸려던 것이면 "
+                   f"remove_cart_item(line_id={line['line_id']})로 이 줄을 빼고 update_cart_item 으로 그 줄을 고치세요.")
+        return [f"주문에 이미 '{menu['name']}'이(가) 있습니다({ids}). {fix}"]
+
+    def _must_ask(self, session, menu, temperature, ice):
+        """손님 말이 서로 부딪치면 한쪽을 골라 올리지 않는다. 무엇이 부딪치는지 알려 주고 손님에게 묻게 한다."""
+        temps = menu.get("temperatures") or []
+        reason = session.ask_first
+        if not reason and ice and str(temperature or "").upper() == "HOT":
+            reason = ("HOT 음료에는 얼음이 들어가지 않는데 얼음량이 함께 들어왔습니다. 임의로 한쪽을 고르지 말고, "
+                      "따뜻하게(얼음 없음)인지 아이스(얼음량 선택)인지 물어보세요.")
+        if reason:
+            raise OrderError("conflicting_request", "아직 올리지 않았습니다. " + reason + " 답변에서는 무엇이 서로 맞지 않는지 짧게 말하고 "
+                             "하나를 골라 달라고 합니다.", menu=menu["name"], choices={"temperature": temps} if len(temps) > 1 else {})
+
+    @staticmethod
+    def _unapplied(line, sugar, ice):
+        """손님이 말했지만 이 메뉴에서 바꿀 수 없어 반영되지 않은 옵션."""
+        missed = []
+        if sugar is not None and line["sugar"] is None:
+            missed.append("sugar")
+        if ice and ice != "regular" and line["temperature"] == "ICE" and line["ice"] is None:
+            missed.append("ice")
+        return missed
+
     def _add_to_cart(self, session, menu_name, size=None, temperature=None, sugar=None, ice=None,
-                     toppings=None, quantity=1, cup=None, request_note=None):
+                     toppings=None, quantity=1, cup=None, request_note=None, dine_option=None):
         menu = self._find_menu(menu_name)
+        self._must_ask(session, menu, temperature, ice)
         draft = session.propose()
         try:
+            if dine_option:  # 매장/포장에 따라 기본 컵이 달라지므로 먼저 적용한다
+                draft.set_options(dine_option)
             line, defaults, notes = draft.add(menu, size, temperature, sugar, ice, toppings, quantity, cup)
             if request_note:
                 draft.add_note(request_note, line["line_id"])
-        except OrderError:
+        except OrderError as e:
             session.pending()  # 아무것도 바뀌지 않은 빈 변경안은 치운다
+            if e.result["error"] in ("sold_out", "not_for_sale"):
+                e.result["next"] = SUBSTITUTE_RULE
             raise
-        return self._proposed(session, proposed=draft.line_text(line), defaults_applied=defaults, notes=notes + self._doubled(line))
+        extra = {"promise": NOTE_RULE} if request_note else {}
+        return self._proposed(session, proposed=draft.line_text(line), defaults_applied=defaults, unapplied=self._unapplied(line, sugar, ice),
+                              notes=notes + self._doubled(line) + self._already(session, menu, line), say=SAY_RULE, **extra)
 
     def _update_cart_item(self, session, line_id, **changes):
         draft = session.propose()
         try:
+            menu = self.catalog.by_id[draft._find(line_id)["menu_id"]]
+            self._must_ask(session, menu, changes.get("temperature"), changes.get("ice"))
             line, defaults, notes = draft.update(line_id, **changes)
         except OrderError:
             session.pending()
             raise
-        return self._proposed(session, proposed=draft.line_text(line), defaults_applied=defaults, notes=notes + self._doubled(line))
+        return self._proposed(session, proposed=draft.line_text(line), defaults_applied=defaults, notes=notes + self._doubled(line),
+                              unapplied=self._unapplied(line, changes.get("sugar"), changes.get("ice")), say=SAY_RULE)
 
     def _remove_cart_item(self, session, line_id=None, clear_all=False):
         draft = session.propose()
@@ -318,7 +426,7 @@ class ToolBox:
         except OrderError:
             session.pending()
             raise
-        return self._proposed(session, promise="메모는 직원에게 전달될 뿐입니다. 매장에서 들어줄 수 있는지는 약속하지 말고 '전달해 드릴게요'라고만 하세요.")
+        return self._proposed(session, promise=NOTE_RULE)
 
     def _remove_request_note(self, session, note_id):
         draft = session.propose()
@@ -342,7 +450,10 @@ class ToolBox:
         if session.pending() and not session.draft_undo:
             session.discard()
             return {"ok": True, "applied": False, "discarded": True,
-                    "message": "확인을 기다리던 변경안을 버렸습니다. 주문은 그대로입니다. 손님이 원한 것을 새로 올리거나 무엇을 원하는지 물어보세요."}
+                    "message": "확인을 기다리던 변경안을 버렸습니다. 주문은 변경안을 올리기 전 그대로입니다(order). 이미 주문에 있는 메뉴를 "
+                               "다시 담지 마세요. 담긴 줄의 옵션을 바꾸려면 update_cart_item 을 쓰고, 다른 메뉴를 원하면 add_to_cart 를 씁니다. "
+                               "무엇을 원하는지 분명하지 않으면 물어보세요.",
+                    "order": session.order.summary_text()}
         session.propose_undo()
         return self._proposed(session, undo=True)
 

@@ -164,7 +164,7 @@ function orderSummary(order) {
   const row = (label, value, cls) => el("div", { class: cls }, el("dt", {}, label), el("dd", {}, value));
   return [
     el("ul", { class: "receipt-lines" }, order.lines.map((line) => el("li", {},
-      el("span", {}, `${line.name} × ${line.quantity}`, line.voucher && el("span", { class: "tag" }, t("voucher_tag")),
+      el("span", {}, `${menuName(line)} × ${line.quantity}`, line.voucher && el("span", { class: "tag" }, t("voucher_tag")),
         el("small", {}, optionText(line)), line.notes.map((n) => el("small", { class: "memo" }, `“${n.text}”`))),
       el("span", {}, money(line.line_total - line.covered))))),
     order.notes.length ? el("ul", { class: "notes" }, order.notes.map((n) => el("li", { class: "note" }, n.text))) : null,
@@ -336,7 +336,7 @@ function receiptPaper(order) {
   return el("div", { class: "paper" },
     el("strong", {}, t("receipt_paper_title")), el("small", {}, `${state.config.store.name} · ${receipt.paid_at}`),
     el("div", { class: "paper-number" }, `${t("order_number")} ${receipt.order_number}`),
-    order.lines.map((line) => el("div", { class: "paper-row" }, el("span", {}, `${line.name} × ${line.quantity}`), el("span", {}, money(line.line_total)))),
+    order.lines.map((line) => el("div", { class: "paper-row" }, el("span", {}, `${menuName(line)} × ${line.quantity}`), el("span", {}, money(line.line_total)))),
     totals.voucher ? el("div", { class: "paper-row" }, el("span", {}, t("voucher_amount")), el("span", {}, `−${money(totals.voucher)}`)) : null,
     totals.coupon ? el("div", { class: "paper-row" }, el("span", {}, t("coupon_amount")), el("span", {}, `−${money(totals.coupon)}`)) : null,
     totals.discount ? el("div", { class: "paper-row" }, el("span", {}, t("discount_amount")), el("span", {}, `−${money(totals.discount)}`)) : null,

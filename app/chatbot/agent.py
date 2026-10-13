@@ -9,6 +9,7 @@ import re
 from concurrent.futures import ThreadPoolExecutor
 
 from app import config, i18n
+from app.chatbot import checks
 from app.chatbot.prompts import system_prompt, turn_message
 from app.chatbot.tools import SEARCH_TOOL, ToolBox
 
@@ -33,10 +34,22 @@ class KioskAgent:
         self.moderation = moderation
         self._pool = ThreadPoolExecutor(max_workers=4)
 
+    def warm_up(self):
+        """서버를 켠 직후 첫 손님의 답이 느리지 않게 임베딩과 모델을 한 번씩 미리 부른다(연결과 프롬프트 캐시를 데운다)."""
+        try:
+            self.retriever.search("안녕하세요")
+            self.client.chat.completions.create(
+                model=self.model, tools=self.specs, max_completion_tokens=16,
+                messages=[{"role": "system", "content": self.system}, {"role": "user", "content": "안녕하세요"}])
+            log.info("모델 연결 준비 완료")
+        except Exception:
+            log.warning("미리 데우기 실패 (첫 답변이 조금 느릴 수 있음)", exc_info=True)
+
     def respond(self, session, user_text):
         """손님의 한마디에 대한 답을 이벤트(dict)로 하나씩 내보낸다.
 
-        delta: 답변 글 조각 / status: 실행할 도구 / tool: 도구 실행 결과 / sources: 검색된 문서
+        delta: 답변 글 조각 / replace: 검증에 걸려 다시 쓴 답변 전체 / verified: 검증 결과
+        status: 실행할 도구 / tool: 도구 실행 결과 / sources: 검색된 문서
         state: 주문 상태 / cards: 답변에 나온 메뉴 / compare: 메뉴 비교표 / proposal: 확인을 기다리는 변경안
         chips: 빠른 답변 버튼 / error / done
         """
@@ -56,7 +69,15 @@ class KioskAgent:
             session.set_language(language)
             yield {"type": "state", **session.state()}
 
+        if session.pending() and checks.is_bare_yes(user_text):
+            # 말로 한 동의는 확인이 아니다. 모델에게 맡기면 가끔 같은 변경을 다시 올리므로 코드가 바로 답하고 확인 화면을 다시 띄운다.
+            reply = i18n.text("press_confirm", session.language)
+            yield {"type": "delta", "text": reply}
+            yield from self._finish(session, user_text, reply, need=None, waiting=None)
+            return
+
         waiting = session.pending_text()  # 이번 턴에 변경안이 달라졌는지 보려고 처음 모습을 남겨 둔다
+        conflict, warnings = checks.request_warnings(user_text)  # 서로 부딪치는 말, 없는 사이즈
         flagged = self._pool.submit(self._flagged, user_text) if self.moderation else None
         hits = self.retriever.search(user_text, context=self._context(session.history, user_text))
         if flagged and flagged.result():
@@ -69,9 +90,11 @@ class KioskAgent:
         messages = [
             {"role": "system", "content": self.system},
             *session.history[-2 * config.HISTORY_TURNS:],
-            {"role": "user", "content": turn_message(session, hits, user_text)},
+            {"role": "user", "content": turn_message(session, hits, user_text, [conflict, *warnings] if conflict else warnings)},
         ]
+        unapplied = []
         parts, need = [], None
+        notes_before = self._note_ids(session)
         for round_no in range(config.MAX_TOOL_ROUNDS + 1):
             # 마지막 라운드에서는 도구를 막아 반드시 글로 답하게 한다.
             text, calls = yield from self._stream(messages, allow_tools=round_no < config.MAX_TOOL_ROUNDS)
@@ -84,9 +107,13 @@ class KioskAgent:
             messages.append({"role": "assistant", "content": text or None, "tool_calls": [
                 {"id": c["id"], "type": "function", "function": {"name": c["name"], "arguments": c["arguments"]}}
                 for c in calls]})
+            # 부딪치는 말이 한 음료에 대한 것일 때만 막는다. 여러 잔을 한 번에 말한 것("아이스 하나, 따뜻한 것 하나")은 그대로 둔다.
+            lines_touched = sum(c["name"] in ("add_to_cart", "update_cart_item") for c in calls)
+            session.ask_first = conflict if lines_touched == 1 else None
             for call in calls:
                 yield {"type": "status", "name": call["name"]}
                 args, result = self._run_tool(call, session)
+                unapplied += [u for u in result.get("unapplied", []) if u not in unapplied]
                 found = result.pop("hits", None)
                 view = result.pop("view", None)  # 화면에만 쓰는 값 (비교표의 사진 등)
                 messages.append({"role": "tool", "tool_call_id": call["id"],
@@ -99,10 +126,75 @@ class KioskAgent:
                     yield {"type": "state", **session.state()}
                 if call["name"] == "compare_menus" and view:
                     yield {"type": "compare", **view}
-                if call["name"] == "add_to_cart":
-                    need = result if result.get("error") == "need_options" else None
+                if call["name"] == "add_to_cart":  # 고를 것이 남았으면 선택지 버튼을 띄운다
+                    need = result if result.get("error") == "need_options" or result.get("choices", {}).get("temperature") else None
                 yield event
-        yield from self._finish(session, user_text, "\n\n".join(parts), need, waiting)
+        session.ask_first = None
+        new_note = bool(self._note_ids(session) - notes_before)
+        reply = yield from self._verify(session, user_text, "\n\n".join(parts), messages, new_note, unapplied)
+        yield from self._finish(session, user_text, reply, need, waiting)
+
+    @staticmethod
+    def _note_ids(session):
+        return {n["note_id"] for n in (session.draft or session.order).notes}
+
+    def _verify(self, session, user_text, reply, messages, new_note=False, unapplied=()):
+        """답변을 코드로 다시 확인한다(checks.py). 근거 없는 금액이 있으면 한 번 다시 쓰게 하고,
+        알레르기 안내나 요청 메모 안내가 빠졌으면 정해 둔 문구를 붙인다."""
+        report = {"type": "verified", "amounts": "ok", "rewritten": False, "allergy_notice": None, "note_notice": None, "unapplied": None}
+        context = checks.message_text(messages)
+        unknown = checks.ungrounded_amounts(reply, context)
+        if unknown:
+            log.warning("답변에 근거 없는 금액 %s", unknown)
+            fixed = self._rewrite(messages, reply, unknown)
+            if fixed and not checks.ungrounded_amounts(fixed, context):
+                reply, report["rewritten"] = fixed, True
+                yield {"type": "replace", "text": reply}
+            else:
+                caution = i18n.text("amount_caution", session.language)
+                reply += "\n\n" + caution
+                report["amounts"] = unknown
+                yield {"type": "delta", "text": "\n\n" + caution}
+        if checks.asks_about_allergy(user_text) and reply:
+            report["allergy_notice"] = "model"
+            if not checks.has_allergy_notice(reply, session.language):
+                notice = i18n.text("allergy_notice", session.language)
+                reply += "\n\n" + notice
+                report["allergy_notice"] = "added"
+                yield {"type": "delta", "text": "\n\n" + notice}
+        if unapplied and session.pending() and reply:  # 손님이 말한 옵션을 반영하지 못했는데 답변이 밝히지 않았을 때
+            report["unapplied"] = "model"
+            if not checks.mentions_fixed(reply, session.language):
+                items = ", ".join(i18n.text(f"unapplied_{u}", session.language) for u in unapplied)
+                notice = i18n.text("unapplied_notice", session.language, items=items)
+                reply += "\n\n" + notice
+                report["unapplied"] = "added"
+                yield {"type": "delta", "text": "\n\n" + notice}
+        if new_note and reply:
+            report["note_notice"] = "model"
+            if not checks.has_note_caveat(reply, session.language):
+                notice = i18n.text("note_notice", session.language)
+                reply += "\n\n" + notice
+                report["note_notice"] = "added"
+                yield {"type": "delta", "text": "\n\n" + notice}
+        yield report
+        return reply
+
+    def _rewrite(self, messages, reply, unknown):
+        """근거 없는 금액이 든 답변을 모델에게 한 번 다시 쓰게 한다. 실패하면 None."""
+        note = ("방금 답변에 근거 없는 금액이 있습니다: " + ", ".join(f"{n:,}원" for n in unknown) + ". 이 금액은 실시간 상태, 참고문서, "
+                "도구 결과 어디에도 없습니다. 직접 계산하거나 어림하지 말고 근거에 적힌 금액만 그대로 써서 같은 내용의 답변을 다시 쓰세요. "
+                "필요한 합계가 근거에 없으면 그 금액은 빼고, 정확한 금액은 화면의 주문 내역이나 결제 화면에서 확인해 달라고 안내하세요. "
+                "사과나 설명 없이 고친 답변만 씁니다.")
+        stream = self._stream([*messages, {"role": "assistant", "content": reply}, {"role": "system", "content": note}], allow_tools=False)
+        try:
+            while True:
+                next(stream)  # 글 조각은 화면에 흘리지 않고 다 쓴 뒤에 한 번에 바꾼다
+        except StopIteration as done:
+            return done.value[0].strip()
+        except Exception:
+            log.warning("답변 다시 쓰기 실패", exc_info=True)
+            return None
 
     def _finish(self, session, user_text, reply, need, waiting=None):
         if reply:  # 모델이 아무 글도 내지 않은 턴은 기록하지 않는다
@@ -110,8 +202,10 @@ class KioskAgent:
             session.events.clear()  # 화면 조작 내역은 이번 턴에 모델에게 전했다
         # "블랙 밀크티 하나 주세요처럼 말씀해 주세요" 같은 예시 문장 속 메뉴는 카드로 띄우지 않는다.
         spoken = re.sub(r'"[^"\n]*"|“[^”\n]*”', " ", reply)
-        cards = [self.catalog.card(m, bool(session.stock and session.stock.is_sold_out(m["id"])))
-                 for m in self.catalog.find_mentions(spoken, limit=4)]
+        mentioned = self.catalog.find_mentions(spoken, limit=5)
+        if mentioned:
+            session.shown = [m["name"] for m in mentioned]
+        cards = [self.catalog.card(m, bool(session.stock and session.stock.is_sold_out(m["id"]))) for m in mentioned[:4]]
         if cards:
             yield {"type": "cards", "items": cards}
         pending = session.pending()

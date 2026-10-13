@@ -390,6 +390,7 @@ class Order:
         return {
             **line,
             "name": menu["name"],
+            "name_en": menu.get("name_en"),
             "image": f"/{menu['image']}" if menu["image"] else None,
             "toppings": [{"id": t, "name": cat.toppings[t]["name"], "price": cat.toppings[t]["price"]} for t in line["toppings"]],
             "sugar_note": sugar_note,

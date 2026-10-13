@@ -447,3 +447,6 @@ input[type="checkbox"] { width: 1.1rem; height: 1.1rem; accent-color: var(--acce
 
 /* 결제 화면의 "다음" 버튼은 내용이 길어도 늘 보이게 아래에 붙여 둔다 */
 .pay-main > .wide-button { position: sticky; bottom: 0; box-shadow: 0 0 0 .5rem var(--surface), 0 -1rem 1rem .25rem var(--surface); }
+
+/* 다른 언어 화면: 번역한 메뉴명 아래에 작게 붙는 공식 한글 이름 */
+.native-name { display: block; font-size: 12px; font-weight: 400; color: var(--muted); line-height: 1.3; }

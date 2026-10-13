@@ -31,6 +31,14 @@ RAG_MIN_SCORE = float(os.getenv("RAG_MIN_SCORE", "0"))
 USE_MODERATION = _flag("USE_MODERATION", "true")
 MODERATION_MODEL = os.getenv("OPENAI_MODERATION_MODEL", "omni-moderation-latest")
 
+# 공개 주소로 올렸을 때의 보호 장치.
+# ACCESS_PASSWORD 를 넣으면 키오스크와 직원 화면 모두 브라우저가 비밀번호를 묻는다(아이디는 아무거나). 비워 두면 묻지 않는다.
+ACCESS_PASSWORD = os.getenv("ACCESS_PASSWORD", "").strip()
+# 대화 횟수 제한(OpenAI 요금 보호). 0 이면 끈다. 한 손님(세션)이 10분 동안, 서버 전체가 1시간 동안 보낼 수 있는 메시지 수.
+CHAT_LIMIT_PER_SESSION = int(os.getenv("CHAT_LIMIT_PER_SESSION", "40"))
+CHAT_LIMIT_PER_HOUR = int(os.getenv("CHAT_LIMIT_PER_HOUR", "600"))
+MAX_SESSIONS = int(os.getenv("MAX_SESSIONS", "200"))  # 이보다 많아지면 가장 오래 쓰지 않은 세션부터 지운다
+
 HISTORY_TURNS = int(os.getenv("HISTORY_TURNS", "8"))  # 모델에게 다시 보여 줄 최근 대화 턴 수
 MAX_TOOL_ROUNDS = 5
 

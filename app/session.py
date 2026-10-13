@@ -1,6 +1,8 @@
 """손님 한 명(브라우저 탭 하나)의 대화·주문 상태. 시연용이라 서버 메모리에만 둔다."""
 import threading
+from collections import OrderedDict
 
+from app.config import MAX_SESSIONS
 from app.i18n import LANGUAGES
 from app.order import Order, OrderError, change_text, changes, won
 
@@ -26,6 +28,8 @@ class Session:
         self.history = []  # [{"role": "user" | "assistant", "content": str}]
         self.staff_call = None
         self.events = []  # 지난 답변 뒤에 손님이 화면 버튼으로 한 일. 다음 턴에 모델에게 알려 준다.
+        self.shown = []  # 직전 답변에서 안내한 메뉴 이름(순서대로). "첫 번째 걸로", "그거"가 무엇인지 가리는 데 쓴다.
+        self.ask_first = None  # 이번 턴 손님 말이 서로 부딪칠 때(아이스 + 따뜻하게): 올리지 말고 물어야 하는 이유
 
     def set_language(self, language):
         if language not in LANGUAGES:
@@ -150,11 +154,14 @@ class SessionStore:
         self.catalog = catalog
         self.stock = stock
         self.board = board
-        self._sessions = {}
+        self._sessions = OrderedDict()  # 최근에 쓴 세션이 뒤로 간다
         self._lock = threading.Lock()
 
     def get(self, session_id):
         with self._lock:
             if session_id not in self._sessions:
                 self._sessions[session_id] = Session(self.catalog, self.stock, self.board)
+                while len(self._sessions) > MAX_SESSIONS:  # 서버를 오래 켜 두어도 메모리가 계속 늘지 않게
+                    self._sessions.popitem(last=False)
+            self._sessions.move_to_end(session_id)
             return self._sessions[session_id]

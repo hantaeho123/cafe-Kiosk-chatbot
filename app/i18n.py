@@ -44,11 +44,54 @@ TEXTS = {
         "zh": "抱歉，生成回答时出现了问题。请稍后再试，或呼叫店员。",
         "ja": "申し訳ございません、回答中に問題が発生しました。少し待ってからもう一度お試しいただくか、スタッフをお呼びください。",
     },
+    # 변경안이 확인을 기다리는데 손님이 말로만 "네"라고 했을 때 (HTI 제약 G6: 확인은 손님이 화면에서 누른다)
+    "press_confirm": {
+        "ko": "주문에 반영하려면 화면에서 [확인]을 눌러 주세요. 제가 대신 누를 수는 없어요.",
+        "en": "To apply it, please tap [Confirm] on the screen. I can't press it for you.",
+        "zh": "要加入订单，请在画面上点击［确认］。我无法替您点击。",
+        "ja": "反映するには、画面の［確認］を押してください。私が代わりに押すことはできません。",
+    },
+    "rate_limited": {
+        "ko": "잠시 대화가 많아 답변을 드리기 어려워요. 조금 뒤에 다시 말씀해 주시거나 화면 버튼으로 주문해 주세요.",
+        "en": "I'm getting too many messages right now. Please try again shortly, or order with the on-screen buttons.",
+        "zh": "当前对话过多，暂时无法回答。请稍后再试，或使用画面按钮点单。",
+        "ja": "ただいま混み合っています。少し待ってからもう一度お試しいただくか、画面のボタンでご注文ください。",
+    },
     "busy": {
         "ko": "앞의 답변을 아직 만들고 있어요. 잠시만 기다려 주세요.",
         "en": "I'm still working on the previous answer. One moment, please.",
         "zh": "上一条回答还在生成中，请稍等。",
         "ja": "前の回答を作成中です。少々お待ちください。",
+    },
+    # 손님이 알레르기를 물었는데 답변에 이 안내가 빠졌으면 코드가 붙인다 (HTI 제약 G2)
+    "allergy_notice": {
+        "ko": "알레르기 정보는 공식 표기 기준이에요. 매장에서 여러 재료를 같은 기구로 다루어 다른 성분이 섞일 수 있으니, 알레르기가 있으시면 주문 전에 직원에게 꼭 확인해 주세요.",
+        "en": "Allergen information is based on the official labeling. Drinks are made with shared equipment, so traces of other ingredients may be present. If you have an allergy, please check with a staff member before ordering.",
+        "zh": "过敏原信息以官方标示为准。店内使用同一器具处理多种原料，可能混入其他成分。如有过敏，请在点单前向店员确认。",
+        "ja": "アレルギー情報は公式表示に基づいています。店舗では同じ器具で複数の材料を扱うため、他の成分が混入する可能性があります。アレルギーのある方は、ご注文前にスタッフにご確認ください。",
+    },
+    # 요청 메모를 올렸는데 답변에 이 말이 빠졌으면 코드가 붙인다 (HTI 제약 G9)
+    "note_notice": {
+        "ko": "요청 메모는 직원에게 전달만 돼요. 매장 사정에 따라 들어드리기 어려울 수 있어요.",
+        "en": "Your note will be passed on to the staff, but depending on the store it may not be possible.",
+        "zh": "备注只会转达给店员，根据门店情况可能无法满足。",
+        "ja": "ご要望メモはスタッフにお伝えするだけで、店舗の状況によってはお応えできない場合があります。",
+    },
+    # 손님이 말한 옵션 가운데 그 메뉴에서 바꿀 수 없어 반영하지 못한 것이 있는데 답변이 밝히지 않았을 때 (HTI 제약 G4)
+    "unapplied_notice": {
+        "ko": "말씀하신 것 중 {items}은(는) 이 메뉴에서 바꿀 수 없어 반영하지 못했어요. 확인 화면에 보이는 옵션대로 주문돼요.",
+        "en": "Note: {items} can't be changed for this drink, so it wasn't applied. The order will follow the options shown on the confirmation screen.",
+        "zh": "提示：此饮品无法调整{items}，因此未能按您说的设置。将按确认画面显示的选项下单。",
+        "ja": "ご指定のうち{items}はこのメニューでは変更できないため反映していません。確認画面に表示されたオプションでご注文になります。",
+    },
+    "unapplied_sugar": {"ko": "당도", "en": "the sugar level", "zh": "甜度", "ja": "甘さ"},
+    "unapplied_ice": {"ko": "얼음량", "en": "the ice level", "zh": "冰量", "ja": "氷の量"},
+    # 답변에 근거 없는 금액이 남았을 때 덧붙인다 (HTI 제약 G5)
+    "amount_caution": {
+        "ko": "정확한 금액은 화면의 주문 내역과 결제 화면에 나오는 값으로 확인해 주세요.",
+        "en": "For exact amounts, please check your order summary and the payment screen.",
+        "zh": "准确金额请以画面上的订单明细和付款画面为准。",
+        "ja": "正確な金額は、画面のご注文内容とお支払い画面でご確認ください。",
     },
     # 사이즈·온도를 고르는 버튼을 눌렀을 때 대신 입력되는 말
     "pick_size_temp": {"ko": "{menu} {temp} {size} 사이즈로 주세요", "en": "{menu}: {temp}, size {size} please",

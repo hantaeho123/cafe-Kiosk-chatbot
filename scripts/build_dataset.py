@@ -86,6 +86,8 @@ def pick_nutrition(rows, size=None, temp="COLD"):
 
 def build_menu():
     products = load("raw/official/products.json")["data"]
+    # 영문 메뉴명: 공식 값이 없어 번역해 둔 것(scripts/translate_menu.py). 파일이 없으면 비워 둔다.
+    names_en = load("curated/menu_names_en.json")["names"] if (DATA / "curated/menu_names_en.json").exists() else {}
     prices = defaultdict(list)
     with open(DATA / "raw/baemin/prices.csv", encoding="utf-8") as f:
         for row in csv.DictReader(f):
@@ -119,7 +121,7 @@ def build_menu():
             "official_no": p["no"],
             "kind": p["kind"],
             "name": p["name"],
-            "name_en": None,
+            "name_en": names_en.get(p["name"]),
             "aliases": sorted({re.sub(r"\s*[LJG]$", "", r["app_name"]) for r in rows} - {p["name"]}),
             "description": p["description"],
             "category": regular[0] if regular else next(t for t, keys in DRINK_TYPES if any(re.search(k, p["name"]) for k in keys)),
@@ -216,6 +218,8 @@ def nutrition_sentence(n):
 
 def menu_doc(m, options):
     lines = [f"메뉴명: {m['name']}"]
+    if m["name_en"]:
+        lines.append(f"영문명: {m['name_en']}")
     if m["aliases"]:
         lines.append(f"다른 표기: {', '.join(m['aliases'])}")
     lines.append(f"분류: {m['category']}" + (f" / {m['series']}" if m["series"] else ""))

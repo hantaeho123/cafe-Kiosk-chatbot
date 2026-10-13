@@ -42,7 +42,7 @@ class Catalog:
         # 정규화한 이름·별칭 → 메뉴. 긴 이름부터 맞춰야 '블랙 밀크티 + 펄' 이 '블랙 밀크티' 로 잘리지 않는다.
         self._names = {}
         for m in self.items:
-            for name in [m["name"], *m["aliases"]]:
+            for name in [m["name"], *m["aliases"], *([m["name_en"]] if m.get("name_en") else [])]:
                 self._names.setdefault(normalize(name), m)
         self._by_length = sorted(self._names.items(), key=lambda kv: -len(kv[0]))
 
@@ -97,7 +97,7 @@ class Catalog:
                 result.append(m)
         return result[:limit]
 
-    def find_drinks(self, flavor=None, caffeine=None, no_milk=False, hot=False, category=None,
+    def find_drinks(self, flavor=None, caffeine=None, no_milk=False, hot=False, iced=False, category=None,
                     max_price=None, max_kcal=None, low_sugar=False, sugar_adjustable=False,
                     exclude_allergens=(), exclude_ids=(), sort="popular"):
         """조건을 모두 만족하는 판매 중인 음료. 조건이 여러 개일 때 모델이 추천 목록들을 눈으로 겹쳐 보면
@@ -110,6 +110,7 @@ class Catalog:
                     and (caffeine != "low" or t["caffeine_level"] in ("무카페인", "저카페인"))
                     and (not no_milk or not t["contains_milk"])
                     and (not hot or t["hot_available"])
+                    and (not iced or "ICE" in m["temperatures"])
                     and (not category or m["category"] == category)
                     and (max_price is None or self.min_price(m) <= max_price)
                     and (max_kcal is None or (t["kcal_ref"] is not None and t["kcal_ref"] <= max_kcal))
@@ -120,7 +121,8 @@ class Catalog:
         def number(key):
             return lambda m: (m["tags"][key] is None, m["tags"][key] or 0, self.min_price(m))
 
-        order = {"popular": self.popularity, "price": self.min_price, "kcal": number("kcal_ref"), "caffeine": number("caffeine_mg_ref")}
+        order = {"popular": self.popularity, "price": self.min_price, "kcal": number("kcal_ref"),
+                 "caffeine": number("caffeine_mg_ref"), "sugar": number("sugar_g_ref")}
         found = [m for m in self.items if m["kind"] == "drink" and self.orderable(m) and matches(m)]
         return sorted(found, key=order.get(sort, self.popularity))
 
@@ -153,6 +155,7 @@ class Catalog:
         return {
             "id": m["id"],
             "name": m["name"],
+            "name_en": m.get("name_en"),
             "kind": m["kind"],
             "category": m["category"],
             "image": f"/{m['image']}" if m["image"] else None,

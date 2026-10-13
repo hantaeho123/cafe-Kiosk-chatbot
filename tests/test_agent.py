@@ -85,7 +85,7 @@ def test_chat_orders_wait_for_the_customer_to_confirm(talk):
     assert [c["type"] for c in proposal["changes"]] == ["add", "add"] and proposal["changed"] is True
     assert (proposal["before"]["total"], proposal["after"]["total"]) == (0, 15000)
     # 변경안을 그대로 둔 채 다른 것을 물으면 확인 화면을 다시 띄우지 않는다(답변을 가리지 않게). 버튼은 그대로 남는다.
-    events, session, client = talk("네 맞아요", text_chunks("[변경 확인하기]를 눌러 확인 화면에서 [확인]을 눌러 주세요."))
+    events, session, client = talk("펄은 뭐예요?", text_chunks("타피오카로 만든 쫀득한 토핑이에요. 올려 둔 변경은 [변경 확인하기]에서 확인해 주세요."))
     assert of(events, "proposal")[0]["changed"] is False and len(of(events, "proposal")[0]["changes"]) == 2
     assert "도구를 다시 부르지 말고" in client.requests[0]["messages"][-1]["content"]
     assert [c.get("action") for c in of(events, "chips")[0]["items"]] == ["confirm", "reject"]
@@ -309,3 +309,102 @@ def test_customer_language_switches_the_session(talk):
     assert session.language == "en"
     talk("아메리카노 하나 주세요", text_chunks("사이즈를 알려 주세요."))
     assert session.language == "ko"
+
+
+# ---------------------------------------------------------------- 답변 검증 (checks.py)
+
+def test_reply_with_an_amount_from_nowhere_is_rewritten(talk):
+    events, session, client = talk("블랙 밀크티 세 잔이면 얼마예요?", text_chunks("세 잔이면 14,777원이에요."),
+                                   text_chunks("정확한 합계는 주문 내역에서 확인해 주세요."))
+    assert of(events, "replace") == [{"type": "replace", "text": "정확한 합계는 주문 내역에서 확인해 주세요."}]
+    assert of(events, "verified")[0]["rewritten"] is True
+    assert "14,777원" in client.requests[1]["messages"][-1]["content"]  # 무엇이 근거 없는 금액인지 알려 주고 다시 쓰게 한다
+    assert session.history[-1]["content"] == "정확한 합계는 주문 내역에서 확인해 주세요."
+
+
+def test_a_caution_is_added_when_the_rewrite_does_not_help(talk):
+    events, session, _ = talk("블랙 밀크티 세 잔이면 얼마예요?", text_chunks("세 잔이면 14,777원이에요."), text_chunks("14,777원 맞아요."))
+    assert of(events, "verified")[0]["amounts"] == [14777] and not of(events, "replace")
+    assert session.history[-1]["content"].endswith("결제 화면에 나오는 값으로 확인해 주세요.")
+
+
+def test_allergy_question_always_carries_the_notice(talk):
+    events, session, _ = talk("우유 알레르기 있는데 타로 밀크티 마셔도 돼요?", text_chunks("알레르기 표기에는 우유가 있어요."))
+    assert of(events, "verified")[0]["allergy_notice"] == "added"
+    assert "직원에게 꼭 확인" in session.history[-1]["content"]
+    events, session, _ = talk("그럼 알레르기 표기에 우유가 없는 건요?",
+                              text_chunks("표기 기준으로는 망고 주스예요. 같은 기구를 써서 섞일 수 있으니 직원에게 확인해 주세요."))
+    assert of(events, "verified")[0]["allergy_notice"] == "model"
+    assert session.history[-1]["content"].count("직원") == 1  # 이미 있으면 또 붙이지 않는다
+
+
+def test_request_note_caveat_is_added_when_the_model_forgets(talk):
+    events, session, _ = talk("자스민티 L 아이스 하나, 얼음은 빼 달라고 남겨 주세요",
+                              tool_chunks(("add_to_cart", {"menu_name": "자스민티", "size": "L", "temperature": "ICE", "request_note": "얼음 빼 주세요"})),
+                              text_chunks("자스민티와 메모를 확인 화면에 올렸어요."))
+    assert of(events, "verified")[0]["note_notice"] == "added"
+    assert "어려울 수 있어요" in session.history[-1]["content"]
+
+
+# ---------------------------------------------------------------- 모델이 헷갈리지 않게 코드가 알려 주는 것
+
+def test_menus_just_shown_are_numbered_for_the_next_turn(talk):
+    _, _, client = talk("첫 번째 걸로 주세요", text_chunks("어떤 메뉴를 말씀하시나요?"))
+    assert "직전에 안내한 메뉴(순서대로): 없음" in client.requests[0]["messages"][-1]["content"]
+    talk("추천해줘", text_chunks("**타로 밀크티**와 **블랙 밀크티**를 추천해요."))
+    talk("당도 30%가 뭐예요?", text_chunks("시럽을 3분의 1쯤 넣은 거예요."))  # 메뉴가 안 나온 답변은 목록을 지우지 않는다
+    _, _, client = talk("첫 번째 걸로 주세요", text_chunks("타로 밀크티 말씀이시죠?"))
+    assert "직전에 안내한 메뉴(순서대로): 1) 타로 밀크티 2) 블랙 밀크티" in client.requests[0]["messages"][-1]["content"]
+
+
+def test_no_match_tells_which_condition_to_drop(talk):
+    _, _, client = talk("카페인 적고 덜 단 시원한 거", tool_chunks(
+        ("find_menus", {"caffeine": "low", "sugar_adjustable": True, "flavor": "시원한"})), text_chunks("조건을 하나 빼면 있어요."))
+    assert tool_result(client)["total"] == 18  # '시원한'은 맛이 아니라 '차갑게'로 읽는다
+    _, _, client = talk("카페인 적고 덜 단 스무디", tool_chunks(
+        ("find_menus", {"caffeine": "low", "sugar_adjustable": True, "flavor": "스무디류"})), text_chunks("조건을 하나 빼면 있어요."))
+    result = tool_result(client)
+    assert result["total"] == 0 and result["relaxed"][0]["without"] == "맛 (시원한)" and result["relaxed"][0]["menus"]
+    _, _, client = talk("카페인 적고 덜 단 시원한 거", tool_chunks(
+        ("find_menus", {"caffeine": "low", "sugar_adjustable": True, "temperature": "ICE", "sort": "sugar"})), text_chunks("이런 메뉴가 있어요."))
+    menus = tool_result(client)["menus"]
+    assert menus and all("ICE" in m["temperatures"] and m["sugar_adjustable"] for m in menus)
+    assert [m["sugar_g"] for m in menus] == sorted(m["sugar_g"] for m in menus)
+
+
+def test_budget_search_comes_with_a_priced_example(talk):
+    _, _, client = talk("2만 원으로 셋이", tool_chunks(("find_menus", {"total_budget": 20000, "people": 3})), text_chunks("세 잔이에요."))
+    example = tool_result(client)["example"]
+    assert len(example["lines"]) == 3 and example["budget"]["within_budget"] is True
+    assert example["total"] == "16,800원" and example["budget"]["left"] == "3,200원"
+
+
+def test_adding_a_menu_already_in_the_order_is_pointed_out(talk):
+    talk("블랙 밀크티 L 아이스 하나", tool_chunks(BLACK), text_chunks("확인 화면에 올렸어요."))[1].confirm()
+    _, _, client = talk("블랙은 70으로", tool_chunks(("add_to_cart", {**BLACK[1], "sugar": 70})), text_chunks("올렸어요."))
+    assert "주문에 이미 '블랙 밀크티'" in tool_result(client)["notes"][-1] and "remove_cart_item" in tool_result(client)["notes"][-1]
+    _, session, client = talk("하나 더", tool_chunks(("undo_last_change", {})), tool_chunks(BLACK), text_chunks("올렸어요."))
+    assert "수량이 1잔에서 2잔으로" in tool_result(client, request=2)["notes"][-1]
+
+
+def test_dine_option_rides_along_with_the_order(talk):
+    events, _, _ = talk("타로 밀크티 L 아이스 하나 포장이요", tool_chunks(
+        ("add_to_cart", {**TARO[1], "dine_option": "포장"})), text_chunks("확인 화면에 올렸어요."))
+    assert sorted(c["type"] for c in of(events, "proposal")[0]["changes"]) == ["add", "dine"]
+
+
+def test_unavailable_menu_is_not_swapped_for_another(talk):
+    _, _, client = talk("초코멜로 스무디 주세요", tool_chunks(("add_to_cart", {"menu_name": "초코멜로 스무디"})), text_chunks("품절이에요."))
+    assert tool_result(client)["error"] == "sold_out" and "대신 올리지 마세요" in tool_result(client)["next"]
+
+
+def test_saying_yes_is_not_a_confirmation(talk):
+    talk("블랙 밀크티 L 아이스 하나", tool_chunks(BLACK), text_chunks("확인 화면에 올렸어요."))
+    events, session, client = talk("네 맞아요")  # 모델을 부르지 않는다
+    assert client.requests == [] and "[확인]을 눌러 주세요" in of(events, "delta")[0]["text"]
+    assert of(events, "proposal")[0]["changed"] is True and not session.order.lines  # 확인 화면을 다시 띄울 뿐 주문은 그대로
+    events, _, client = talk("네 그리고 타로 밀크티도 하나요", tool_chunks(TARO), text_chunks("타로 밀크티도 올렸어요."))
+    assert len(client.requests) == 2  # 다른 요청이 섞이면 모델에게 넘긴다
+    session.confirm()
+    events, _, client = talk("네", text_chunks("더 필요한 게 있으세요?"))
+    assert len(client.requests) == 1  # 기다리는 변경안이 없으면 평소처럼 답한다

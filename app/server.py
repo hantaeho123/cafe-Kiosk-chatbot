@@ -5,12 +5,17 @@
 주문을 바꾸는 길은 둘이다. 손님이 화면 버튼으로 고치면 바로 반영되고(/api/order/*), 대화로 말하면 모델이 변경안을
 올린 뒤 손님이 변경 확인 화면에서 확인해야 반영된다(/api/order/confirm). 결제(/api/pay/*, /api/scan)는 버튼으로만 한다.
 """
+import base64
 import json
 import logging
+import secrets
+import threading
+import time
+from collections import deque
 from typing import Optional
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import FileResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from openai import OpenAI, OpenAIError
 from pydantic import BaseModel, Field
@@ -106,10 +111,59 @@ class StockIn(BaseModel):
     sold_out: bool
 
 
+class RateLimiter:
+    """정해진 시간 안에 받을 수 있는 횟수를 센다. 공개 주소로 올렸을 때 OpenAI 요금이 한없이 나가지 않게 하는 장치다."""
+
+    def __init__(self, limit, seconds):
+        self.limit, self.seconds = limit, seconds
+        self._times = {}
+        self._lock = threading.Lock()
+
+    def allow(self, key="all"):
+        if not self.limit:
+            return True
+        now = time.monotonic()
+        with self._lock:
+            times = self._times.setdefault(key, deque())
+            while times and now - times[0] > self.seconds:
+                times.popleft()
+            if len(times) >= self.limit:
+                return False
+            times.append(now)
+            if len(self._times) > 5000:  # 오래된 키가 쌓이지 않게
+                self._times = {k: v for k, v in self._times.items() if v and now - v[-1] <= self.seconds}
+            return True
+
+
+class PasswordGate:
+    """ACCESS_PASSWORD 가 있으면 모든 화면과 API 앞에서 브라우저 기본 로그인 창으로 비밀번호를 묻는다(아이디는 아무거나).
+    배포 서버의 상태 확인에 쓰는 /api/config 만 열어 둔다."""
+
+    def __init__(self, app, password):
+        self.app, self.password = app, password
+
+    def _ok(self, scope):
+        header = dict(scope["headers"]).get(b"authorization", b"").decode("latin-1")
+        try:
+            kind, _, value = header.partition(" ")
+            given = base64.b64decode(value).decode("utf-8").partition(":")[2] if kind.lower() == "basic" else ""
+        except ValueError:
+            given = ""
+        return secrets.compare_digest(given.encode(), self.password.encode())
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http" or scope["path"] == "/api/config" or self._ok(scope):
+            return await self.app(scope, receive, send)
+        denied = Response("비밀번호가 필요합니다.", status_code=401, media_type="text/plain; charset=utf-8",
+                          headers={"WWW-Authenticate": 'Basic realm="kiosk", charset="UTF-8"'})
+        await denied(scope, receive, send)
+
+
 class Kiosk:
     """서버가 들고 있는 것들: 메뉴판, 품절 상태, POS, 직원 화면, 세션, 대화 에이전트(API 키가 있을 때만)."""
 
     def __init__(self, client=None, index_dir=config.INDEX_DIR):
+        warm_up = client is None  # 테스트에서 넣은 가짜 클라이언트는 데우지 않는다
         self.catalog = Catalog()
         self.stock = Stock(self.catalog)
         self.board = StaffBoard()
@@ -124,6 +178,8 @@ class Kiosk:
             store, built = open_store(embedder, folder=index_dir)
             log.info("RAG 인덱스 %s: 문서 %d개 (%s)", "새로 생성" if built else "불러옴", len(store.docs), embedder.model)
             self.agent = KioskAgent(client, Retriever(store, embedder, self.catalog), self.catalog)
+            if warm_up:
+                threading.Thread(target=self.agent.warm_up, daemon=True).start()
         except OpenAIError as e:
             # 키가 없거나 틀려도 메뉴판과 장바구니 화면은 뜨게 하고, 대화만 막는다.
             self.error = f"OpenAI 연결에 실패했습니다. 프로젝트 루트의 .env 에 OPENAI_API_KEY 를 넣었는지 확인하세요. ({e})"
@@ -141,6 +197,10 @@ def create_app(client=None, index_dir=config.INDEX_DIR):
     catalog, stock, pos, board = kiosk.catalog, kiosk.stock, kiosk.pos, kiosk.board
     app = FastAPI(title="공차 키오스크 챗봇")
     app.state.kiosk = kiosk
+    if config.ACCESS_PASSWORD:
+        app.add_middleware(PasswordGate, password=config.ACCESS_PASSWORD)
+    per_session = RateLimiter(config.CHAT_LIMIT_PER_SESSION, 600)
+    per_hour = RateLimiter(config.CHAT_LIMIT_PER_HOUR, 3600)
 
     def opening(session, **extra):
         """세션 상태와 함께 화면이 처음 그릴 것들(인사말, 빠른 답변 버튼, 지난 대화)."""
@@ -420,6 +480,10 @@ def create_app(client=None, index_dir=config.INDEX_DIR):
                 yield {"type": "done"}
             elif not session.lock.acquire(blocking=False):
                 yield {"type": "error", "message": i18n.text("busy", session.language)}
+                yield {"type": "done"}
+            elif not (per_session.allow(body.session_id) and per_hour.allow()):
+                session.lock.release()
+                yield {"type": "error", "message": i18n.text("rate_limited", session.language)}
                 yield {"type": "done"}
             else:
                 try:
