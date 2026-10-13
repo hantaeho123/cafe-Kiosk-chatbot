@@ -1,4 +1,5 @@
 import json
+import re
 
 import pytest
 from fastapi.testclient import TestClient
@@ -299,3 +300,16 @@ def test_old_sessions_are_dropped_first(catalog, monkeypatch):
     store.get("a")  # 다시 쓴 세션은 최근 것이 된다
     store.get("d")
     assert store.get("a") is first and list(store._sessions) == ["c", "d", "a"]
+
+
+def test_browser_always_gets_the_current_screen_files(kiosk):
+    """js·css 주소에 버전이 붙고 저장해 두지 않게 한다. 예전 app.js 가 남아 번역이 안 보이던 문제."""
+    client, _ = kiosk
+    home = client.get("/")
+    assert home.headers["cache-control"] == "no-cache"
+    scripts = re.findall(r'src="(/static/[\w.]+\.js\?v=\w{10})"', home.text)
+    assert [s.split("?")[0] for s in scripts] == ["/static/i18n.js", "/static/app.js", "/static/pay.js"]
+    assert re.search(r'href="/static/style\.css\?v=\w{10}"', home.text) and "staff.js?v=" in client.get("/staff").text
+    served = client.get(scripts[1])
+    assert served.status_code == 200 and served.headers["cache-control"] == "no-cache"
+    assert client.get(scripts[1], headers={"If-None-Match": served.headers["etag"]}).status_code == 304  # 안 바뀌었으면 다시 받지 않는다

@@ -23,13 +23,9 @@ function t(key, vars = {}) {
   return text.replace(/\{(\w+)\}/g, (_, name) => vars[name] ?? "");
 }
 
-// 다른 언어 화면에서는 번역한 메뉴명을 먼저 보여 주고, 공식 한글 이름을 작게 붙인다 (메뉴 영문명은 번역 데이터).
+// 다른 언어 화면에서는 번역한 메뉴명을 보여 준다 (번역 데이터: data/curated/menu_i18n.json).
 function menuName(item) {
   return (state.lang !== "ko" && item.names && (item.names[state.lang] || item.names.en)) || item.name;
-}
-
-function nativeName(item) {
-  return menuName(item) !== item.name ? el("small", { class: "native-name" }, item.name) : null;
 }
 
 // 메뉴 데이터에 든 한국어 낱말(카테고리, 맛, 알레르기 성분, 영양 항목 등)을 화면 언어로 바꾼다. 없는 낱말은 그대로 둔다.
@@ -251,7 +247,7 @@ function menuCard(item, onPick) {
     el("div", { class: "badges" }, item.badges.map((b) => el("span", { class: "badge" + (b.startsWith("인기") ? "" : " soft") }, badgeLabel(b)))),
     el("div", { class: "photo" }, item.image && el("img", { src: item.image, alt: "", loading: "lazy" }),
       item.sold_out && el("span", { class: "sold-out-mark" }, t("sold_out"))),
-    el("div", { class: "info" }, el("div", { class: "name" }, menuName(item)), nativeName(item), el("div", { class: "price" }, price)));
+    el("div", { class: "info" }, el("div", { class: "name" }, menuName(item)), el("div", { class: "price" }, price)));
 }
 
 function renderBoard() {
@@ -426,7 +422,7 @@ async function openDetail(id, line = null, { draft = false, fromSuggestion = fal
     onclick: () => { close(); send(t("ask_template", { name: item.name })); } }, t("ask_menu"));
   const header = [
     el("div", { class: "photo" }, item.image && el("img", { src: item.image, alt: item.name })),
-    el("h3", {}, menuName(item), nativeName(item)),
+    el("h3", {}, menuName(item)),
     el("div", { class: "muted" }, word(item.category)),
     item.description && el("p", { class: "description" }, (state.lang !== "ko" && item.descriptions[state.lang]) || item.description),
     // 가격·칼로리·카페인은 펼치지 않아도 바로 보인다
@@ -552,7 +548,7 @@ function renderCart() {
     el("div", { class: "line" + (line.sold_out ? " sold-out" : ""), "data-line": line.line_id },
       line.image ? el("img", { src: line.image, alt: "" }) : el("span"),
       el("div", {},
-        el("div", { class: "name" }, menuName(line), nativeName(line),
+        el("div", { class: "name" }, menuName(line),
           line.voucher && el("span", { class: "tag" }, t("voucher_tag")),
           line.sold_out && el("span", { class: "tag warn" }, t("line_sold_out"))),
         el("div", { class: "options" }, optionText(line)),

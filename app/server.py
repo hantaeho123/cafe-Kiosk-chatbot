@@ -6,8 +6,10 @@
 올린 뒤 손님이 변경 확인 화면에서 확인해야 반영된다(/api/order/confirm). 결제(/api/pay/*, /api/scan)는 버튼으로만 한다.
 """
 import base64
+import hashlib
 import json
 import logging
+import re
 import secrets
 import threading
 import time
@@ -15,7 +17,7 @@ from collections import deque
 from typing import Optional
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse, Response, StreamingResponse
+from fastapi.responses import HTMLResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from openai import OpenAI, OpenAIError
 from pydantic import BaseModel, Field
@@ -109,6 +111,32 @@ class OrderDoneIn(BaseModel):
 class StockIn(BaseModel):
     menu_id: str
     sold_out: bool
+
+
+class FreshStaticFiles(StaticFiles):
+    """화면 파일(js·css)은 브라우저가 쓸 때마다 서버에 바뀌었는지 묻게 한다. 이 헤더가 없으면 브라우저가 알아서 예전 파일을
+    한동안 다시 쓰는데, 그러면 서버는 새 버전이고 화면 코드는 예전 버전이라 번역 같은 새 기능이 보이지 않는다."""
+
+    def file_response(self, *args, **kwargs):
+        response = super().file_response(*args, **kwargs)
+        response.headers["Cache-Control"] = "no-cache"
+        return response
+
+
+def asset_version():
+    """화면 파일이 하나라도 바뀌면 달라지는 값. 주소 뒤에 ?v= 로 붙여 브라우저가 새 파일을 받게 한다."""
+    digest = hashlib.sha256()
+    for path in sorted(config.WEB_DIR.iterdir()):
+        if path.is_file():
+            digest.update(path.name.encode() + path.read_bytes())
+    return digest.hexdigest()[:10]
+
+
+def page(name, version):
+    """html 파일을 읽어 js·css 주소에 버전을 붙인다. 페이지 자체는 저장해 두지 않게 한다."""
+    html = (config.WEB_DIR / name).read_text(encoding="utf-8")
+    html = re.sub(r'(/static/[\w.-]+\.(?:js|css))"', rf'\1?v={version}"', html)
+    return HTMLResponse(html, headers={"Cache-Control": "no-cache"})
 
 
 class RateLimiter:
@@ -496,14 +524,16 @@ def create_app(client=None, index_dir=config.INDEX_DIR):
         return StreamingResponse(stream, media_type="text/event-stream",
                                  headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
 
+    version = asset_version()
+
     @app.get("/")
     def index():
-        return FileResponse(config.WEB_DIR / "index.html")
+        return page("index.html", version)
 
     @app.get("/staff")
     def staff_page():
-        return FileResponse(config.WEB_DIR / "staff.html")
+        return page("staff.html", version)
 
     app.mount("/images", StaticFiles(directory=config.IMAGES_DIR), name="images")
-    app.mount("/static", StaticFiles(directory=config.WEB_DIR), name="static")
+    app.mount("/static", FreshStaticFiles(directory=config.WEB_DIR), name="static")
     return app

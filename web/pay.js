@@ -341,7 +341,7 @@ function receiptPaper(order) {
     totals.coupon ? el("div", { class: "paper-row" }, el("span", {}, t("coupon_amount")), el("span", {}, `−${money(totals.coupon)}`)) : null,
     totals.discount ? el("div", { class: "paper-row" }, el("span", {}, t("discount_amount")), el("span", {}, `−${money(totals.discount)}`)) : null,
     el("div", { class: "paper-row total" }, el("span", {}, t("total")), el("span", {}, money(totals.total))),
-    receipt.payments.map((p) => el("div", { class: "paper-row" }, el("span", {}, p.name), el("span", {}, money(p.amount)))));
+    receipt.payments.map((p) => el("div", { class: "paper-row" }, el("span", {}, word(p.name)), el("span", {}, money(p.amount)))));
 }
 
 function doneStep(order) {
@@ -357,7 +357,7 @@ function doneStep(order) {
     el("h4", {}, t("order_done")),
     el("div", { class: "order-number" }, t("order_number"), el("strong", {}, String(receipt.order_number)), el("small", {}, t("order_number_hint"))),
     orderSummary(order),
-    el("p", { class: "muted" }, [`${t(order.dine_option)} · ${t("payment")}: ${receipt.payments.map((p) => p.name).join(" + ") || "-"}`,
+    el("p", { class: "muted" }, [`${t(order.dine_option)} · ${t("payment")}: ${receipt.payments.map((p) => word(p.name)).join(" + ") || "-"}`,
       totals.stamps ? t("stamps", { n: totals.stamps }) : null].filter(Boolean).join(" · ")),
     paper,
     el("button", { class: "primary wide-button", type: "button", onclick: restart }, t("new_order")),
