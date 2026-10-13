@@ -141,6 +141,29 @@ SCENARIOS = [
              lambda t, c: t.verified.get("note_notice") in ("model", "added") and not says(t, "빼 드릴게요|빼서 드릴게요|가능합니다")),
         ]),
     ]),
+    ("애매한 요청: 서로 맞지 않는 말", "되묻기 (L11) · 안 되는 옵션 금지 (G4)", [
+        ("아이스 아메리카노 따뜻하게 스몰 사이즈로 얼음 많이 한 잔.", [
+            ("한쪽을 골라 올리지 않는다", nothing_proposed),
+            ("아이스와 따뜻하게가 맞지 않는다고 말하고 묻는다", lambda t, c: says(t, "아이스|ICE") and says(t, "따뜻|HOT")),
+            ("스몰 사이즈가 없다고 알린다", lambda t, c: says(t, "스몰") and says(t, r"\bL\b|L이|L\(")),
+        ]),
+        ("아이스로 L 사이즈요", [
+            ("이제 ICE · L 로 올린다", lambda t, c: [(a["name"], a["size"], a["temperature"]) for a in t.added()] == [("아메리카노", "L", "ICE")]),
+            ("얼음량은 고정이라 반영하지 못했다고 밝힌다", lambda t, c: says(t, "고정|바꿀 수 없|반영하지 못")),
+        ]),
+    ]),
+    ("애매한 요청: 여러 잔의 온도", "여러 잔 한 번에 말하기 (막지 않아야 하는 경우)", [
+        ("아이스 아메리카노 L 하나랑 따뜻한 블랙 밀크티 L 하나 주세요", [
+            ("두 잔을 각각 ICE 와 HOT 으로 올린다", lambda t, c: sorted((a["name"], a["temperature"]) for a in t.added())
+             == [("블랙 밀크티", "HOT"), ("아메리카노", "ICE")]),
+        ]),
+    ]),
+    ("애매한 요청: 반영할 수 없는 옵션", "안 되는 옵션 금지 (G4)", [
+        ("망고 스무디 당도 30%로 하나 주세요", [
+            ("당도 고정으로 올린다", lambda t, c: [(a["name"], a["sugar"]) for a in t.added()] == [("망고 스무디", None)]),
+            ("당도를 바꿀 수 없다고 밝힌다", lambda t, c: t.verified.get("unapplied") in ("model", "added")),
+        ]),
+    ]),
     ("가리키는 대상이 없을 때", "되묻기 (L11)", [
         ("첫 번째 걸로 주세요", [
             ("짐작해서 올리지 않고 어떤 메뉴인지 묻는다", lambda t, c: nothing_proposed(t, c) and not t.called("add_to_cart") and says(t, "어떤|어느|무슨")),

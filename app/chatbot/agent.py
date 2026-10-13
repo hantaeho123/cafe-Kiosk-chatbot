@@ -78,6 +78,7 @@ class KioskAgent:
 
         waiting = session.pending_text()  # 이번 턴에 변경안이 달라졌는지 보려고 처음 모습을 남겨 둔다
         conflict, warnings = checks.request_warnings(user_text)  # 서로 부딪치는 말, 없는 사이즈
+        warnings += self._fixed_options(user_text)
         flagged = self._pool.submit(self._flagged, user_text) if self.moderation else None
         hits = self.retriever.search(user_text, context=self._context(session.history, user_text))
         if flagged and flagged.result():
@@ -127,12 +128,25 @@ class KioskAgent:
                 if call["name"] == "compare_menus" and view:
                     yield {"type": "compare", **view}
                 if call["name"] == "add_to_cart":  # 고를 것이 남았으면 선택지 버튼을 띄운다
-                    need = result if result.get("error") == "need_options" or result.get("choices", {}).get("temperature") else None
+                    asking = result.get("error") == "need_options" or (result.get("error") == "conflicting_request" and result["choices"])
+                    need = result if asking else None
                 yield event
         session.ask_first = None
         new_note = bool(self._note_ids(session) - notes_before)
         reply = yield from self._verify(session, user_text, "\n\n".join(parts), messages, new_note, unapplied)
         yield from self._finish(session, user_text, reply, need, waiting)
+
+    def _fixed_options(self, user_text):
+        """손님이 말한 얼음량·당도가 그 메뉴에서는 고정일 때 미리 알려 준다. 모델이 도구를 부르기 전에 '가능해요'라고 답하지 않게."""
+        found = []
+        for menu in self.catalog.find_mentions(user_text, limit=3):
+            if menu["kind"] != "drink" or not self.catalog.orderable(menu):
+                continue
+            for asked, key, label in ((checks.mentions_ice_amount(user_text), "ice", "얼음량"), (checks.mentions_sugar(user_text), "sugar", "당도")):
+                if asked and menu["options"][key]["adjustable"] is False:
+                    found.append(f"'{menu['name']}'은(는) {label}이 고정이라 바꿀 수 없습니다. 손님이 말한 {label}은 반영되지 않으니 "
+                                 "된다고 하지 말고 고정이라고 알리세요.")
+        return found
 
     @staticmethod
     def _note_ids(session):

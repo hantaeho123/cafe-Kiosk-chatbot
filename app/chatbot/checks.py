@@ -108,3 +108,14 @@ _FIXED = {"ko": r"고정|바꿀 수 없|조절이 안|조절할 수 없|반영�
 
 def mentions_fixed(reply, language):
     return bool(re.search(_FIXED.get(language, _FIXED["ko"]), reply, re.IGNORECASE))
+
+
+_SUGAR = re.compile(r"당도|덜 달|달게|안 달|\d+\s*(?:%|퍼센트|프로)|sugar|sweet|甜|糖|甘", re.IGNORECASE)
+
+
+def mentions_ice_amount(user_text):
+    return bool(_ICE_AMOUNT.search(user_text))
+
+
+def mentions_sugar(user_text):
+    return bool(_SUGAR.search(user_text))

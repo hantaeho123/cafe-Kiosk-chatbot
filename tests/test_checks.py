@@ -28,3 +28,13 @@ def test_request_note_caveat():
     assert checks.has_note_caveat("메모로 전달해 드릴게요. 매장 사정에 따라 어려울 수 있어요.", "ko")
     assert not checks.has_note_caveat("얼음 빼 달라는 메모를 올렸어요.", "ko")
     assert checks.has_note_caveat("I'll pass it on, but it may not be possible.", "en")
+
+
+def test_request_warnings_find_clashing_words():
+    conflict, notes = checks.request_warnings("아이스 아메리카노 따뜻하게 스몰 사이즈로 얼음 많이 한 잔.")
+    assert "차갑게('아이스')" in conflict and "'스몰' 사이즈는 없습니다" in notes[0]
+    assert "얼음량을 함께" in checks.request_warnings("블랙 밀크티 따뜻하게 얼음 적게")[0]
+    assert checks.request_warnings("Iced americano, but make it hot please")[0]
+    # 메뉴 이름 속의 '아이스'(아이스티, 아이스크림)나 평범한 주문은 걸리지 않는다
+    for text in ("납작복숭아 아이스티 따뜻하게 돼요?", "아메리카노 아이스 L 하나", "따뜻한 블랙 밀크티 하나", "얼음 적게 해 주세요"):
+        assert checks.request_warnings(text) == (None, []), text

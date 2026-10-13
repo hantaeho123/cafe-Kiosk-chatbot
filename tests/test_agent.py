@@ -408,3 +408,45 @@ def test_saying_yes_is_not_a_confirmation(talk):
     session.confirm()
     events, _, client = talk("네", text_chunks("더 필요한 게 있으세요?"))
     assert len(client.requests) == 1  # 기다리는 변경안이 없으면 평소처럼 답한다
+
+
+# ---------------------------------------------------------------- 애매하거나 서로 맞지 않는 요청
+
+def test_conflicting_request_is_asked_about_not_guessed(talk):
+    """ "아이스 … 따뜻하게 … 얼음 많이"를 한쪽으로 골라 올려 놓고 손님 말을 그대로 따라 하던 문제. """
+    events, session, client = talk("아이스 아메리카노 따뜻하게 스몰 사이즈로 얼음 많이 한 잔.",
+                                   tool_chunks(("add_to_cart", {"menu_name": "아메리카노", "size": "L", "temperature": "HOT", "ice": "full"})),
+                                   text_chunks("아이스와 따뜻하게 중 어느 쪽으로 드릴까요? 스몰 사이즈는 없고 L이 가장 작아요."))
+    turn = client.requests[0]["messages"][-1]["content"]
+    assert "<주의>" in turn and "차갑게('아이스')와 따뜻하게('따뜻')" in turn and "'스몰' 사이즈는 없습니다" in turn
+    assert "'아메리카노'은(는) 얼음량이 고정이라 바꿀 수 없습니다" in turn  # '얼음 많이 가능해요'라고 답하지 않게
+    result = tool_result(client)
+    assert result["error"] == "conflicting_request" and "올리지 않았습니다" in result["message"]
+    assert not of(events, "proposal") and session.draft is None
+    assert [c["label"] for c in of(events, "chips")[0]["items"]] == ["ICE", "HOT"]  # 고를 수 있게 버튼을 준다
+
+
+def test_hot_with_an_ice_level_is_also_a_conflict(talk):
+    _, session, client = talk("블랙 밀크티 L 얼음 적게요", tool_chunks(("add_to_cart", {**BLACK[1], "temperature": "HOT", "ice": "less"})),
+                              text_chunks("따뜻하게인가요, 아이스인가요?"))
+    assert tool_result(client)["error"] == "conflicting_request" and session.draft is None
+
+
+def test_two_drinks_with_different_temperatures_are_not_blocked(talk):
+    events, _, client = talk("아이스 아메리카노 L 하나랑 따뜻한 블랙 밀크티 L 하나",
+                             tool_chunks(("add_to_cart", {"menu_name": "아메리카노", "size": "L", "temperature": "ICE"}),
+                                         ("add_to_cart", {**BLACK[1], "temperature": "HOT"})), text_chunks("두 잔을 올렸어요."))
+    assert "<주의>" in client.requests[0]["messages"][-1]["content"]  # 알려는 주되
+    assert [c["type"] for c in of(events, "proposal")[0]["changes"]] == ["add", "add"]  # 여러 잔이면 막지 않는다
+
+
+def test_option_that_cannot_be_applied_is_spelled_out(talk):
+    events, session, client = talk("망고 스무디 당도 30%로 하나", tool_chunks(("add_to_cart", {"menu_name": "망고 스무디", "sugar": 30})),
+                                   text_chunks("**망고 스무디**를 당도 30%로 확인 화면에 올렸어요."))
+    assert tool_result(client)["unapplied"] == ["sugar"] and "proposed 에 적힌 실제 옵션" in tool_result(client)["say"]
+    assert of(events, "verified")[0]["unapplied"] == "added"
+    assert "당도은(는) 이 메뉴에서 바꿀 수 없어 반영하지 못했어요" in session.history[-1]["content"]
+    session.reject()
+    events, session, _ = talk("망고 스무디 당도 30%로 하나", tool_chunks(("add_to_cart", {"menu_name": "망고 스무디", "sugar": 30})),
+                              text_chunks("**망고 스무디**는 당도가 고정이라 30%로는 못 바꿔요. 기본 당도로 올렸어요."))
+    assert of(events, "verified")[0]["unapplied"] == "model"  # 모델이 밝혔으면 또 붙이지 않는다
