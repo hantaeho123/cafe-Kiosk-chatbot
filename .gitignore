@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.env
+.DS_Store
+# 임베딩 인덱스는 scripts/build_index.py 로 각자 만든다
+data/rag/index/

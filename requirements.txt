@@ -1,0 +1,9 @@
+openai>=1.50
+faiss-cpu>=1.8
+numpy>=1.26
+fastapi>=0.110
+uvicorn[standard]>=0.29
+python-dotenv>=1.0
+# 테스트용
+pytest>=8.0
+httpx>=0.27

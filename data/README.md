@@ -12,7 +12,8 @@
 | `curated/` | 옵션·정책·키오스크 흐름. 항목마다 `verified`, `source` 표기 | 직접 정리 |
 | `images/` | 상품 사진 176장 (`{공식 상품번호}.png`) | `scrape_official.py --images` |
 | `kiosk/` | **웹 키오스크가 읽는 최종 데이터** | `scripts/build_dataset.py` |
-| `rag/documents.jsonl` | **RAG 검색용 문서 230개** | `scripts/build_dataset.py` |
+| `rag/documents.jsonl` | **RAG 검색용 문서 232개** | `scripts/build_dataset.py` |
+| `rag/index/` | 문서 임베딩으로 만든 FAISS 인덱스 (git 에 올리지 않음) | `scripts/build_index.py` |
 
 `kiosk/` 와 `rag/` 는 손으로 고치지 않는다. `raw/`, `curated/` 를 고친 뒤 다시 빌드한다.
 
@@ -46,7 +47,7 @@ python3 scripts/build_dataset.py              # kiosk/, rag/ 다시 생성
 | type | 개수 | 내용 |
 |---|---|---|
 | `menu` | 175 | 메뉴별 설명·가격·옵션·영양정보·알레르기 |
-| `recommendation` | 19 | 맛 특징별, 인기 순위, 무카페인, 저칼로리, 저당, HOT 가능, 우유 없는 음료 등 |
+| `recommendation` | 21 | 맛 특징별, 인기 순위, 무카페인, 저칼로리, 저당, HOT 가능, 우유 없는 음료, 신메뉴·시즌, 곁들일 디저트 등 |
 | `option` | 13 | 당도, 얼음량, 토핑 종류·가격, 사이즈, HOT/ICE |
 | `category` | 9 | 카테고리별 메뉴판 |
 | `policy` | 6 | 멤버십, SKT, KT, 카카오페이, 페이코, 고객센터 |

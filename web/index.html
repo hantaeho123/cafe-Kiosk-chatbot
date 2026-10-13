@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>공차 키오스크</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body data-view="chat">
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-name">공차 <span id="store-name"></span></span>
+      <span class="brand-sub" data-i18n="brand_sub"></span>
+    </div>
+    <div class="topbar-actions">
+      <div class="languages" id="languages" role="group" aria-label="Language"></div>
+      <button class="ghost" id="evidence-toggle" type="button" aria-pressed="false" data-i18n="evidence"></button>
+      <button class="ghost" id="staff-button" type="button" data-i18n="call_staff"></button>
+      <button class="ghost" id="restart-button" type="button" data-i18n="restart"></button>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel board" aria-labelledby="board-title">
+      <h2 class="panel-title" id="board-title" data-i18n="menu_title"></h2>
+      <div class="tabs" id="tabs" role="tablist"></div>
+      <div class="grid" id="grid"></div>
+    </section>
+
+    <section class="panel chat" aria-labelledby="chat-title">
+      <h2 class="panel-title" id="chat-title" data-i18n="chat_title"></h2>
+      <div class="notice" id="notice" hidden></div>
+      <div class="messages" id="messages" aria-live="polite"></div>
+      <div class="chips" id="chips"></div>
+      <form class="composer" id="composer" autocomplete="off">
+        <input id="input" type="text" maxlength="500" data-i18n-placeholder="placeholder" aria-label="message">
+        <button class="primary" id="send" type="submit" data-i18n="send"></button>
+      </form>
+    </section>
+
+    <section class="panel cart" aria-labelledby="cart-title">
+      <h2 class="panel-title"><span id="cart-title" data-i18n="cart_title"></span> <span class="count" id="cart-count"></span></h2>
+      <div class="dine" id="dine" role="group">
+        <button type="button" data-dine="dine_in" data-i18n="dine_in"></button>
+        <button type="button" data-dine="takeout" data-i18n="takeout"></button>
+      </div>
+      <div class="takeout-extras" id="takeout-extras" hidden>
+        <label><input type="checkbox" id="straw"> <span data-i18n="straw"></span></label>
+        <label><input type="checkbox" id="carrier"> <span data-i18n="carrier"></span></label>
+      </div>
+      <div class="lines" id="lines"></div>
+      <div class="benefits">
+        <label class="row"><span data-i18n="discount"></span>
+          <select id="discount"></select>
+        </label>
+        <label class="row"><span data-i18n="stamp"></span> <input type="checkbox" id="stamp"></label>
+      </div>
+      <dl class="totals">
+        <div><dt data-i18n="subtotal"></dt><dd id="subtotal"></dd></div>
+        <div id="discount-row"><dt data-i18n="discount_amount"></dt><dd id="discount-amount"></dd></div>
+        <div class="grand"><dt data-i18n="total"></dt><dd id="total"></dd></div>
+      </dl>
+      <button class="primary pay" id="pay" type="button" data-i18n="pay"></button>
+    </section>
+  </main>
+
+  <nav class="bottom-nav" aria-label="화면 전환">
+    <button type="button" data-view="menu" data-i18n="nav_menu"></button>
+    <button type="button" data-view="chat" data-i18n="nav_chat"></button>
+    <button type="button" data-view="cart"><span data-i18n="nav_cart"></span> <span class="count" id="nav-count"></span></button>
+  </nav>
+
+  <dialog class="modal" id="detail"></dialog>
+  <dialog class="modal" id="receipt"></dialog>
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

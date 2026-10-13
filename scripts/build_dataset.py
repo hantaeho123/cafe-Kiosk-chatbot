@@ -325,6 +325,13 @@ def build_documents(menu, options, store, policies, flow, info):
         [m for m in drinks if not m["tags"]["contains_milk"]])
     rec("cheapest", "가격이 저렴한 음료", "가격이 낮은 순서입니다.",
         sorted(drinks, key=lambda m: m["sizes"][0]["price"])[:15])
+    rec("season", "신메뉴·시즌 메뉴", "지금 판매 중인 신메뉴(시즌 한정) 음료입니다.", [m for m in drinks if m["is_new_season"]],
+        lambda m: price_line(m) + (f" ({m['series']})" if m["series"] else ""))
+    add("recommend:dessert", "recommendation", "음료와 곁들이기 좋은 디저트·푸드",
+        "음료와 함께 곁들일 수 있는 디저트(푸드) 메뉴입니다. 디저트 가격은 수집되지 않아 매장에서 확인해야 합니다.\n" +
+        "\n".join(f"- {cat}: " + ", ".join(m["name"] for m in food if m["category"] == cat)
+                  for cat in dict.fromkeys(m["category"] for m in food)),
+        ["https://www.gong-cha.co.kr/brand/menu/product?category=002001"])
 
     # 옵션
     sugar, ice, top = options["sugar"], options["ice"], options["toppings"]
