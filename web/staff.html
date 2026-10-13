@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>공차 키오스크 · 직원 화면</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    .staff-main { flex: 1; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .staff-list { flex: 1; overflow-y: auto; padding: 0 .9rem .9rem; display: grid; gap: .5rem; align-content: start; }
+    .ticket { border: 1px solid var(--line); border-radius: 14px; padding: .7rem .9rem; font-size: .875rem; }
+    .ticket.fresh { border-color: var(--accent); background: var(--accent-soft); }
+    .ticket.done { opacity: .5; }
+    .ticket-head { display: flex; align-items: center; justify-content: space-between; gap: .5rem; font-weight: 800; }
+    .ticket-head small { color: var(--muted); font-weight: 400; }
+    .ticket ul { margin: .4rem 0; padding-left: 1.1rem; }
+    .ticket .memo { margin-top: .3rem; padding: .3rem .6rem; border-radius: 8px; background: var(--warn-soft); color: #6b4e00; font-weight: 700; }
+    .ticket button { margin-top: .4rem; }
+    .stock-row { display: flex; align-items: center; justify-content: space-between; gap: .5rem; padding: .35rem 0; border-bottom: 1px solid var(--line); font-size: .875rem; }
+    .stock-row small { color: var(--muted); }
+    .stock-row.out span { color: var(--muted); text-decoration: line-through; }
+    .staff-note { margin: 0 1.1rem .5rem; }
+    .staff-search { margin: 0 .9rem .6rem; border: 1px solid var(--line); border-radius: 12px; padding: 0 .8rem; min-height: 2.5rem; background: var(--soft); }
+    @media (max-width: 1099px) { .staff-main { grid-template-columns: minmax(0, 1fr); overflow-y: auto; } .staff-main .panel { display: flex; min-height: 18rem; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-name">공차 직원 화면</span>
+      <span class="brand-sub">직원 호출 · 제조할 주문과 요청 메모 · 품절 관리</span>
+    </div>
+    <a class="ghost" href="/" style="text-decoration:none;display:inline-flex;align-items:center">키오스크 화면 열기</a>
+  </header>
+
+  <main class="staff-main">
+    <section class="panel">
+      <h2 class="panel-title">직원 호출 <span class="count" id="call-count"></span></h2>
+      <p class="muted staff-note">[확인]을 누르면 키오스크에 "직원이 확인했어요"라고 보입니다.</p>
+      <div class="staff-list" id="calls"></div>
+    </section>
+    <section class="panel">
+      <h2 class="panel-title">제조할 주문 <span class="count" id="order-count"></span></h2>
+      <p class="muted staff-note">결제가 끝난 주문입니다. 손님이 남긴 요청 메모가 함께 보입니다.</p>
+      <div class="staff-list" id="orders"></div>
+    </section>
+    <section class="panel">
+      <h2 class="panel-title">품절 관리 <span class="count" id="stock-count"></span></h2>
+      <p class="muted staff-note">품절로 바꾸면 키오스크 메뉴판에 바로 표시되고, 대화 추천과 주문에서도 빠집니다.</p>
+      <input class="staff-search" id="search" type="search" placeholder="메뉴 이름으로 찾기" aria-label="메뉴 이름으로 찾기">
+      <div class="staff-list" id="menus"></div>
+    </section>
+  </main>
+
+  <script src="/static/staff.js"></script>
+</body>
+</html>

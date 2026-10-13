@@ -33,3 +33,7 @@ MODERATION_MODEL = os.getenv("OPENAI_MODERATION_MODEL", "omni-moderation-latest"
 
 HISTORY_TURNS = int(os.getenv("HISTORY_TURNS", "8"))  # 모델에게 다시 보여 줄 최근 대화 턴 수
 MAX_TOOL_ROUNDS = 5
+
+# 조작이 없을 때 "시간 연장" 안내를 띄우기까지의 시간(초). 비워 두면 data/kiosk/policies.json 의 값을 쓰고, 0 이면 끈다.
+_idle = os.getenv("IDLE_SECONDS", "").strip()
+IDLE_SECONDS = int(_idle) if _idle else None

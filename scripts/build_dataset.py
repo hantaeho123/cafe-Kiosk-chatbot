@@ -5,7 +5,9 @@
     data/kiosk/menu.json        키오스크 화면·장바구니 계산용 (구조화)
     data/kiosk/options.json     사이즈·당도·얼음·토핑
     data/kiosk/store.json       시연 매장
-    data/kiosk/policies.json    멤버십·제휴·고객센터·주문 흐름
+    data/kiosk/policies.json    멤버십·제휴·고객센터·주문 흐름·기기 배치·이용 안내
+    data/kiosk/barcodes.json    시연용 바코드(멤버십·쿠폰·교환권·금액권·결제)와 단말기 시나리오
+    data/kiosk/stock.json       서버를 켰을 때의 품절 상태
     data/rag/documents.jsonl    RAG 검색용 문서 (한 줄에 문서 1개)
 """
 import csv
@@ -335,22 +337,34 @@ def build_documents(menu, options, store, policies, flow, info):
 
     # 옵션
     sugar, ice, top = options["sugar"], options["ice"], options["toppings"]
-    add("option:sugar", "option", "당도 선택",
-        "당도는 " + ", ".join(l["label"] for l in sugar["levels"]) + " 5단계 중에서 고를 수 있고 추가 요금은 없습니다.\n" + sugar["rule"],
-        [sugar["source"]])
+    add("option:sugar", "option", "당도 선택과 단계별 뜻",
+        "당도는 " + ", ".join(l["label"] for l in sugar["levels"]) + " 5단계 중에서 고를 수 있고 추가 요금은 없습니다.\n" +
+        sugar["meaning"] + "\n" + "\n".join(f"- {l['label']}: {l['description']}" for l in sugar["levels"]) + "\n" +
+        sugar["rule"] + "\n영양정보의 당류와 열량은 당도 0% 기준이라, 당도를 올리면 실제 값은 더 높습니다.",
+        [sugar["source"], sugar["meaning_note"]])
     add("option:ice", "option", "얼음량 선택",
-        "얼음량은 " + ", ".join(l["label"] for l in ice["levels"]) + " 중에서 고를 수 있고 추가 요금은 없습니다. 기본은 얼음 보통입니다.\n" + ice["rule"],
+        "얼음량은 " + ", ".join(l["label"] for l in ice["levels"]) + " 중에서 고를 수 있고 추가 요금은 없습니다. 기본은 얼음 보통입니다.\n" +
+        f"'{ice['not_selectable']['label']}'는 화면에서 고를 수 없습니다. " + ice["not_selectable"]["handling"] + "\n" + ice["rule"],
         [ice["source"]])
     add("option:toppings", "option", "토핑 종류와 가격",
-        f"토핑은 최대 {top['max_count']}가지까지 추가할 수 있습니다.\n" +
+        f"토핑은 최대 {top['max_count']}가지까지 추가할 수 있습니다. 샷추가는 토핑 개수에 세지 않습니다.\n" +
         "\n".join(f"- {t['name']}({t['name_en']}) +{won(t['price'])}: {t['description']}" for t in top["items"]) +
         "\n음료 이름에 이미 '+펄' 처럼 토핑이 적힌 메뉴는 그 토핑이 기본 포함된 가격입니다.",
         [top["source"]])
+    cups = options["cups"]
+    add("option:cup", "option", "컵 선택 (매장컵·일회용컵·개인컵·텀블러)",
+        "컵은 " + ", ".join(c["name"] for c in cups["items"]) + " 중에서 고릅니다. "
+        "개인 텀블러를 가져왔으면 개인컵을 골라 텀블러에 담아 달라고 할 수 있습니다.\n" +
+        "\n".join(f"- {c['name']}({c['name_en']}): {c['description']}" for c in cups["items"]) + "\n" + cups["rule"] +
+        "\n개인컵(텀블러) 할인이 있는지는 확인되지 않아 매장에 물어봐야 합니다.",
+        [cups["source"]])
     for t in top["items"]:
         add(f"option:topping:{t['id']}", "option", f"토핑 - {t['name']}",
             f"{t['name']}({t['name_en']}) 토핑은 {t['description']}입니다. 추가 요금은 {won(t['price'])}입니다.", [top["source"]])
+    on_sale_sizes = [s["id"] for s in options["sizes"]["items"] if any(x["size"] == s["id"] for m in drinks for x in m["sizes"])]
     add("option:size", "option", "사이즈 안내",
-        "공차 음료 사이즈는 L(라지), J(점보), G(기가)가 있습니다. ICE 기준 L 473ml, J 651ml, G 946ml 이고 HOT L 은 414ml 입니다. "
+        "공차 음료 사이즈는 L(라지), J(점보), G(기가)가 있습니다. 이 매장에서는 " + ", ".join(on_sale_sizes) + " 사이즈를 판매합니다. "
+        "J(점보)는 L(라지)보다 큰 사이즈입니다. ICE 기준 L 473ml, J 651ml, G 946ml 이고 HOT L 은 414ml 입니다. "
         "메뉴마다 주문 가능한 사이즈가 다르며, 스무디·크러쉬·쥬얼리 음료는 대부분 L 사이즈만 있습니다. J 는 L 보다 보통 1,100원~1,300원 비쌉니다(아메리카노류는 500원).",
         [options["sizes"]["source"], PRICE_SOURCE])
     add("option:temperature", "option", "HOT / ICE 안내", options["temperature"]["rule"], [options["temperature"]["source"]])
@@ -374,10 +388,9 @@ def build_documents(menu, options, store, policies, flow, info):
         "STEP 1 음료 선택: 취향에 맞게 공차의 음료를 고릅니다.\nSTEP 2 얼음량·당도: 얼음량과 당도를 원하는 대로 조절합니다.\n"
         "STEP 3 토핑: 7가지 토핑 중 원하는 토핑을 선택합니다(최대 3가지).",
         [info["order_guide"]["source_url"]])
-    add("guide:payment", "guide", "결제 수단",
-        "확인된 결제 수단: " + ", ".join(p["name"] for p in flow["payment_methods"] if p["verified"]) +
-        "\n그 밖의 결제 수단(신용/체크카드, 삼성페이 등)은 매장 키오스크에서 확인이 필요합니다.",
-        ["data/curated/kiosk_flow.json"])
+    # 이용 안내: 사용법, 결제 방법과 기기 위치, 적립·할인, 교환권·금액권, 요청 사항 처리 방침, 직원 호출, 알레르기
+    for g in flow["guides"]:
+        add(f"guide:{g['id']}", "guide", g["title"], g["text"], ["data/curated/kiosk_flow.json (화면 흐름과 기기 배치는 가정값)"])
 
     # 차(茶) 지식: 공식 Tea 페이지의 찻잎 소개 4종
     tea_lines = info["tea"]["lines"]
@@ -435,6 +448,8 @@ def main():
     dump("kiosk/options.json", options)
     dump("kiosk/store.json", store)
     dump("kiosk/policies.json", {**policies, "kiosk_flow": flow})
+    dump("kiosk/barcodes.json", load("curated/barcodes.json"))
+    dump("kiosk/stock.json", load("curated/stock.json"))
 
     docs = build_documents(menu, options, store, policies, flow, info)
     out = DATA / "rag" / "documents.jsonl"

@@ -8,73 +8,94 @@
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body data-view="chat">
-  <header class="topbar">
-    <div class="brand">
-      <span class="brand-name">공차 <span id="store-name"></span></span>
-      <span class="brand-sub" data-i18n="brand_sub"></span>
-    </div>
-    <div class="topbar-actions">
-      <div class="languages" id="languages" role="group" aria-label="Language"></div>
-      <button class="ghost" id="evidence-toggle" type="button" aria-pressed="false" data-i18n="evidence"></button>
-      <button class="ghost" id="staff-button" type="button" data-i18n="call_staff"></button>
-      <button class="ghost" id="restart-button" type="button" data-i18n="restart"></button>
-    </div>
-  </header>
+  <!-- 낮은 화면을 켜면 이 빈 공간이 위를 차지하고, 키오스크 전체가 아래로 내려온다 -->
+  <div class="low-space" id="low-space" aria-hidden="true"><span data-i18n="low_banner"></span></div>
 
-  <main>
-    <section class="panel board" aria-labelledby="board-title">
-      <h2 class="panel-title" id="board-title" data-i18n="menu_title"></h2>
-      <div class="tabs" id="tabs" role="tablist"></div>
-      <div class="grid" id="grid"></div>
-    </section>
-
-    <section class="panel chat" aria-labelledby="chat-title">
-      <h2 class="panel-title" id="chat-title" data-i18n="chat_title"></h2>
-      <div class="notice" id="notice" hidden></div>
-      <div class="messages" id="messages" aria-live="polite"></div>
-      <div class="chips" id="chips"></div>
-      <form class="composer" id="composer" autocomplete="off">
-        <input id="input" type="text" maxlength="500" data-i18n-placeholder="placeholder" aria-label="message">
-        <button class="primary" id="send" type="submit" data-i18n="send"></button>
-      </form>
-    </section>
-
-    <section class="panel cart" aria-labelledby="cart-title">
-      <h2 class="panel-title"><span id="cart-title" data-i18n="cart_title"></span> <span class="count" id="cart-count"></span></h2>
-      <div class="dine" id="dine" role="group">
-        <button type="button" data-dine="dine_in" data-i18n="dine_in"></button>
-        <button type="button" data-dine="takeout" data-i18n="takeout"></button>
+  <div class="app" id="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-name">공차 <span id="store-name"></span></span>
+        <span class="brand-sub" data-i18n="brand_sub"></span>
       </div>
-      <div class="takeout-extras" id="takeout-extras" hidden>
-        <label><input type="checkbox" id="straw"> <span data-i18n="straw"></span></label>
-        <label><input type="checkbox" id="carrier"> <span data-i18n="carrier"></span></label>
+      <!-- 모든 화면 공통 행동: 이전으로 가기, 처음으로 가기, 시간 연장하기 -->
+      <div class="common-nav" role="group" aria-label="공통">
+        <button class="ghost" id="back-button" type="button" data-i18n="back"></button>
+        <button class="ghost" id="restart-button" type="button" data-i18n="restart"></button>
+        <button class="ghost timer" id="timer-button" type="button" hidden><span id="timer-text"></span> · <span data-i18n="extend"></span></button>
       </div>
-      <div class="lines" id="lines"></div>
-      <div class="benefits">
-        <label class="row"><span data-i18n="discount"></span>
-          <select id="discount"></select>
-        </label>
-        <label class="row"><span data-i18n="stamp"></span> <input type="checkbox" id="stamp"></label>
+      <div class="topbar-actions">
+        <div class="languages" id="languages" role="group" aria-label="Language"></div>
+        <button class="ghost" id="big-text-toggle" type="button" aria-pressed="false" data-i18n="big_text"></button>
+        <button class="ghost" id="low-screen-toggle" type="button" aria-pressed="false" data-i18n="low_screen"></button>
+        <button class="ghost" id="help-button" type="button" data-i18n="help"></button>
+        <button class="ghost" id="staff-button" type="button" data-i18n="call_staff"></button>
+        <button class="ghost" id="evidence-toggle" type="button" aria-pressed="false" data-i18n="evidence"></button>
       </div>
-      <dl class="totals">
-        <div><dt data-i18n="subtotal"></dt><dd id="subtotal"></dd></div>
-        <div id="discount-row"><dt data-i18n="discount_amount"></dt><dd id="discount-amount"></dd></div>
-        <div class="grand"><dt data-i18n="total"></dt><dd id="total"></dd></div>
-      </dl>
-      <button class="primary pay" id="pay" type="button" data-i18n="pay"></button>
-    </section>
-  </main>
+    </header>
 
-  <nav class="bottom-nav" aria-label="화면 전환">
-    <button type="button" data-view="menu" data-i18n="nav_menu"></button>
-    <button type="button" data-view="chat" data-i18n="nav_chat"></button>
-    <button type="button" data-view="cart"><span data-i18n="nav_cart"></span> <span class="count" id="nav-count"></span></button>
-  </nav>
+    <main id="main">
+      <section class="panel board" aria-labelledby="board-title">
+        <div class="panel-head">
+          <h2 class="panel-title" id="board-title" data-i18n="menu_title"></h2>
+          <button class="outline" id="voucher-button" type="button" data-i18n="use_voucher"></button>
+        </div>
+        <div class="tabs" id="tabs" role="tablist"></div>
+        <div class="grid" id="grid"></div>
+      </section>
 
-  <dialog class="modal" id="detail"></dialog>
-  <dialog class="modal" id="receipt"></dialog>
-  <div class="toast" id="toast" role="status" hidden></div>
+      <section class="panel chat" aria-labelledby="chat-title">
+        <h2 class="panel-title" id="chat-title" data-i18n="chat_title"></h2>
+        <div class="notice" id="notice" hidden></div>
+        <div class="messages" id="messages" aria-live="polite"></div>
+        <div class="chips" id="chips"></div>
+        <form class="composer" id="composer" autocomplete="off">
+          <input id="input" type="text" maxlength="500" data-i18n-placeholder="placeholder" aria-label="message">
+          <button class="primary" id="send" type="submit" data-i18n="send"></button>
+        </form>
+      </section>
 
+      <section class="panel cart" aria-labelledby="cart-title">
+        <h2 class="panel-title"><span id="cart-title" data-i18n="cart_title"></span> <span class="count" id="cart-count"></span></h2>
+        <div class="banner" id="pending-banner" hidden>
+          <span data-i18n="pending_banner"></span>
+          <button type="button" id="pending-open" data-i18n="pending_open"></button>
+        </div>
+        <div class="banner" id="paying-banner" hidden>
+          <span data-i18n="paying_banner"></span>
+          <button type="button" id="paying-open" data-i18n="paying_open"></button>
+        </div>
+        <div class="dine" id="dine" role="group">
+          <button type="button" data-dine="dine_in" data-i18n="dine_in"></button>
+          <button type="button" data-dine="takeout" data-i18n="takeout"></button>
+        </div>
+        <div class="takeout-extras" id="takeout-extras" hidden>
+          <label><input type="checkbox" id="straw"> <span data-i18n="straw"></span></label>
+          <label><input type="checkbox" id="carrier"> <span data-i18n="carrier"></span></label>
+        </div>
+        <div class="lines" id="lines"></div>
+        <div class="requests" id="requests"></div>
+        <dl class="totals" id="totals"></dl>
+        <div class="cart-actions">
+          <button class="outline" id="clear-button" type="button" data-i18n="clear_all"></button>
+          <button class="outline" id="undo-button" type="button" data-i18n="undo"></button>
+        </div>
+        <button class="primary pay" id="pay" type="button" data-i18n="pay"></button>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="화면 전환">
+      <button type="button" data-view="menu" data-i18n="nav_menu"></button>
+      <button type="button" data-view="chat" data-i18n="nav_chat"></button>
+      <button type="button" data-view="cart"><span data-i18n="nav_cart"></span> <span class="count" id="nav-count"></span></button>
+    </nav>
+
+    <!-- 시작 화면, 옵션 화면, 추가 제안 창, 변경 확인 화면, 결제 화면이 여기에 뜬다. 상단의 공통 버튼은 가리지 않는다. -->
+    <div class="layer" id="layer" hidden></div>
+    <div class="toast" id="toast" role="status" hidden></div>
+  </div>
+
+  <script src="/static/i18n.js"></script>
   <script src="/static/app.js"></script>
+  <script src="/static/pay.js"></script>
 </body>
 </html>

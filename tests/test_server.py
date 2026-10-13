@@ -8,6 +8,7 @@ from app.server import create_app
 from tests.conftest import FakeClient, text_chunks, tool_chunks
 
 SESSION = {"session_id": "test-session-1"}
+TARO = ("add_to_cart", {"menu_name": "타로 밀크티", "size": "L", "temperature": "ICE"})
 
 
 @pytest.fixture
@@ -17,64 +18,231 @@ def kiosk(tmp_path):
     return TestClient(create_app(client=fake, index_dir=tmp_path)), fake
 
 
+def post(client, path, **body):
+    return client.post(path, json={**SESSION, **body})
+
+
 def chat(client, message):
-    response = client.post("/api/chat", json={**SESSION, "message": message})
+    response = post(client, "/api/chat", message=message)
     assert response.headers["content-type"].startswith("text/event-stream")
     return [json.loads(line[6:]) for line in response.text.split("\n\n") if line.startswith("data: ")]
 
 
-def test_pages_and_menu(kiosk):
+def menu_id(client, name):
+    return next(i["id"] for t in client.get("/api/menu").json()["tabs"] for i in t["items"] if i["name"] == name)
+
+
+def error_code(response):
+    return response.json()["detail"]["code"]
+
+
+def test_pages_menu_and_config(kiosk):
     client, _ = kiosk
-    assert "공차 키오스크" in client.get("/").text
-    assert client.get("/static/app.js").status_code == 200
-    assert client.get("/api/config").json()["ready"] is True
-    tabs = client.get("/api/menu").json()["tabs"]
-    first = tabs[0]["items"][0]
-    assert client.get(first["image"]).status_code == 200
+    assert "공차 키오스크" in client.get("/").text and "직원 화면" in client.get("/staff").text
+    for name in ("app.js", "i18n.js", "pay.js", "staff.js", "style.css"):
+        assert client.get(f"/static/{name}").status_code == 200
+    config = client.get("/api/config").json()
+    assert config["ready"] is True
+    assert config["ice_levels"] == ["less", "regular", "full"] and [c["id"] for c in config["cups"]] == ["store", "disposable", "personal"]
+    assert config["sugar_help"]["levels"]["30"] and config["toppings"][0]["description"]
+    assert {p["id"]: p["device"] for p in config["payment_methods"]}["card"] == "card_slot"
+    assert config["devices"]["card_slot"]["location"] and config["idle"] == {"idle_seconds": 120, "warning_seconds": 30}
+    assert any(b["kind"] == "gift_card" for b in config["demo"]["barcodes"])
+
+    menu = client.get("/api/menu").json()
+    first = menu["tabs"][0]["items"][0]
+    assert client.get(first["image"]).status_code == 200 and first["sold_out"] is False
+    sold_out = [i["name"] for t in menu["tabs"] for i in t["items"] if i["sold_out"]]
+    assert set(sold_out) == {"초코멜로 스무디"} and len(menu["stock"]["sold_out"]) == 1
     detail = client.get(f"/api/menu/{first['id']}").json()
-    assert detail["name"] == first["name"] and detail["nutrition"]
+    assert detail["name"] == first["name"] and detail["nutrition"] and detail["kcal"] is not None
+    assert detail["prices"][0]["volume_ml"]["ICE"]
     assert client.get("/api/menu/nope").status_code == 404
 
 
 def test_session_opens_with_greeting_and_chips(kiosk):
     client, _ = kiosk
-    session = client.post("/api/session", json=SESSION).json()
+    session = post(client, "/api/session").json()
     assert "시흥배곧점" in session["greeting"] and len(session["chips"]) == 4
     assert session["order"]["lines"] == [] and session["language"] == "ko"
-    english = client.post("/api/session/language", json={**SESSION, "language": "en"}).json()
+    assert session["pending"] is None and session["can_undo"] is False
+    english = post(client, "/api/session/language", language="en").json()
     assert english["greeting"].startswith("Hello") and english["chips"][0]["label"] == "What's popular?"
-    assert client.post("/api/session/language", json={**SESSION, "language": "xx"}).status_code == 400
+    assert post(client, "/api/session/language", language="xx").status_code == 400
 
 
-def test_chat_stream_updates_the_cart(kiosk):
+def test_chat_proposal_is_applied_only_after_confirming_on_screen(kiosk):
     client, fake = kiosk
-    fake.script += [tool_chunks(("add_to_cart", {"menu_name": "타로 밀크티", "size": "L", "temperature": "ICE"})),
-                    text_chunks("**타로 밀크티** L 사이즈를 담았어요.")]
+    post(client, "/api/order/options", dine_option="dine_in")
+    fake.script += [tool_chunks(TARO), text_chunks("**타로 밀크티** L 를 확인 화면에 올렸어요. [확인]을 눌러 주세요.")]
     events = chat(client, "타로 밀크티 아이스 L 하나 주세요")
     assert [e["type"] for e in events][-1] == "done"
-    assert "담았어요" in "".join(e["text"] for e in events if e["type"] == "delta")
-    lines = client.post("/api/session", json=SESSION).json()["order"]["lines"]
-    assert lines[0]["name"] == "타로 밀크티" and lines[0]["sugar"] == 50 and lines[0]["line_total"] == 4900
+    proposal = next(e for e in events if e["type"] == "proposal")
+    assert proposal["changes"][0]["after"]["name"] == "타로 밀크티" and proposal["after"]["total"] == 4900
+    waiting = post(client, "/api/session").json()
+    assert waiting["order"]["lines"] == [] and waiting["pending"]["changes"][0]["type"] == "add"
+    assert [c["action"] for c in waiting["chips"]] == ["confirm", "reject"]
+    assert error_code(post(client, "/api/pay/start")) == "pending_changes"  # 확인을 건너뛰고 결제로 갈 수 없다
 
-    # 화면의 +/− 버튼과 매장·할인 선택도 같은 주문을 고친다
-    line_id = lines[0]["line_id"]
-    more = client.post("/api/order/line", json={**SESSION, "line_id": line_id, "quantity": 3}).json()
-    assert more["order"]["totals"]["subtotal"] == 14700
-    opted = client.post("/api/order/options", json={**SESSION, "dine_option": "takeout", "discount": "skt"}).json()
-    assert opted["order"]["totals"]["total"] == 13230 and opted["chips"][0]["label"] == "결제할게요"
-    emptied = client.post("/api/order/line", json={**SESSION, "line_id": line_id, "quantity": 0}).json()
-    assert emptied["order"]["lines"] == []
-    assert client.post("/api/order/line", json={**SESSION, "line_id": 99, "quantity": 1}).status_code == 400
+    confirmed = post(client, "/api/order/confirm").json()
+    line = confirmed["order"]["lines"][0]
+    assert (line["name"], line["sugar"], line["cup"], line["line_total"]) == ("타로 밀크티", 50, "store", 4900)
+    assert confirmed["applied"][0]["type"] == "add" and confirmed["pending"] is None and confirmed["can_undo"] is True
+    assert confirmed["chips"][0] == {"label": "결제하기", "action": "pay"}
+    assert error_code(post(client, "/api/order/confirm")) == "nothing_pending"
+
+    fake.script += [tool_chunks(("update_cart_item", {"line_id": line["line_id"], "quantity": 3})), text_chunks("세 잔으로 올렸어요.")]
+    chat(client, "세 잔으로 바꿔 줘")
+    rejected = post(client, "/api/order/reject").json()  # [취소]를 누르면 그대로다
+    assert rejected["pending"] is None and rejected["order"]["lines"][0]["quantity"] == 1
+
+
+def test_customer_edits_the_order_with_buttons(kiosk):
+    client, fake = kiosk
+    post(client, "/api/order/options", dine_option="dine_in")
+    added = post(client, "/api/order/item", menu_id=menu_id(client, "타로 밀크티"), size="L", temperature="ICE").json()
+    line_id = added["line_id"]
+    more = post(client, "/api/order/line", line_id=line_id, quantity=3).json()
+    assert more["order"]["totals"]["subtotal"] == 14700 and more["can_undo"] is True
+    takeout = post(client, "/api/order/options", dine_option="takeout", straw=True).json()
+    assert takeout["order"]["lines"][0]["cup"] == "disposable" and takeout["order"]["straw"] is True
+    undone = post(client, "/api/order/undo").json()  # 되돌리기: 직전 변경 하나
+    assert undone["order"]["dine_option"] == "dine_in" and undone["order"]["lines"][0]["cup"] == "store"
+    assert post(client, "/api/order/line", line_id=99, quantity=1).status_code == 400
+    assert post(client, "/api/order/undo").json()["order"]["lines"][0]["quantity"] == 1  # 실패한 조작은 기록에 남지 않는다
+
+    # 확인을 기다리던 변경안은 손님이 주문을 직접 고치면 사라진다
+    fake.script += [tool_chunks(("update_cart_item", {"line_id": line_id, "sugar": 30})), text_chunks("올렸어요.")]
+    chat(client, "당도 30으로")
+    assert post(client, "/api/session").json()["pending"]
+    emptied = post(client, "/api/order/clear").json()  # 전체 취소
+    assert emptied["order"]["lines"] == [] and emptied["pending"] is None
+    assert post(client, "/api/order/undo").json()["order"]["lines"][0]["name"] == "타로 밀크티"
+
+
+def test_option_screen_adds_edits_and_suggests(kiosk):
+    client, fake = kiosk
+    post(client, "/api/order/options", dine_option="dine_in")
+    black = menu_id(client, "블랙 밀크티")
+    added = post(client, "/api/order/item", menu_id=black, size="J", temperature="ICE", sugar=70, ice="less",
+                 toppings=["pearl", "cheese_foam"], quantity=2).json()
+    line = added["order"]["lines"][0]
+    assert added["line_id"] == line["line_id"]
+    assert line["unit_price"] == 6000 + 600 + 900 and line["line_total"] == 15000
+    assert (line["sugar"], line["ice"], [t["id"] for t in line["toppings"]]) == (70, "less", ["pearl", "cheese_foam"])
+    # 추가 제안 창: 아직 담지 않은 인기 메뉴 (품절 제외)
+    assert len(added["suggestions"]) == 3 and added["suggestions"][0]["name"] == "딸기 쥬얼리 밀크티"
+    assert black not in [s["id"] for s in added["suggestions"]]
+
+    edited = post(client, "/api/order/item", line_id=line["line_id"], size="L", temperature="HOT", sugar=30, toppings=[],
+                  quantity=1, cup="personal").json()
+    line = edited["order"]["lines"][0]
+    assert (line["size"], line["temperature"], line["ice"], line["toppings"], line["cup"]) == ("L", "HOT", None, [], "personal")
+    assert edited["order"]["totals"]["subtotal"] == 4900 and "suggestions" not in edited
+
+    too_many = dict(menu_id=black, size="L", temperature="ICE", toppings=["pearl", "aloe", "coconut", "milk_foam"])
+    assert error_code(post(client, "/api/order/item", **too_many)) == "too_many_toppings"
+    assert post(client, "/api/order/item", menu_id="nope").status_code == 404
+    assert len(post(client, "/api/session").json()["order"]["lines"]) == 1
+
+    # 변경 확인 화면의 "옵션 직접 고치기": 변경안의 줄을 고쳐도 [확인] 전에는 주문이 그대로다
+    fake.script += [tool_chunks(TARO), text_chunks("올렸어요.")]
+    chat(client, "타로 밀크티 L 아이스 하나")
+    pending = post(client, "/api/session").json()["pending"]["changes"][0]["after"]
+    fixed = post(client, "/api/order/item", draft=True, line_id=pending["line_id"], size="J", temperature="ICE", sugar=30,
+                 ice="regular", toppings=["pearl"], quantity=1).json()
+    after = fixed["pending"]["changes"][0]["after"]
+    assert (after["size"], after["sugar"], after["line_total"]) == ("J", 30, 6600) and len(fixed["order"]["lines"]) == 1
+    assert len(post(client, "/api/order/confirm").json()["order"]["lines"]) == 2
+    assert error_code(post(client, "/api/order/item", draft=True, line_id=1, size="L", temperature="ICE")) == "nothing_pending"
+
+
+def test_customer_pays_with_the_terminal(kiosk):
+    client, fake = kiosk
+    post(client, "/api/order/item", menu_id=menu_id(client, "블랙 밀크티"), size="L", temperature="ICE")
+    assert error_code(post(client, "/api/pay/start")) == "need_dine_option"
+    post(client, "/api/order/options", dine_option="takeout")
+    assert error_code(post(client, "/api/scan", purpose="membership", code="SKT-1001")) == "wrong_screen"
+    paying = post(client, "/api/pay/start").json()
+    assert paying["order"]["status"] == "paying" and paying["chips"][0]["action"] == "resume_pay"
+    assert error_code(post(client, "/api/order/line", line_id=1, quantity=2)) == "payment_open"  # 결제 중에는 주문을 못 바꾼다
+
+    assert error_code(post(client, "/api/scan", purpose="membership", code="DAMAGED")) == "barcode_unreadable"
+    scanned = post(client, "/api/scan", purpose="membership", code="SKT-1001").json()
+    assert scanned["scan"]["label"] == "SKT T멤버십 바코드" and scanned["order"]["totals"]["total"] == 4410
+    post(client, "/api/scan", purpose="stamp", code="GC-APP-1001")
+    removed = post(client, "/api/pay/benefit", kind="discount").json()
+    assert removed["order"]["discount"] is None and removed["order"]["stamp"] is True
+
+    declined = post(client, "/api/pay/tender", method="card", scenario="declined").json()
+    assert declined["approved"] is False and declined["order"]["failure"]["reason"] == "declined"
+    back = post(client, "/api/pay/cancel").json()  # [이전]: 주문 화면으로 돌아간다
+    assert back["order"]["status"] == "ordering"
+    post(client, "/api/pay/start")
+    gift = post(client, "/api/scan", purpose="gift_card", code="GV-3000").json()
+    assert gift["scan"]["amount"] == 3000 and gift["order"]["totals"]["due"] == 1900
+    paid = post(client, "/api/pay/tender", method="card").json()
+    assert paid["approved"] is True and paid["order"]["status"] == "paid" and paid["chips"] == []
+    receipt = paid["order"]["receipt"]
+    assert [p["amount"] for p in receipt["payments"]] == [3000, 1900] and receipt["print_receipt"] is None
+    assert paid["order"]["totals"]["stamps"] == 1
+    printed = post(client, "/api/pay/receipt", print_receipt=True).json()
+    assert printed["order"]["receipt"]["print_receipt"] is True
+    assert error_code(post(client, "/api/order/clear")) == "already_paid"
+
+    board = client.get("/api/staff/board").json()
+    assert board["orders"][0]["number"] == receipt["order_number"]
+    assert client.post("/api/staff/order", json={"number": receipt["order_number"]}).json()["status"] == "done"
+
+    fake.script += [text_chunks("안녕하세요!")]
+    chat(client, "안녕하세요")  # 결제 뒤의 첫 마디는 새 주문이다
+    assert post(client, "/api/session").json()["order"]["status"] == "ordering"
+
+
+def test_menu_voucher_is_scanned_from_the_ordering_screen(kiosk):
+    client, _ = kiosk
+    post(client, "/api/order/options", dine_option="dine_in")
+    scanned = post(client, "/api/scan", purpose="menu_voucher", code="MV-AMERICANO-L").json()
+    line = scanned["order"]["lines"][0]
+    assert scanned["scan"]["menu"] == "아메리카노" and line["voucher"]["label"] == "아메리카노 L 교환권"
+    assert (line["covered"], scanned["order"]["totals"]["total"]) == (4200, 0)
+    assert error_code(post(client, "/api/scan", purpose="menu_voucher", code="GV-3000")) == "barcode_wrong_kind"
+    assert error_code(post(client, "/api/order/line", line_id=line["line_id"], quantity=2)) == "voucher_locked"
+    post(client, "/api/pay/start")
+    done = post(client, "/api/pay/tender", method="none").json()
+    assert done["order"]["status"] == "paid" and done["order"]["receipt"]["payments"] == []
+
+
+def test_staff_screen_calls_and_sold_out(kiosk):
+    client, _ = kiosk
+    called = post(client, "/api/staff", reason="바코드가 읽히지 않아요").json()
+    assert called["staff_call"]["status"] == "waiting"
+    board = client.get("/api/staff/board").json()
+    assert board["calls"][0]["reason"] == "바코드가 읽히지 않아요" and len(board["menus"]) == 91
+    client.post("/api/staff/call", json={"id": board["calls"][0]["id"]})
+    live = client.get("/api/live", params=SESSION).json()
+    assert live["staff_call"]["status"] == "coming"  # 직원이 확인하면 키오스크에도 보인다
+
+    taro = menu_id(client, "타로 밀크티")
+    version = live["stock"]["version"]
+    stock = client.post("/api/staff/stock", json={"menu_id": taro, "sold_out": True}).json()
+    assert taro in stock["sold_out"] and stock["version"] == version + 1
+    assert client.get(f"/api/menu/{taro}").json()["sold_out"] is True
+    post(client, "/api/order/options", dine_option="dine_in")
+    assert error_code(post(client, "/api/order/item", menu_id=taro, size="L", temperature="ICE")) == "sold_out"
+    client.post("/api/staff/stock", json={"menu_id": taro, "sold_out": False})
+    assert post(client, "/api/order/item", menu_id=taro, size="L", temperature="ICE").status_code == 200
+    assert client.post("/api/staff/stock", json={"menu_id": "nope", "sold_out": True}).status_code == 404
 
 
 def test_reset_and_staff_call(kiosk):
     client, fake = kiosk
     fake.script += [text_chunks("안녕하세요!")]
     chat(client, "안녕")
-    assert len(client.post("/api/session", json=SESSION).json()["history"]) == 2
-    assert client.post("/api/staff", json=SESSION).json()["staff_call"]["reason"]
-    fresh = client.post("/api/session/reset", json=SESSION).json()
-    assert fresh["history"] == [] and fresh["staff_call"] is None
+    assert len(post(client, "/api/session").json()["history"]) == 2
+    assert post(client, "/api/staff").json()["staff_call"]["reason"]
+    fresh = post(client, "/api/session/reset").json()
+    assert fresh["history"] == [] and fresh["staff_call"] is None and fresh["order"]["dine_option"] is None
 
 
 def test_without_api_key_the_screen_still_opens(tmp_path, monkeypatch):
@@ -88,29 +256,8 @@ def test_without_api_key_the_screen_still_opens(tmp_path, monkeypatch):
     assert client.get("/api/menu").json()["tabs"]
     events = chat(client, "안녕")
     assert [e["type"] for e in events] == ["error", "done"]
-
-
-def test_add_and_edit_with_options_from_the_menu_popup(kiosk):
-    client, _ = kiosk
-    config = client.get("/api/config").json()
-    assert config["sugar_levels"] == [0, 30, 50, 70, 100] and config["max_toppings"] == 3
-    assert {"id": "pearl", "name": "펄", "price": 600} in config["toppings"]
-    menu_id = next(i["id"] for t in client.get("/api/menu").json()["tabs"] for i in t["items"] if i["name"] == "블랙 밀크티")
-
-    added = client.post("/api/order/item", json={**SESSION, "menu_id": menu_id, "size": "J", "temperature": "ICE", "sugar": 70,
-                                                 "ice": "less", "toppings": ["pearl", "cheese_foam"], "quantity": 2}).json()
-    line = added["order"]["lines"][0]
-    assert added["line_id"] == line["line_id"]
-    assert line["unit_price"] == 6000 + 600 + 900 and line["line_total"] == 15000
-    assert (line["sugar"], line["ice"], [t["id"] for t in line["toppings"]]) == (70, "less", ["pearl", "cheese_foam"])
-
-    edited = client.post("/api/order/item", json={**SESSION, "line_id": line["line_id"], "size": "L", "temperature": "HOT",
-                                                  "sugar": 30, "toppings": [], "quantity": 1, "tumbler": True}).json()
-    line = edited["order"]["lines"][0]
-    assert (line["size"], line["temperature"], line["ice"], line["toppings"], line["tumbler"]) == ("L", "HOT", None, [], True)
-    assert edited["order"]["totals"]["subtotal"] == 4900
-
-    too_many = {**SESSION, "menu_id": menu_id, "size": "L", "temperature": "ICE", "toppings": ["pearl", "aloe", "coconut", "milk_foam"]}
-    assert client.post("/api/order/item", json=too_many).status_code == 400
-    assert client.post("/api/order/item", json={**SESSION, "menu_id": "nope"}).status_code == 404
-    assert len(client.post("/api/session", json=SESSION).json()["order"]["lines"]) == 1
+    # 대화 없이도 버튼만으로 주문하고 결제할 수 있다
+    post(client, "/api/order/options", dine_option="dine_in")
+    post(client, "/api/order/item", menu_id=menu_id(client, "아메리카노"), size="L", temperature="HOT")
+    post(client, "/api/pay/start")
+    assert post(client, "/api/pay/tender", method="nfc").json()["order"]["status"] == "paid"

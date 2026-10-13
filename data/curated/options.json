@@ -3,29 +3,36 @@
   "sugar": {
     "label": "당도",
     "levels": [
-      {"value": 0, "label": "0%"},
-      {"value": 30, "label": "30%"},
-      {"value": 50, "label": "50%"},
-      {"value": 70, "label": "70%"},
-      {"value": 100, "label": "100%"}
+      {"value": 0, "label": "0%", "description": "시럽을 넣지 않습니다. 차·우유·과일·토핑이 가진 단맛만 납니다."},
+      {"value": 30, "label": "30%", "description": "기본의 3분의 1 정도입니다. 단맛이 살짝 납니다."},
+      {"value": 50, "label": "50%", "description": "기본의 절반입니다. 은은하게 답니다."},
+      {"value": 70, "label": "70%", "description": "기본보다 조금 덜 답니다."},
+      {"value": 100, "label": "100%", "description": "기본 레시피 그대로입니다. 가장 답니다."}
     ],
     "extra_price": 0,
-    "rule": "메뉴마다 추천 당도가 다르다(menu.json 의 options.sugar.recommended). 'Sugar고정' 메뉴(스무디·크러쉬·브라운슈가 쥬얼리 등)는 당도를 바꿀 수 없다.",
+    "meaning": "당도 %는 기본 레시피(100%)에 넣는 시럽 양에 대한 비율입니다.",
+    "meaning_verified": false,
+    "meaning_note": "공식 페이지에는 '5가지 당도'라는 것만 있다. 단계별 설명은 % 의 일반적인 뜻을 풀어 쓴 것이라 매장 확인이 필요하다.",
+    "rule": "메뉴마다 추천 당도가 다릅니다. 스무디·크러쉬·브라운슈가 쥬얼리처럼 '당도 고정'인 메뉴는 당도를 바꿀 수 없습니다.",
     "verified": true,
     "source": "배달의민족 공차 시흥배곧점 옵션 화면(2026-10-12 캡처) + 공식 주문방법 페이지(5가지 당도)"
   },
   "ice": {
     "label": "얼음량",
     "levels": [
-      {"value": "none", "label": "얼음 없이", "label_en": "No Ice", "verified": false},
       {"value": "less", "label": "얼음 적게", "label_en": "Less Ice", "verified": true},
       {"value": "regular", "label": "얼음 보통", "label_en": "Regular Ice", "verified": true, "default": true},
       {"value": "full", "label": "얼음 많이", "label_en": "Full Ice", "verified": false}
     ],
+    "not_selectable": {
+      "label": "얼음 없이",
+      "closest": "less",
+      "handling": "가장 가까운 선택은 '얼음 적게'입니다. 얼음을 빼 달라는 요청은 요청 사항 메모로 직원에게 전달할 수 있지만, 매장에서 들어줄 수 있는지는 확인이 필요합니다."
+    },
     "extra_price": 0,
-    "rule": "'Ice고정' 메뉴(스무디·크러쉬·커피·쥬얼리·제주그린/피스타치오/미니펄 계열 등)는 얼음량을 바꿀 수 없다. HOT 음료에는 얼음 옵션이 없다.",
+    "rule": "스무디·크러쉬·커피·쥬얼리처럼 '얼음 고정'인 메뉴는 얼음량을 바꿀 수 없습니다. HOT 음료에는 얼음 옵션이 없습니다.",
     "verified": false,
-    "source": "배민 메뉴 표기 'Regular Ice (얼음 보통)' 와 가게 공지 '얼음 제외 주문 불가, 대신 적게(less ice)' 로 보통/적게만 확인. 없이/많이는 매장 키오스크 확인 필요"
+    "source": "단계는 최종 HTI 의 옵션 값(얼음 적게·보통·많이)을 따랐다. 배민 메뉴 표기 'Regular Ice (얼음 보통)' 와 가게 공지 '얼음 제외 주문 불가, 대신 적게(less ice)' 로 보통/적게만 확인. 많이는 매장 키오스크 확인 필요"
   },
   "toppings": {
     "label": "토핑",
@@ -47,6 +54,7 @@
       "토핑 가격은 공차슈페너 1개 메뉴의 옵션 화면에서 확인한 값이다. 다른 메뉴도 같은 가격표를 쓴다고 가정했다.",
       "공차슈페너는 배민에서 토핑 '최대 1개 선택' 이었다. 메뉴별 최대 개수는 다를 수 있다(공식 안내는 최대 3가지).",
       "샷추가가 커피 외 메뉴에도 되는지는 미확인.",
+      "샷추가는 공식 안내의 '7가지 토핑'에 들지 않으므로 최대 3가지 제한에 세지 않는다(가정).",
       "allergens_assumed 는 공식 표기가 아니라 재료로 추정한 값이다."
     ]
   },
@@ -65,5 +73,17 @@
     "rule": "공식 영양정보 표에 HOT 행이 있는 메뉴만 HOT 주문이 가능하다고 보았다. 쥬얼리·스무디·크러쉬·요구르트류는 ICE 전용.",
     "source": "공식 주문방법 페이지(오리지널 티·밀크티·프룻티 Hot & Iced, 쥬얼리 Iced only) + 메뉴별 영양정보 표",
     "caveat": "배민 캡처 가격은 HOT/ICE 구분이 없다. HOT 가격은 ICE 와 같다고 가정(미확인)."
+  },
+  "cups": {
+    "label": "컵",
+    "items": [
+      {"id": "store", "name": "매장컵", "name_en": "Store cup", "description": "매장에서 마실 때 쓰는 컵입니다.", "dine_in_only": true},
+      {"id": "disposable", "name": "일회용컵", "name_en": "Disposable cup", "description": "들고 나갈 수 있는 일회용 컵입니다."},
+      {"id": "personal", "name": "개인컵", "name_en": "My own cup", "description": "가져온 텀블러나 개인 컵에 담습니다. 주문한 뒤 컵을 카운터 직원에게 건네 주세요."}
+    ],
+    "rule": "매장에서 마시면 기본은 매장컵, 포장이면 일회용컵입니다. 포장 주문은 매장컵을 고를 수 없습니다. 컵에 따른 추가 요금은 없습니다.",
+    "personal_cup_discount": null,
+    "verified": false,
+    "source": "컵 종류는 최종 HTI 의 옵션 값(매장컵·일회용컵·개인컵). 기본 컵 규칙과 개인컵 할인 여부는 매장 확인 필요"
   }
 }

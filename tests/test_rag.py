@@ -8,6 +8,14 @@ def test_documents_cover_what_the_kiosk_must_answer():
     assert {"menu", "recommendation", "option", "category", "policy", "guide", "store", "knowledge"} <= types
     ids = {d["id"] for d in docs}
     assert {"recommend:season", "recommend:dessert", "recommend:popular", "option:toppings", "store:info"} <= ids
+    # 이용 안내 문서: 사용법, 결제 방법과 기기 위치, 적립·할인, 교환권·금액권, 요청 사항 처리 방침, 직원 호출, 알레르기
+    assert {f"guide:{name}" for name in ("kiosk", "payment", "benefits", "voucher", "requests", "staff", "allergy")} <= ids
+    text = {d["id"]: d["text"] for d in docs}
+    assert "카드 투입구" in text["guide:payment"] and "교차 오염" in text["guide:allergy"]
+    assert "들어주지 못할 수" in text["guide:requests"] and "[시간 연장]" in text["guide:kiosk"]
+    # 옵션 문서: 당도 단계의 뜻, 고를 수 없는 얼음 값, 컵
+    assert "- 30%: " in text["option:sugar"] and "'얼음 없이'는 화면에서 고를 수 없습니다" in text["option:ice"]
+    assert "매장컵, 일회용컵, 개인컵" in text["option:cup"]
 
 
 def test_embedding_text_drops_nutrition_rows_only():

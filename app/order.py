@@ -1,8 +1,9 @@
-"""주문 상태(장바구니·옵션·결제). 가격 계산과 옵션 검증은 LLM 이 아니라 이 코드가 한다."""
-import itertools
-import json
+"""주문 상태(장바구니·요청 메모·할인·결제 내역). 가격 계산과 옵션 검증은 LLM 이 아니라 이 코드(POS)가 한다.
+
+결제 절차(바코드 리더, 결제 단말기)는 app/pos.py 에 있다.
+"""
+import copy
 import re
-from datetime import datetime
 
 from app.catalog import SIZE_NAMES
 
@@ -12,12 +13,18 @@ DISCOUNTS = {"skt": "SKT T멤버십 10% 할인", "kt": "KT 멤버십 10% 할인"
 DISCOUNT_RATE = 0.10
 DISCOUNT_CAP = 20000
 DINE_OPTIONS = {"dine_in": "매장에서 먹고 가기", "takeout": "포장하기"}
+LINE_FIELDS = ("size", "temperature", "sugar", "ice", "toppings", "quantity", "cup")
 
 _SIZE_WORDS = {"라지": "L", "large": "L", "점보": "J", "jumbo": "J", "기가": "G", "giga": "G"}
 _TEMP_WORDS = {"ice": "ICE", "iced": "ICE", "cold": "ICE", "아이스": "ICE", "차가운": "ICE",
                "hot": "HOT", "핫": "HOT", "따뜻한": "HOT", "뜨거운": "HOT"}
 _DINE_WORDS = {"매장": "dine_in", "dine_in": "dine_in", "포장": "takeout", "takeout": "takeout"}
-_order_numbers = itertools.count(101)
+_CUP_WORDS = {"store": "store", "매장컵": "store", "머그": "store", "머그컵": "store",
+              "disposable": "disposable", "일회용컵": "disposable", "일회용": "disposable", "테이크아웃컵": "disposable",
+              "personal": "personal", "개인컵": "personal", "텀블러": "personal", "개인텀블러": "personal", "tumbler": "personal"}
+_NO_ICE_WORDS = {"none", "no", "noice", "얼음없이", "얼음빼고", "얼음제외", "없이"}
+# 되돌리기(직전 변경 취소)와 변경 확인 화면이 다루는 범위. 할인·결제 내역은 여기에 들지 않는다.
+_CART_FIELDS = ("lines", "notes", "dine_option", "straw", "carrier")
 
 
 class OrderError(Exception):
@@ -41,18 +48,24 @@ def _word(value, words):
 
 
 class Order:
-    def __init__(self, catalog):
+    def __init__(self, catalog, stock=None):
         self.catalog = catalog
+        self.stock = stock  # 품절 상태. 없으면 품절을 확인하지 않는다.
         self.lines = []
-        self._line_ids = itertools.count(1)
+        self.notes = []  # 요청 메모: {"note_id", "text", "line_id"(주문 전체에 대한 메모면 None)}
+        self._next_line = 1
+        self._next_note = 1
         self.dine_option = None  # "dine_in" | "takeout"
         self.straw = None  # 포장일 때만: 빨대 등 일회용품
         self.carrier = None  # 포장일 때만: 캐리어
+        # 아래는 손님이 결제 화면에서 바코드를 찍거나 단말기를 써야만 바뀐다 (app/pos.py)
         self.discount = None  # "skt" | "kt"
-        self.stamp = False  # 공차 멤버십 스탬프 적립
-        self.benefits_asked = False  # 할인·적립 여부를 손님이 한 번이라도 정했는지 (결제 전에 꼭 묻는다)
-        self.status = "ordering"  # 결제가 끝나면 "paid"
-        self._shown = None  # 손님에게 최종 확인으로 보여 준 주문 내용 (그대로일 때만 결제한다)
+        self.stamp = None  # 공차 멤버십 앱 바코드를 찍었으면 {"code", "label"}
+        self.coupon = None  # {"code", "label", "benefit": "amount" | "free_drink", "amount"}
+        self.tenders = []  # 낸 돈: {"method", "name", "amount", ...}
+        self.scanned = set()  # 이 주문에서 이미 쓴 바코드
+        self.failure = None  # 직전 결제 실패: {"method", "reason", "attempts"}
+        self.status = "ordering"  # "ordering" → "paying"(결제 화면) → "paid"
         self.receipt = None
 
     # ------------------------------------------------------------ 옵션 검증
@@ -61,13 +74,15 @@ class Order:
         return [{"size": s["size"], "name": SIZE_NAMES.get(s["size"], s["size"]), "price": s["price"]}
                 for s in menu["sizes"]]
 
-    def _validate(self, menu, size, temperature, sugar, ice, toppings, quantity):
+    def _validate(self, menu, size, temperature, sugar, ice, toppings, quantity, cup):
         """손님이 고른 옵션을 메뉴판 규칙에 맞춰 확정한다. (확정 값, 기본값으로 채운 항목, 안내할 점) 을 돌려준다."""
         cat, name = self.catalog, menu["name"]
         if not cat.orderable(menu):
             reason = ("시연 매장(시흥배곧점) 판매 목록에 없는 메뉴" if menu["kind"] == "drink"
                       else "가격 정보가 없어 키오스크에서 주문할 수 없는 메뉴")
             raise OrderError("not_for_sale", f"'{name}'은(는) {reason}입니다. 직원에게 문의하도록 안내하거나 다른 메뉴를 제안하세요.")
+        if self.stock and self.stock.is_sold_out(menu["id"]):
+            raise OrderError("sold_out", f"'{name}'은(는) 지금 품절이라 주문할 수 없습니다. 품절이라고 알리고 비슷한 다른 메뉴를 제안하세요.")
 
         sizes = [s["size"] for s in menu["sizes"]]
         temps = menu["temperatures"]
@@ -110,9 +125,9 @@ class Order:
         elif sugar is not None and opt["sugar"]["adjustable"] is None:
             notes.append("이 메뉴는 당도 조절 가능 여부가 확인되지 않았습니다. 요청은 주문에 표시했고 매장에서 확인이 필요합니다.")
 
-        ice = self._parse_ice(ice)
+        ice = None if temperature == "HOT" else self._parse_ice(ice)
         if temperature == "HOT":
-            ice = None
+            pass
         elif opt["ice"]["adjustable"] is False:
             if ice not in (None, "regular"):
                 notes.append("이 메뉴는 얼음량이 고정이라 바꿀 수 없습니다.")
@@ -124,7 +139,8 @@ class Order:
             notes.append("이 메뉴는 얼음량 조절 가능 여부가 확인되지 않았습니다. 요청은 주문에 표시했고 매장에서 확인이 필요합니다.")
 
         toppings = self._parse_toppings(toppings)
-        if len(toppings) > cat.max_toppings:
+        # 공식 안내의 '7가지 토핑 중 최대 3가지'. 샷추가는 그 7가지에 들지 않아 세지 않는다.
+        if sum(cat.toppings[t]["basic"] for t in toppings) > cat.max_toppings:
             raise OrderError("too_many_toppings", f"토핑은 최대 {cat.max_toppings}가지까지 추가할 수 있습니다.")
 
         try:
@@ -134,8 +150,11 @@ class Order:
         if not 1 <= quantity <= MAX_QUANTITY:
             raise OrderError("invalid_quantity", f"수량은 1~{MAX_QUANTITY}잔 사이로 주문할 수 있습니다.")
 
+        cup, cup_default = self._parse_cup(cup)
+        if cup_default:
+            defaults.append(cat.cups[cup]["name"])
         chosen = {"menu_id": menu["id"], "size": size, "temperature": temperature, "sugar": sugar, "ice": ice,
-                  "toppings": toppings, "quantity": quantity}
+                  "toppings": toppings, "quantity": quantity, "cup": cup}
         return chosen, defaults, notes
 
     def _parse_sugar(self, sugar):
@@ -152,9 +171,14 @@ class Order:
         if ice is None or ice == "":
             return None
         levels = self.catalog.ice_levels
-        value = str(ice).strip().lower()
-        by_label = {label.replace(" ", ""): key for key, label in levels.items()}
-        value = by_label.get(value.replace(" ", ""), value)
+        value = str(ice).strip().lower().replace(" ", "")
+        value = {label.replace(" ", ""): key for key, label in levels.items()}.get(value, value)
+        if value in _NO_ICE_WORDS:
+            raise OrderError("ice_not_selectable",
+                             "'얼음 없이'는 화면에서 고를 수 없는 값이라 반영하지 않았습니다. 가장 가까운 선택은 '얼음 적게'입니다. "
+                             "손님에게 얼음 적게로 할지 묻고, 원하면 '얼음 빼 주세요'를 요청 메모로 남길 수 있다고 안내하세요. "
+                             "메모는 직원에게 전달될 뿐이며 들어준다고 약속하지 않습니다.",
+                             choices={"ice": list(levels)}, closest="less")
         if value not in levels:
             raise OrderError("invalid_ice", "얼음량은 " + ", ".join(levels.values()) + " 중에서 고를 수 있습니다.",
                              choices={"ice": list(levels)})
@@ -172,70 +196,119 @@ class Order:
                 result.append(tid)
         return sorted(result, key=list(self.catalog.toppings).index)
 
+    def _parse_cup(self, cup):
+        """(컵, 기본값으로 정했는지). 말하지 않으면 매장에서는 매장컵, 그 밖에는 일회용컵이다."""
+        cups = self.catalog.cups
+        if cup is None or cup == "":
+            return ("store" if self.dine_option == "dine_in" else "disposable"), True
+        value = _CUP_WORDS.get(str(cup).strip().lower().replace(" ", ""))
+        if value not in cups:
+            raise OrderError("invalid_cup", "컵은 " + ", ".join(c["name"] for c in cups.values()) + " 중에서 고를 수 있습니다.",
+                             choices={"cup": list(cups)})
+        if value == "store" and self.dine_option == "takeout":
+            raise OrderError("invalid_cup", "포장 주문은 매장컵에 담을 수 없습니다. 일회용컵이나 개인컵 중에서 고르게 하세요.",
+                             choices={"cup": [c for c in cups if c != "store"]})
+        return value, False
+
     # ------------------------------------------------------------ 장바구니
 
     def _find(self, line_id):
         for line in self.lines:
             if line["line_id"] == line_id:
                 return line
-        raise OrderError("line_not_found", f"장바구니에 #{line_id} 줄이 없습니다. <주문상태>의 번호를 확인하세요.")
+        raise OrderError("line_not_found", f"장바구니에 #{line_id} 줄이 없습니다. <실시간상태>의 번호를 확인하세요.")
 
-    def add(self, menu, size=None, temperature=None, sugar=None, ice=None, toppings=None, quantity=1, tumbler=False):
+    def add(self, menu, size=None, temperature=None, sugar=None, ice=None, toppings=None, quantity=1, cup=None, voucher=None):
         chosen, defaults, notes = self._validate(menu, size, temperature, sugar, ice, toppings,
-                                                 1 if quantity is None else quantity)
-        chosen["tumbler"] = bool(tumbler)
-        same = next((l for l in self.lines
-                     if all(l[k] == chosen[k] for k in chosen if k != "quantity")), None)
+                                                 1 if quantity is None else quantity, cup)
+        chosen["voucher"] = voucher  # 교환권으로 담은 줄이면 {"code", "label"}
+        same = None if voucher else next((l for l in self.lines if all(l[k] == chosen[k] for k in chosen if k != "quantity")), None)
         if same:
             if same["quantity"] + chosen["quantity"] > MAX_QUANTITY:
                 raise OrderError("invalid_quantity", f"같은 메뉴는 한 번에 {MAX_QUANTITY}잔까지 담을 수 있습니다.")
             same["quantity"] += chosen["quantity"]
             line = same
         else:
-            line = {"line_id": next(self._line_ids), **chosen}
+            line = {"line_id": self._next_line, **chosen}
+            self._next_line += 1
             self.lines.append(line)
+        return line, defaults, notes
+
+    def _change(self, line, menu, **options):
+        chosen, defaults, notes = self._validate(menu, **options)
+        if line["voucher"] and (chosen["size"] != line["size"] or chosen["quantity"] != 1):
+            raise OrderError("voucher_locked", "교환권으로 담은 메뉴는 사이즈와 수량을 바꿀 수 없습니다. 당도·얼음·토핑·컵만 바꿀 수 있습니다.")
+        line.update(chosen)
         return line, defaults, notes
 
     def update(self, line_id, **changes):
         """바꿀 항목만 넘긴다. 넘기지 않은(None) 항목은 그대로 둔다."""
         line = self._find(line_id)
-        menu = self.catalog.by_id[line["menu_id"]]
-        merged = {k: (changes[k] if changes.get(k) is not None else line[k])
-                  for k in ("size", "temperature", "sugar", "ice", "toppings", "quantity")}
+        merged = {k: (changes[k] if changes.get(k) is not None else line[k]) for k in LINE_FIELDS}
         new_temp = _word(changes.get("temperature"), _TEMP_WORDS)
         if new_temp and new_temp != line["temperature"] and changes.get("ice") is None:
             merged["ice"] = None  # HOT ↔ ICE 를 바꾸면 얼음은 기본값부터 다시 정한다
-        chosen, defaults, notes = self._validate(menu, **merged)
-        line.update(chosen)
-        if changes.get("tumbler") is not None:
-            line["tumbler"] = bool(changes["tumbler"])
-        return line, defaults, notes
+        return self._change(line, self.catalog.by_id[line["menu_id"]], **merged)
 
-    def replace(self, line_id, size=None, temperature=None, sugar=None, ice=None, toppings=None, quantity=1, tumbler=False):
+    def replace(self, line_id, size=None, temperature=None, sugar=None, ice=None, toppings=None, quantity=1, cup=None):
         """한 줄의 옵션을 통째로 다시 정한다. 화면의 옵션 선택 창은 모든 항목을 한꺼번에 보내기 때문이다."""
         line = self._find(line_id)
-        menu = self.catalog.by_id[line["menu_id"]]
-        chosen, defaults, notes = self._validate(menu, size, temperature, sugar, ice, toppings, quantity)
-        line.update(chosen, tumbler=bool(tumbler))
-        return line, defaults, notes
+        return self._change(line, self.catalog.by_id[line["menu_id"]], size=size, temperature=temperature, sugar=sugar,
+                            ice=ice, toppings=toppings, quantity=quantity, cup=cup)
 
     def remove(self, line_id):
         line = self._find(line_id)
         self.lines.remove(line)
+        self.notes = [n for n in self.notes if n["line_id"] != line_id]
         return line
 
     def clear(self):
         self.lines.clear()
+        self.notes.clear()
 
-    # ------------------------------------------------------------ 주문 옵션·결제
+    # ------------------------------------------------------------ 요청 메모
 
-    def set_options(self, dine_option=None, straw=None, carrier=None, discount=None, stamp=None):
+    def add_note(self, text, line_id=None):
+        """화면에서 고를 수 없는 요청을 주문(또는 한 줄)에 메모로 붙인다. 들어줄지는 매장이 정한다."""
+        limits = self.catalog.flow["requests"]
+        text = re.sub(r"\s+", " ", str(text or "")).strip()
+        if not text:
+            raise OrderError("empty_note", "메모 내용이 비어 있습니다.")
+        if len(text) > limits["max_length"]:
+            raise OrderError("note_too_long", f"요청 메모는 {limits['max_length']}자까지 남길 수 있습니다. 더 짧게 정리해서 다시 호출하세요.")
+        if line_id is not None:
+            self._find(line_id)
+        same = next((n for n in self.notes if n["text"] == text and n["line_id"] == line_id), None)
+        if same:
+            return same
+        if len(self.notes) >= limits["max_notes"]:
+            raise OrderError("too_many_notes", f"요청 메모는 주문당 {limits['max_notes']}개까지 남길 수 있습니다.")
+        note = {"note_id": self._next_note, "text": text, "line_id": line_id}
+        self._next_note += 1
+        self.notes.append(note)
+        return note
+
+    def remove_note(self, note_id):
+        note = next((n for n in self.notes if n["note_id"] == note_id), None)
+        if not note:
+            raise OrderError("note_not_found", f"요청 메모 {note_id}번이 없습니다. <실시간상태>의 메모 번호를 확인하세요.")
+        self.notes.remove(note)
+        return note
+
+    # ------------------------------------------------------------ 이용 방식
+
+    def set_options(self, dine_option=None, straw=None, carrier=None):
         notes = []
         if dine_option is not None:
             value = _DINE_WORDS.get(str(dine_option).strip().lower())
             if not value:
                 raise OrderError("invalid_dine_option", "이용 방식은 '매장' 또는 '포장' 중에서 고릅니다.")
             self.dine_option = value
+            # 기본 컵은 이용 방식을 따른다: 매장이면 매장컵, 포장이면 일회용컵. 개인컵은 그대로 둔다.
+            swap = {"takeout": ("store", "disposable"), "dine_in": ("disposable", "store")}[value]
+            for line in self.lines:
+                if line["cup"] == swap[0]:
+                    line["cup"] = swap[1]
             if value == "dine_in":
                 self.straw = self.carrier = None
         if straw is not None or carrier is not None:
@@ -244,65 +317,63 @@ class Order:
             else:
                 self.straw = bool(straw) if straw is not None else self.straw
                 self.carrier = bool(carrier) if carrier is not None else self.carrier
-        if discount is not None or stamp is not None:
-            self.benefits_asked = True
-        if discount is not None:
-            value = str(discount).strip().lower()
-            if value not in (*DISCOUNTS, "none"):
-                raise OrderError("invalid_discount", "할인은 skt, kt, none 중 하나입니다.")
-            self.discount = None if value == "none" else value
-        if stamp is not None:
-            self.stamp = bool(stamp)
         return notes
 
-    def checkout(self, payment_method, print_receipt):
-        if self.status == "paid":
-            raise OrderError("already_paid", "이미 결제가 끝난 주문입니다.")
-        if not self.lines:
-            raise OrderError("empty_cart", "장바구니가 비어 있어 결제할 수 없습니다. 먼저 메뉴를 담아야 합니다.")
-        if not self.dine_option:
-            raise OrderError("need_dine_option", "매장에서 먹고 가는지 포장인지 먼저 확인해야 합니다.", need=["dine_option"])
-        if not self.benefits_asked:
-            raise OrderError("need_benefits", "멤버십 스탬프 적립과 통신사(SKT/KT) 할인 여부를 아직 묻지 않았습니다. 손님에게 물어보고 "
-                             "set_order_options 로 기록한 뒤(둘 다 없으면 discount=none, stamp=false) 다시 호출하세요.",
-                             need=["discount", "stamp"])
-        methods = self.catalog.payment_methods
-        if payment_method not in methods:
-            raise OrderError("invalid_payment_method", "결제 수단을 다시 확인해 주세요.", choices={"payment_method": methods})
-        # 최종 확인: 같은 내용으로 두 번째 호출될 때 결제한다. 그 사이 주문이 바뀌면 다시 확인받는다.
-        showing = json.dumps([self.lines, self.dine_option, self.straw, self.carrier, self.discount, self.stamp,
-                              payment_method, bool(print_receipt)], ensure_ascii=False)
-        if self._shown != showing:
-            self._shown = showing
-            raise OrderError("need_confirmation", "아직 결제하지 않았습니다. 아래 주문 내용(메뉴·옵션·수량·금액)과 결제 수단, 영수증 여부를 "
-                             "손님에게 보여 주고 이대로 결제할지 확인받으세요. 손님이 동의하면 같은 인자로 다시 호출하면 결제됩니다.",
-                             order=self.summary_text(), payment_method=methods[payment_method], print_receipt=bool(print_receipt))
-        self.status = "paid"
-        self.receipt = {
-            "order_number": next(_order_numbers),
-            "payment_method": {"id": payment_method, "name": methods[payment_method]},
-            "print_receipt": bool(print_receipt),
-            "paid_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
-        }
-        return self.receipt
+    # ------------------------------------------------------------ 복사·되돌리기
+
+    def snapshot(self):
+        return {k: copy.deepcopy(getattr(self, k)) for k in _CART_FIELDS}
+
+    def restore(self, snapshot):
+        """장바구니를 snapshot 때로 되돌린다. 줄 번호는 다시 쓰지 않도록 번호표는 되감지 않는다."""
+        for key, value in snapshot.items():
+            setattr(self, key, copy.deepcopy(value))
+
+    def clone(self):
+        """모델이 올리는 변경안을 담을 복사본. 가격과 옵션 검증이 진짜 주문과 똑같이 돈다."""
+        other = copy.copy(self)
+        other.restore(self.snapshot())
+        other.tenders = copy.deepcopy(self.tenders)
+        other.scanned = set(self.scanned)
+        return other
+
+    def adopt(self, draft):
+        """손님이 확인한 변경안을 받아들인다."""
+        self.restore(draft.snapshot())
+        self._next_line = max(self._next_line, draft._next_line)
+        self._next_note = max(self._next_note, draft._next_note)
 
     # ------------------------------------------------------------ 금액·표시
+
+    def _base(self, line):
+        return next(s["price"] for s in self.catalog.by_id[line["menu_id"]]["sizes"] if s["size"] == line["size"])
 
     def _prices(self, line):
         """(한 잔 가격, 그중 제휴 할인 대상 금액). 샷추가는 기본 토핑이 아니라 할인 대상에서 빠진다."""
         cat = self.catalog
-        base = next(s["price"] for s in cat.by_id[line["menu_id"]]["sizes"] if s["size"] == line["size"])
+        base = self._base(line)
         extra = sum(cat.toppings[t]["price"] for t in line["toppings"])
         basic = sum(cat.toppings[t]["price"] for t in line["toppings"] if cat.toppings[t]["basic"])
         return base + extra, base + basic
 
+    def _coupon_amount(self, remaining):
+        if not self.coupon:
+            return 0
+        if self.coupon["benefit"] == "free_drink":  # 교환권으로 받지 않은 음료 중 가장 비싼 한 잔의 메뉴 가격
+            return max((self._base(l) for l in self.lines if not l["voucher"]), default=0)
+        return min(self.coupon["amount"], max(remaining, 0))
+
     def totals(self):
-        subtotal = sum(self._prices(l)[0] * l["quantity"] for l in self.lines)
-        eligible = sum(self._prices(l)[1] * l["quantity"] for l in self.lines)
-        discount = min(int(eligible * DISCOUNT_RATE), DISCOUNT_CAP) if self.discount else 0
         count = sum(l["quantity"] for l in self.lines)
-        return {"count": count, "subtotal": subtotal, "discount": discount, "total": subtotal - discount,
-                "stamps": count if self.stamp else 0}
+        subtotal = sum(self._prices(l)[0] * l["quantity"] for l in self.lines)
+        voucher = sum(self._base(l) for l in self.lines if l["voucher"])  # 교환권은 메뉴 가격만 대신 낸다
+        coupon = self._coupon_amount(subtotal - voucher)
+        eligible = sum(self._prices(l)[1] * l["quantity"] for l in self.lines if not l["voucher"])
+        discount = min(int(eligible * DISCOUNT_RATE), DISCOUNT_CAP) if self.discount else 0
+        total = subtotal - voucher - coupon - discount
+        paid = sum(t["amount"] for t in self.tenders)
+        return {"count": count, "subtotal": subtotal, "voucher": voucher, "coupon": coupon, "discount": discount,
+                "total": total, "paid": paid, "due": total - paid, "stamps": count if self.stamp else 0}
 
     def line_view(self, line):
         cat = self.catalog
@@ -323,38 +394,74 @@ class Order:
             "toppings": [{"id": t, "name": cat.toppings[t]["name"], "price": cat.toppings[t]["price"]} for t in line["toppings"]],
             "sugar_note": sugar_note,
             "ice_note": ice_note,
+            "cup_name": cat.cups[line["cup"]]["name"],
             "unit_price": unit,
             "line_total": unit * line["quantity"],
+            "covered": self._base(line) if line["voucher"] else 0,  # 교환권이 대신 내는 금액
+            "sold_out": bool(self.stock and self.stock.is_sold_out(line["menu_id"])),
+            "notes": [n for n in self.notes if n["line_id"] == line["line_id"]],
         }
 
-    def line_text(self, line):
+    def option_parts(self, line):
+        """한 줄의 옵션을 한국어 낱말로: 사이즈, 온도, 당도, 얼음, 토핑, 컵."""
         v = self.line_view(line)
         sugar = f"당도 {v['sugar']}%" if v["sugar"] is not None else {"fixed": "당도 고정", "default": "당도 기본"}[v["sugar_note"]]
         ice = (self.catalog.ice_levels[v["ice"]] if v["ice"] else
                {"hot": None, "fixed": "얼음 고정", "default": "얼음 기본"}[v["ice_note"]])
         parts = [v["size"], v["temperature"], sugar, ice,
-                 "토핑: " + (", ".join(t["name"] for t in v["toppings"]) or "없음"),
-                 "개인 텀블러" if v["tumbler"] else None]
-        return (f"#{v['line_id']} {v['name']} | " + " | ".join(p for p in parts if p) +
+                 "토핑: " + (", ".join(t["name"] for t in v["toppings"]) or "없음"), v["cup_name"]]
+        return [p for p in parts if p]
+
+    def line_text(self, line):
+        v = self.line_view(line)
+        text = (f"#{v['line_id']} {v['name']} | " + " | ".join(self.option_parts(line)) +
                 f" | {v['quantity']}잔 | {won(v['line_total'])}")
+        if v["voucher"]:
+            text += f" | 교환권 사용(메뉴 가격 {won(v['covered'])} 처리)"
+        if v["sold_out"]:
+            text += " | 지금 품절(결제 전에 빼야 함)"
+        for note in v["notes"]:
+            text += f" | 요청 메모 {note['note_id']}번: {note['text']}"
+        return text
+
+    def amount_text(self):
+        t = self.totals()
+        text = f"주문 {won(t['subtotal'])}"
+        for key, label in (("voucher", "교환권"), ("coupon", "쿠폰"), ("discount", "제휴 할인")):
+            if t[key]:
+                text += f" - {label} {won(t[key])}"
+        text += f" = 결제 금액 {won(t['total'])}"
+        if t["paid"]:
+            text += f" (이미 낸 금액 {won(t['paid'])}, 남은 금액 {won(t['due'])})"
+        return text
 
     def summary_text(self):
-        """모델에게 매 턴 보여 주는 주문 상태."""
+        """모델에게 매 턴 보여 주는 주문 상태. 금액은 모두 여기(POS)에서 계산한 값이다."""
         t = self.totals()
         lines = ["장바구니: " + (f"{len(self.lines)}줄, {t['count']}잔" if self.lines else "비어 있음")]
         lines += ["  " + self.line_text(l) for l in self.lines]
+        for note in self.notes:
+            if note["line_id"] is None:
+                lines.append(f"  주문 전체 요청 메모 {note['note_id']}번: {note['text']}")
         dine = DINE_OPTIONS.get(self.dine_option, "아직 선택 안 함")
         if self.dine_option == "takeout":
-            ask = {None: "아직 안 물어봄", True: "필요", False: "필요 없음"}
+            ask = {None: "선택 안 함", True: "필요", False: "필요 없음"}
             dine += f" (빨대: {ask[self.straw]}, 캐리어: {ask[self.carrier]})"
         lines.append(f"이용 방식: {dine}")
-        lines.append("할인: " + (DISCOUNTS[self.discount] if self.discount else "없음") +
-                     " / 멤버십 스탬프 적립: " + (f"예 ({t['stamps']}개)" if self.stamp else "아니오") +
-                     ("" if self.benefits_asked else " (손님에게 아직 안 물어봄)"))
         if self.lines:
-            lines.append(f"금액: 주문 {won(t['subtotal'])} - 할인 {won(t['discount'])} = 결제 {won(t['total'])}")
+            lines.append(f"금액(POS 계산): {self.amount_text()}")
+        benefits = [DISCOUNTS[self.discount]] if self.discount else []
+        benefits += [f"쿠폰 '{self.coupon['label']}'"] if self.coupon else []
+        benefits += [f"멤버십 스탬프 {t['stamps']}개 적립"] if self.stamp else []
+        lines.append("할인·적립(손님이 결제 화면에서 바코드를 찍어야 적용된다): " + (", ".join(benefits) or "아직 없음"))
         if self.status == "paid":
             lines.append(f"결제 완료: 주문번호 {self.receipt['order_number']}")
+        elif self.status == "paying":
+            lines.append("결제 화면: 손님이 진행 중 (이 동안에는 주문을 바꿀 수 없다)")
+            if self.failure:
+                lines.append(f"  직전 결제 실패: {self.failure['reason_text']} ({self.failure['attempts']}번째)")
+        else:
+            lines.append("결제 화면: 아직 열지 않음")
         return "\n".join(lines)
 
     def to_dict(self):
@@ -362,11 +469,73 @@ class Order:
         return {
             "status": self.status,
             "lines": [self.line_view(l) for l in self.lines],
+            "notes": [n for n in self.notes if n["line_id"] is None],
             "totals": self.totals(),
             "dine_option": self.dine_option,
             "straw": self.straw,
             "carrier": self.carrier,
             "discount": self.discount,
-            "stamp": self.stamp,
+            "stamp": bool(self.stamp),
+            "coupon": self.coupon and {"label": self.coupon["label"], "benefit": self.coupon["benefit"]},
+            "tenders": self.tenders,
+            "failure": self.failure,
             "receipt": self.receipt,
         }
+
+
+# ------------------------------------------------------------ 변경 내용 (변경 확인 화면)
+
+def changes(before, after):
+    """두 주문 상태의 차이. 변경 확인 화면에 그리고 모델에게도 글로 알려 준다."""
+    result = []
+    old = {l["line_id"]: l for l in before.lines}
+    new = {l["line_id"]: l for l in after.lines}
+    for line_id, line in new.items():
+        if line_id not in old:
+            result.append({"type": "add", "line_id": line_id, "after": after.line_view(line)})
+        elif line != old[line_id]:
+            result.append({"type": "update", "line_id": line_id, "fields": [f for f in LINE_FIELDS if line[f] != old[line_id][f]],
+                           "before": before.line_view(old[line_id]), "after": after.line_view(line)})
+    for line_id, line in old.items():
+        if line_id not in new:
+            result.append({"type": "remove", "line_id": line_id, "before": before.line_view(line)})
+
+    def with_name(order, note):
+        line = next((l for l in order.lines if l["line_id"] == note["line_id"]), None)
+        return {**note, "line_name": order.catalog.by_id[line["menu_id"]]["name"] if line else None}
+
+    old_notes = {n["note_id"]: n for n in before.notes}
+    new_notes = {n["note_id"]: n for n in after.notes}
+    # 새로 담는 줄에 붙은 메모는 그 줄과 함께 보이므로 따로 적지 않는다.
+    result += [{"type": "note_add", "note": with_name(after, n)} for i, n in new_notes.items()
+               if i not in old_notes and (n["line_id"] is None or n["line_id"] in old)]
+    # 줄을 빼서 함께 사라지는 메모는 따로 적지 않는다.
+    result += [{"type": "note_remove", "note": with_name(before, n)} for i, n in old_notes.items()
+               if i not in new_notes and (n["line_id"] is None or n["line_id"] in new)]
+    if before.dine_option != after.dine_option:
+        result.append({"type": "dine", "before": before.dine_option, "after": after.dine_option})
+    for key in ("straw", "carrier"):
+        if getattr(before, key) != getattr(after, key):
+            result.append({"type": "option", "name": key, "before": getattr(before, key), "after": getattr(after, key)})
+    return result
+
+
+def change_text(before, after, change):
+    """변경 한 건을 모델이 읽을 한 줄로."""
+    kind = change["type"]
+    if kind == "add":
+        return "추가: " + after.line_text(after._find(change["line_id"]))
+    if kind == "remove":
+        return "삭제: " + before.line_text(before._find(change["line_id"]))
+    if kind == "update":
+        return ("변경: " + before.line_text(before._find(change["line_id"])) +
+                "\n      → " + after.line_text(after._find(change["line_id"])))
+    if kind in ("note_add", "note_remove"):
+        note = change["note"]
+        where = f"{note['line_name']}(#{note['line_id']})" if note["line_id"] else "주문 전체"
+        return f"요청 메모 {'추가' if kind == 'note_add' else '삭제'} ({where}): {note['text']}"
+    if kind == "dine":
+        return f"이용 방식: {DINE_OPTIONS.get(change['before'], '선택 안 함')} → {DINE_OPTIONS.get(change['after'], '선택 안 함')}"
+    label = {"straw": "빨대", "carrier": "캐리어"}[change["name"]]
+    word = {None: "선택 안 함", True: "필요", False: "필요 없음"}
+    return f"{label}: {word[change['before']]} → {word[change['after']]}"

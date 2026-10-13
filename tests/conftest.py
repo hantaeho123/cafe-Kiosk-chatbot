@@ -54,7 +54,8 @@ class FakeClient:
         return NS(results=[NS(flagged="폭탄" in input)])
 
     def _complete(self, **params):
-        self.requests.append(params)
+        # 에이전트는 같은 messages 목록에 도구 결과를 계속 덧붙이므로, 요청할 때의 모습을 따로 남겨 둔다.
+        self.requests.append({**params, "messages": list(params["messages"])})
         if not self.script:
             raise RuntimeError("준비한 응답이 없습니다")
         step = self.script.pop(0)

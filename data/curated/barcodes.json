@@ -1,0 +1,35 @@
+{
+  "_note": "시연용 바코드. 실제 바코드 리더와 제휴사·POS 서버 대신 쓴다. 코드와 혜택 내용은 모두 지어낸 값이며 실제 공차 바코드와 무관하다. 잔액과 사용 여부는 주문 하나 안에서만 기억하고, 새 주문에서는 처음 값으로 돌아간다.",
+  "items": [
+    {"code": "GC-APP-1001", "kind": "app", "label": "공차 멤버십 앱 바코드", "label_en": "Gong Cha app barcode"},
+    {"code": "SKT-1001", "kind": "membership", "telecom": "skt", "label": "SKT T멤버십 바코드", "label_en": "SKT T Membership barcode"},
+    {"code": "KT-1001", "kind": "membership", "telecom": "kt", "label": "KT 멤버십 바코드", "label_en": "KT Membership barcode"},
+    {"code": "CP-2000", "kind": "coupon", "benefit": "amount", "amount": 2000, "label": "2,000원 할인 쿠폰", "label_en": "₩2,000 off coupon"},
+    {"code": "CP-FREE", "kind": "coupon", "benefit": "free_drink", "label": "무료 음료 쿠폰 (스탬프 보상)", "label_en": "Free drink coupon (stamp reward)"},
+    {"code": "MV-BMT-PEARL-L", "kind": "menu_voucher", "menu": "블랙 밀크티 + 펄", "size": "L", "label": "블랙 밀크티 + 펄 L 교환권", "label_en": "Voucher: Black Milk Tea + Pearl (L)"},
+    {"code": "MV-AMERICANO-L", "kind": "menu_voucher", "menu": "아메리카노", "size": "L", "label": "아메리카노 L 교환권", "label_en": "Voucher: Americano (L)"},
+    {"code": "GV-10000", "kind": "gift_card", "balance": 10000, "label": "금액권 10,000원", "label_en": "Gift card ₩10,000"},
+    {"code": "GV-3000", "kind": "gift_card", "balance": 3000, "label": "금액권 3,000원", "label_en": "Gift card ₩3,000"},
+    {"code": "KAKAOPAY-1001", "kind": "pay", "method": "kakaopay", "label": "카카오페이 결제 바코드", "label_en": "KakaoPay payment barcode"},
+    {"code": "PAYCO-1001", "kind": "pay", "method": "payco", "label": "페이코 결제 바코드", "label_en": "PAYCO payment barcode"},
+    {"code": "NAVERPAY-1001", "kind": "pay", "method": "naverpay", "label": "네이버페이 결제 바코드", "label_en": "Naver Pay payment barcode"},
+    {"code": "DAMAGED", "kind": "unreadable", "label": "구겨진 바코드 (인식 실패 시연)", "label_en": "Crumpled barcode (read failure demo)"}
+  ],
+  "rules": {
+    "free_drink": "무료 음료 쿠폰은 교환권으로 받지 않은 음료 가운데 가장 비싼 한 잔의 메뉴 가격을 뺀다. 토핑 추가 금액은 빼지 않는다(가정).",
+    "amount": "금액 쿠폰은 적힌 금액만큼 뺀다. 결제 금액보다 크면 결제 금액까지만 뺀다(가정).",
+    "telecom": "통신사 할인은 쿠폰·교환권과 함께 쓸 수 없다(공식 이용안내의 '기타 서비스와 중복 혜택 불가', '메뉴권과 동시 사용 불가'). 금액권 결제와 스탬프 적립은 함께 쓸 수 있다."
+  },
+  "terminal_scenarios": {
+    "_note": "결제 단말기 시연용. 손님이 어떤 카드를 꽂았는지를 고른다.",
+    "card": [
+      {"id": "ok", "label": "정상 카드", "label_en": "Working card"},
+      {"id": "declined", "label": "한도 초과 카드 (승인 거절 시연)", "label_en": "Over-limit card (declined demo)"},
+      {"id": "unreadable", "label": "IC 칩이 안 읽히는 카드 (인식 실패 시연)", "label_en": "Unreadable chip (read failure demo)"}
+    ],
+    "nfc": [
+      {"id": "ok", "label": "정상 휴대폰 결제", "label_en": "Working phone payment"},
+      {"id": "declined", "label": "잔액 부족 (승인 거절 시연)", "label_en": "Insufficient balance (declined demo)"}
+    ]
+  }
+}

@@ -1,4 +1,8 @@
-"""대화 에이전트. 한 턴을 검색(RAG) → 프롬프트 구성 → 모델 호출(스트리밍) → 도구 실행 순서로 처리한다."""
+"""대화 에이전트. 한 턴을 검색(RAG) → 프롬프트 구성 → 모델 호출(스트리밍) → 도구 실행 순서로 처리한다.
+
+모델은 주문을 직접 바꾸지 못한다. 도구가 올린 변경안은 턴이 끝날 때 proposal 이벤트로 화면에 보내고,
+손님이 변경 확인 화면에서 [확인]을 눌러야 반영된다. 결제는 화면과 단말기에서 손님이 직접 한다.
+"""
 import json
 import logging
 import re
@@ -33,7 +37,8 @@ class KioskAgent:
         """손님의 한마디에 대한 답을 이벤트(dict)로 하나씩 내보낸다.
 
         delta: 답변 글 조각 / status: 실행할 도구 / tool: 도구 실행 결과 / sources: 검색된 문서
-        state: 주문 상태 / cards: 답변에 나온 메뉴 / chips: 빠른 답변 버튼 / error / done
+        state: 주문 상태 / cards: 답변에 나온 메뉴 / compare: 메뉴 비교표 / proposal: 확인을 기다리는 변경안
+        chips: 빠른 답변 버튼 / error / done
         """
         try:
             yield from self._respond(session, user_text)
@@ -46,25 +51,25 @@ class KioskAgent:
     def _respond(self, session, user_text):
         if session.order.status == "paid":  # 결제가 끝난 뒤의 첫 마디는 새 주문으로 본다
             session.new_order()
-        order = session.order
         language = i18n.detect_language(user_text)
         if language and language != session.language:  # 손님이 다른 언어로 말하면 화면과 답변 언어를 따라 바꾼다
             session.set_language(language)
             yield {"type": "state", **session.state()}
 
+        waiting = session.pending_text()  # 이번 턴에 변경안이 달라졌는지 보려고 처음 모습을 남겨 둔다
         flagged = self._pool.submit(self._flagged, user_text) if self.moderation else None
         hits = self.retriever.search(user_text, context=self._context(session.history, user_text))
         if flagged and flagged.result():
             reply = i18n.text("blocked", session.language)
             yield {"type": "delta", "text": reply}
-            yield from self._finish(session, user_text, reply, need=None)
+            yield from self._finish(session, user_text, reply, need=None, waiting=waiting)
             return
         yield {"type": "sources", "items": _sources(hits)}
 
         messages = [
             {"role": "system", "content": self.system},
             *session.history[-2 * config.HISTORY_TURNS:],
-            {"role": "user", "content": turn_message(order.summary_text(), hits, session.language, user_text)},
+            {"role": "user", "content": turn_message(session, hits, user_text)},
         ]
         parts, need = [], None
         for round_no in range(config.MAX_TOOL_ROUNDS + 1):
@@ -83,27 +88,37 @@ class KioskAgent:
                 yield {"type": "status", "name": call["name"]}
                 args, result = self._run_tool(call, session)
                 found = result.pop("hits", None)
+                view = result.pop("view", None)  # 화면에만 쓰는 값 (비교표의 사진 등)
                 messages.append({"role": "tool", "tool_call_id": call["id"],
                                  "content": json.dumps(result, ensure_ascii=False)})
                 event = {"type": "tool", "name": call["name"], "args": args, "ok": bool(result.get("ok"))}
                 if call["name"] == SEARCH_TOOL:
                     event["sources"] = _sources(found or [])
                 else:
-                    event["result"] = {k: v for k, v in result.items() if k != "order"}
+                    event["result"] = result
                     yield {"type": "state", **session.state()}
+                if call["name"] == "compare_menus" and view:
+                    yield {"type": "compare", **view}
                 if call["name"] == "add_to_cart":
                     need = result if result.get("error") == "need_options" else None
                 yield event
-        yield from self._finish(session, user_text, "\n\n".join(parts), need)
+        yield from self._finish(session, user_text, "\n\n".join(parts), need, waiting)
 
-    def _finish(self, session, user_text, reply, need):
+    def _finish(self, session, user_text, reply, need, waiting=None):
         if reply:  # 모델이 아무 글도 내지 않은 턴은 기록하지 않는다
             session.history += [{"role": "user", "content": user_text}, {"role": "assistant", "content": reply}]
+            session.events.clear()  # 화면 조작 내역은 이번 턴에 모델에게 전했다
         # "블랙 밀크티 하나 주세요처럼 말씀해 주세요" 같은 예시 문장 속 메뉴는 카드로 띄우지 않는다.
         spoken = re.sub(r'"[^"\n]*"|“[^”\n]*”', " ", reply)
-        cards = [self.catalog.card(m) for m in self.catalog.find_mentions(spoken, limit=4)]
+        cards = [self.catalog.card(m, bool(session.stock and session.stock.is_sold_out(m["id"])))
+                 for m in self.catalog.find_mentions(spoken, limit=4)]
         if cards:
             yield {"type": "cards", "items": cards}
+        pending = session.pending()
+        if pending:
+            # changed 가 참이면 화면이 변경 확인 화면을 띄운다. 변경안은 그대로 두고 다른 것을 물었을 때는
+            # 답변을 가리지 않도록 띄우지 않고, 손님이 [변경 확인하기]로 다시 연다.
+            yield {"type": "proposal", **pending, "changed": session.pending_text() != waiting}
         yield {"type": "chips", "items": self.chips(session, need)}
         yield {"type": "state", **session.state()}
 
@@ -164,6 +179,8 @@ class KioskAgent:
     # ------------------------------------------------------------ 빠른 답변 버튼
 
     def chips(self, session, need=None):
+        """상황에 맞는 버튼. text 가 있으면 그 문장을 보내고, action 이 있으면 화면이 바로 동작한다.
+        결제와 변경 확인은 손님이 직접 눌러야 해서 action 버튼으로 준다."""
         lang, order = session.language, session.order
         if need:
             menu = need["menu"]
@@ -178,8 +195,13 @@ class KioskAgent:
             return [{"label": t, "text": i18n.text("pick_temp", lang, menu=menu, temp=t)} for t in temps]
         if order.status == "paid":
             return []
+        if order.status == "paying":
+            return [i18n.action("resume_pay", lang)] + i18n.chips("paying", lang)
+        if session.pending():
+            return [i18n.action("confirm", lang), i18n.action("reject", lang)]
+        undo = [i18n.action("undo", lang)] if session.undo_stack else []
         if not order.lines:
-            return i18n.chips("start", lang)
+            return i18n.chips("start", lang) if not undo else undo + i18n.chips("start", lang)[:3]
         if not order.dine_option:
-            return i18n.chips("dine", lang) + i18n.chips("cart", lang)[:1]
-        return i18n.chips("cart", lang)
+            return [i18n.action("dine_in", lang), i18n.action("takeout", lang)] + undo
+        return [i18n.action("pay", lang)] + i18n.chips("cart", lang) + undo
