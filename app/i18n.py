@@ -18,6 +18,14 @@ def detect_language(text):
         return "zh"
     return "en" if len(words) >= 2 else None
 
+# 매장 이름의 외국어 표기(로마자·한자 표기는 번역이 아니라 음을 옮긴 것). 없는 매장은 한글 그대로 쓴다.
+STORE_NAMES = {"시흥배곧점": {"en": "Siheung Baegot", "zh": "始兴培谷店", "ja": "シフン・ペゴッ店"}}
+
+
+def store_name(name, language):
+    return STORE_NAMES.get(name, {}).get(language, name)
+
+
 TEXTS = {
     "greeting": {
         "ko": "안녕하세요, 공차 {store}입니다. 메뉴가 궁금하시거나 주문하실 게 있으면 편하게 말씀해 주세요. "

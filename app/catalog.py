@@ -42,7 +42,8 @@ class Catalog:
         # 정규화한 이름·별칭 → 메뉴. 긴 이름부터 맞춰야 '블랙 밀크티 + 펄' 이 '블랙 밀크티' 로 잘리지 않는다.
         self._names = {}
         for m in self.items:
-            for name in [m["name"], *m["aliases"], *([m["name_en"]] if m.get("name_en") else [])]:
+            foreign = [t["name"] for t in m.get("i18n", {}).values() if t.get("name")]  # 외국어 이름으로도 찾는다
+            for name in [m["name"], *m["aliases"], *foreign]:
                 self._names.setdefault(normalize(name), m)
         self._by_length = sorted(self._names.items(), key=lambda kv: -len(kv[0]))
 
@@ -155,7 +156,7 @@ class Catalog:
         return {
             "id": m["id"],
             "name": m["name"],
-            "name_en": m.get("name_en"),
+            "names": self.names(m),
             "kind": m["kind"],
             "category": m["category"],
             "image": f"/{m['image']}" if m["image"] else None,
@@ -166,8 +167,14 @@ class Catalog:
             "badges": badges,
         }
 
+    @staticmethod
+    def names(m):
+        """외국어 화면에 보여 줄 메뉴 이름 {"en": ..., "zh": ..., "ja": ...}. 번역해 둔 값이다."""
+        return {lang: t["name"] for lang, t in m.get("i18n", {}).items() if t.get("name")}
+
     def detail(self, m, sold_out=False):
-        info = {**self.card(m, sold_out), "description": m["description"], "allergens": m["allergens"]}
+        info = {**self.card(m, sold_out), "description": m["description"], "allergens": m["allergens"],
+                "descriptions": {lang: t["description"] for lang, t in m.get("i18n", {}).items() if t.get("description")}}
         if m["kind"] != "drink":
             info["nutrition"] = [{"label": "1회 제공량 기준", "values": n} for n in m["nutrition"]]
             return info

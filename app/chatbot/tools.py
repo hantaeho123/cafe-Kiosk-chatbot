@@ -196,9 +196,14 @@ class ToolBox:
                 "results": [{"title": h.doc["title"], "type": h.doc["type"], "text": h.doc["text"],
                              **({"sold_out": True} if h.doc["metadata"].get("menu_id") in sold_out else {})} for h in hits]}
 
-    def _menu_row(self, m):
+    def _local(self, session, m):
+        """외국어 화면일 때 그 언어의 메뉴 이름(메뉴판에 보이는 것과 같다). 모델이 제멋대로 번역하지 않게 도구 결과에 넣어 준다."""
+        names = self.catalog.names(m)
+        return {} if session.language == "ko" or not names else {"name_local": names.get(session.language) or names.get("en")}
+
+    def _menu_row(self, session, m):
         return {
-            "name": m["name"], "category": m["category"],
+            "name": m["name"], **self._local(session, m), "category": m["category"],
             "price": ", ".join(f"{s['size']} {s['price']:,}원" for s in m["sizes"]),
             "flavors": m["tags"]["flavors"], "caffeine_mg": m["tags"]["caffeine_mg_ref"], "kcal": m["tags"]["kcal_ref"],
             "sugar_g": m["tags"]["sugar_g_ref"], "temperatures": m["temperatures"], "contains_milk": m["tags"]["contains_milk"],
@@ -206,7 +211,7 @@ class ToolBox:
             "allergens": m["allergens"], "badges": self.catalog.card(m)["badges"],
         }
 
-    def _relaxed(self, conditions, sold_out):
+    def _relaxed(self, session, conditions, sold_out):
         """조건을 하나씩 빼 보고 무엇을 빼면 메뉴가 나오는지 알려 준다. 모델이 '맞는 메뉴가 없어요'로 끝내지 않게 하려는 것이다."""
         active = [k for k, v in conditions.items() if k != "sort" and v not in (None, False, [], ())]
         options = []
@@ -214,7 +219,7 @@ class ToolBox:
             found = self.catalog.find_drinks(exclude_ids=sold_out, **{k: v for k, v in conditions.items() if k != key})
             if found:
                 options.append({"without": f"{CONDITION_NAMES.get(key, key)} ({conditions[key]})", "total": len(found),
-                                "menus": [self._menu_row(m) for m in found[:3]]})
+                                "menus": [self._menu_row(session, m) for m in found[:3]]})
         if not options:
             return {"message": "조건을 모두 만족하는 음료가 없습니다. 손님에게 알리고 어떤 조건이 가장 중요한지 물어보세요."}
         return {"message": "조건을 모두 만족하는 음료는 없습니다. '없다'로 끝내지 말고, relaxed 를 보고 어떤 조건을 빼면 "
@@ -251,20 +256,20 @@ class ToolBox:
         sold_out = session.stock.ids() if session.stock else []
         found = self.catalog.find_drinks(exclude_ids=sold_out, **conditions)
         if not found:
-            return {**result, "total": 0, **self._relaxed(conditions, sold_out)}
+            return {**result, "total": 0, **self._relaxed(session, conditions, sold_out)}
         if total_budget is not None:
             result["example"] = self._example(session, found, people, int(total_budget))
         return {**result, "total": len(found),
                 "basis": "카페인·열량·당류(sugar_g)는 가장 작은 ICE 사이즈, 당도 0% 기준. 당도를 올리면 당류와 열량이 늘어난다. 품절 메뉴는 빠져 있음",
-                "menus": [self._menu_row(m) for m in found[:limit]]}
+                "menus": [self._menu_row(session, m) for m in found[:limit]]}
 
     def _compare_menus(self, session, menu_names):
         menus = list({m["id"]: m for m in map(self._find_menu, menu_names)}.values())
         if len(menus) < 2:
             raise OrderError("bad_arguments", "서로 다른 메뉴가 두 개 이상 필요합니다.")
-        facts = [self.catalog.facts(m, self._sold_out(session, m)) for m in menus]
+        facts = [{**self.catalog.facts(m, self._sold_out(session, m)), **self._local(session, m)} for m in menus]
         cards = [self.catalog.card(m) for m in menus]
-        view = [{**f, "id": m["id"], "name_en": m.get("name_en"), "image": c["image"], "prices": c["prices"],
+        view = [{**f, "id": m["id"], "names": c["names"], "image": c["image"], "prices": c["prices"],
                  "sugar": m["options"]["sugar"] if m["kind"] == "drink" else {"adjustable": None, "recommended": None}}
                 for f, m, c in zip(facts, menus, cards)]
         return {"ok": True, "menus": facts, "view": {"items": view},
@@ -278,7 +283,7 @@ class ToolBox:
         sugar, ice = menu["options"]["sugar"], menu["options"]["ice"]
         adjustable = {True: "조절 가능", False: "고정(바꿀 수 없음)", None: "조절 가능 여부가 확인되지 않음(요청은 받되 매장 확인 필요)"}
         return {
-            "ok": True, "menu": menu["name"], "orderable": True, "sold_out": self._sold_out(session, menu),
+            "ok": True, "menu": menu["name"], **self._local(session, menu), "orderable": True, "sold_out": self._sold_out(session, menu),
             "sizes": [{"size": s["size"], "price": won(s["price"]), "volume_ml": s.get("volume_ml")} for s in menu["sizes"]],
             "temperatures": menu["temperatures"],
             "sugar": {"status": adjustable[sugar["adjustable"]], "levels": cat.sugar_levels if sugar["adjustable"] is not False else [],
@@ -390,7 +395,8 @@ class ToolBox:
             raise
         extra = {"promise": NOTE_RULE} if request_note else {}
         return self._proposed(session, proposed=draft.line_text(line), defaults_applied=defaults, unapplied=self._unapplied(line, sugar, ice),
-                              notes=notes + self._doubled(line) + self._already(session, menu, line), say=SAY_RULE, **extra)
+                              notes=notes + self._doubled(line) + self._already(session, menu, line), say=SAY_RULE,
+                              **self._local(session, menu), **extra)
 
     def _update_cart_item(self, session, line_id, **changes):
         draft = session.propose()
@@ -402,7 +408,8 @@ class ToolBox:
             session.pending()
             raise
         return self._proposed(session, proposed=draft.line_text(line), defaults_applied=defaults, notes=notes + self._doubled(line),
-                              unapplied=self._unapplied(line, changes.get("sugar"), changes.get("ice")), say=SAY_RULE)
+                              unapplied=self._unapplied(line, changes.get("sugar"), changes.get("ice")), say=SAY_RULE,
+                              **self._local(session, menu))
 
     def _remove_cart_item(self, session, line_id=None, clear_all=False):
         draft = session.propose()

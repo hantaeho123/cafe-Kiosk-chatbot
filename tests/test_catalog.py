@@ -79,9 +79,19 @@ def test_detect_language():
     assert [detect_language(t) for t in ("ICE L", "ok", "ㅁㄴㅇㄹ", "1", "americano")] == [None] * 5
 
 
-def test_menus_can_be_found_by_their_english_names(catalog):
+def test_menus_have_translated_names_and_descriptions(catalog):
+    """외국어 화면용 번역(data/curated/menu_i18n.json). 화면은 그 언어의 이름을 먼저 보여 주고 한글 이름을 작게 붙인다."""
+    taro = catalog.resolve("타로 밀크티")[0]
+    card = catalog.card(taro)
+    assert card["name"] == "타로 밀크티" and card["names"] == {"en": "Taro Milk Tea", "zh": "芋头奶茶", "ja": "タロミルクティー"}
+    assert set(catalog.detail(taro)["descriptions"]) == {"en", "zh", "ja"}
+    for menu in catalog.items:
+        assert set(catalog.names(menu)) == {"en", "zh", "ja"}, menu["name"]
+        described = {lang for lang, t in menu["i18n"].items() if t.get("description")}
+        assert described == ({"en", "zh", "ja"} if menu["description"] else set()), menu["name"]
+
+
+def test_menus_can_be_found_by_their_foreign_names(catalog):
     assert catalog.resolve("Black Milk Tea with Pearls")[0]["name"] == "블랙 밀크티 + 펄"
+    assert catalog.resolve("芋头奶茶")[0]["name"] == "타로 밀크티" and catalog.resolve("タロミルクティー")[0]["name"] == "타로 밀크티"
     assert [m["name"] for m in catalog.find_mentions("One Americano and a Taro Milk Tea, please")] == ["아메리카노", "타로 밀크티"]
-    card = catalog.card(catalog.resolve("타로 밀크티")[0])
-    assert card["name"] == "타로 밀크티" and card["name_en"] == "Taro Milk Tea"  # 화면은 외국어일 때 영문명을 먼저 보여 준다
-    assert all(m["name_en"] for m in catalog.items)

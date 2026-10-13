@@ -161,7 +161,7 @@ SCENARIOS = [
     ("애매한 요청: 반영할 수 없는 옵션", "안 되는 옵션 금지 (G4)", [
         ("망고 스무디 당도 30%로 하나 주세요", [
             ("당도 고정으로 올린다", lambda t, c: [(a["name"], a["sugar"]) for a in t.added()] == [("망고 스무디", None)]),
-            ("당도를 바꿀 수 없다고 밝힌다", lambda t, c: t.verified.get("unapplied") in ("model", "added")),
+            ("당도를 바꿀 수 없다고 밝힌다", lambda t, c: says(t, "고정|바꿀 수 없|변경할 수 없|반영하지 못")),
         ]),
     ]),
     ("가리키는 대상이 없을 때", "되묻기 (L11)", [
@@ -221,6 +221,24 @@ SCENARIOS = [
     ("직원 호출", "직원 부르기", [
         ("직원 좀 불러 주세요", [
             ("직원 화면에 호출이 뜬다", lambda t, c: len(t.staff.to_dict()["calls"]) == 1),
+        ]),
+    ]),
+    ("중국어 주문", "내 언어로 입력하기 (L9) · 화면과 같은 메뉴 이름", [
+        ("推荐一款不含咖啡因的饮料", [
+            ("화면 언어가 중국어로 바뀐다", lambda t, c: t.session.language == "zh"),
+            ("메뉴판과 같은 중국어 이름으로 추천한다", lambda t, c: remember_menus(t, c) and all(
+                t.catalog.names(t.catalog.resolve(m)[0])["zh"] in t.reply for m in t.menus)),
+            ("가격을 ₩ 로 쓴다", lambda t, c: "₩" in t.reply and amounts_ok(t, c)),
+        ]),
+        ("第一个要大杯冰的", [
+            ("첫째 메뉴를 올린다", lambda t, c: [a["name"] for a in t.added()] == c["menus"][:1]),
+            ("올린 메뉴도 중국어 이름으로 말한다", lambda t, c: t.catalog.names(t.catalog.resolve(c["menus"][0])[0])["zh"] in t.reply),
+        ]),
+    ]),
+    ("일본어 주문", "내 언어로 입력하기 (L9)", [
+        ("ブラックミルクティーのアイスLを1つください", [
+            ("화면 언어가 일본어로 바뀐다", lambda t, c: t.session.language == "ja"),
+            ("일본어 이름으로 말한 메뉴를 올린다", lambda t, c: [(a["name"], a["size"], a["temperature"]) for a in t.added()] == [("블랙 밀크티", "L", "ICE")]),
         ]),
     ]),
     ("Daniel 영어 주문", "내 언어로 입력하기 (L9)", [

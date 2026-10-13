@@ -1,0 +1,2447 @@
+{
+ "_note": "공식 사이트에 외국어 메뉴가 없어 모델로 번역한 값이다. 눈에 띄는 오역만 손으로 고쳤고 전체를 검수하지는 않았다(verified=false). 직접 고친 값은 scripts/translate_menu.py 를 다시 돌려도 유지된다.",
+ "verified": false,
+ "source": "scripts/translate_menu.py",
+ "menus": {
+  "초콜렛 밀크티": {
+   "en": {
+    "name": "Chocolate Milk Tea",
+    "description": "Chocolate-infused smooth milk milk tea (HOT / ICED)"
+   },
+   "zh": {
+    "name": "巧克力奶茶",
+    "description": "浓厚巧克力融入柔滑奶茶中，细细品味浓郁巧克力风味（冷热皆宜）"
+   },
+   "ja": {
+    "name": "チョコレートミルクティー",
+    "description": "なめらかなミルクに溶け込んだ濃厚なチョコレートを感じられるチョコレートミルクティー（HOT / ICED）"
+   }
+  },
+  "블랙 밀크티 + 펄": {
+   "en": {
+    "name": "Black Milk Tea with Pearls",
+    "description": "Signature black milk tea paired with chewy pearls"
+   },
+   "zh": {
+    "name": "红茶奶茶加珍珠",
+    "description": "贡茶招牌红茶奶茶与Q弹珍珠的完美组合"
+   },
+   "ja": {
+    "name": "ブラックミルクティー+パール",
+    "description": "ゴンチャの代表メニュー、ブラックミルクティーともちもちとしたパールのコンビネーション"
+   }
+  },
+  "타로 밀크티 + 펄": {
+   "en": {
+    "name": "Taro Milk Tea with Pearls",
+    "description": "Nutty taro milk tea with chewy pearls, a best seller"
+   },
+   "zh": {
+    "name": "芋头奶茶加珍珠",
+    "description": "香浓芋头奶茶搭配Q弹珍珠，贡茶热销款"
+   },
+   "ja": {
+    "name": "タロミルクティー+パール",
+    "description": "香ばしいタロミルクティーともちもちのパールが出会ったゴンチャのベストセラー"
+   }
+  },
+  "망고 요구르트 + 화이트펄": {
+   "en": {
+    "name": "Mango Yogurt with White Pearls",
+    "description": "Sweet mango pulp and yogurt with chewy white pearls juice"
+   },
+   "zh": {
+    "name": "芒果酸奶加白珍珠",
+    "description": "甜蜜芒果果肉和酸奶融合，辅以嚼劲十足的白珍珠果汁"
+   },
+   "ja": {
+    "name": "マンゴーヨーグルト+ホワイトパール",
+    "description": "甘いマンゴー果肉とヨーグルトにホワイトパールのコリコリ感が感じられるジュース"
+   }
+  },
+  "카페라떼": {
+   "en": {
+    "name": "Cafe Latte",
+    "description": "Rich and smooth Gong Cha coffee (HOT / ICED)"
+   },
+   "zh": {
+    "name": "拿铁",
+    "description": "贡茶特制浓郁顺滑新款咖啡（冷热皆宜）"
+   },
+   "ja": {
+    "name": "カフェラテ",
+    "description": "濃厚でなめらかなゴンチャの新しいコーヒー（HOT / ICED）"
+   }
+  },
+  "청포도 스무디": {
+   "en": {
+    "name": "Green Grape Smoothie",
+    "description": "Refreshing sweet green grape juice with aloe bits"
+   },
+   "zh": {
+    "name": "青葡萄冰沙",
+    "description": "清爽甜美青葡萄汁与丰富芦荟粒，趣味十足的青葡萄冰沙"
+   },
+   "ja": {
+    "name": "グリーングレープスムージー",
+    "description": "爽やかで甘い青葡萄果汁とアロエの小粒が楽しいグリーングレープスムージー"
+   }
+  },
+  "망고 스무디": {
+   "en": {
+    "name": "Mango Smoothie",
+    "description": "Concentrated sweet mango blended with milk (ONLY ICED)"
+   },
+   "zh": {
+    "name": "芒果冰沙",
+    "description": "甜美浓缩芒果与奶制品混合研磨而成的芒果冰沙（仅限冰饮）"
+   },
+   "ja": {
+    "name": "マンゴースムージー",
+    "description": "濃縮された甘いマンゴーとミルクを一緒に混ぜたマンゴースムージー（ONLY ICED）"
+   }
+  },
+  "망고 요구르트": {
+   "en": {
+    "name": "Mango Yogurt",
+    "description": "Combination of concentrated sweet mango particles and tangy yogurt"
+   },
+   "zh": {
+    "name": "芒果酸奶",
+    "description": "浓缩甜芒果颗粒与酸味酸奶的完美结合"
+   },
+   "ja": {
+    "name": "マンゴーヨーグルト",
+    "description": "濃縮された甘いマンゴーの粒と酸味のあるヨーグルトの組み合わせ、マンゴーヨーグルト"
+   }
+  },
+  "망고 주스": {
+   "en": {
+    "name": "Mango Juice",
+    "description": "Sweet mango juice with noticeable mango particles"
+   },
+   "zh": {
+    "name": "芒果果汁",
+    "description": "浓缩甜芒果颗粒带来的甘甜芒果果汁"
+   },
+   "ja": {
+    "name": "マンゴージュース",
+    "description": "濃縮された甘いマンゴーの粒が感じられる甘いマンゴージュース"
+   }
+  },
+  "청포도 자스민티": {
+   "en": {
+    "name": "Green Grape Jasmine Tea",
+    "description": "Refreshing sweet jasmine fruit tea with bitter jasmine and green grape"
+   },
+   "zh": {
+    "name": "青葡萄茉莉茶",
+    "description": "微苦茉莉茶加入清爽青葡萄，清新甜美的茉莉水果茶"
+   },
+   "ja": {
+    "name": "グリーングレープジャスミンティー",
+    "description": "ほろ苦いジャスミンティーにさわやかな青葡萄を入れた爽やかで甘いジャスミンフルーツティー"
+   }
+  },
+  "자몽 자스민티": {
+   "en": {
+    "name": "Grapefruit Jasmine Tea",
+    "description": "New harmony of sweet bittersweet grapefruit and rosemary in jasmine fruit tea"
+   },
+   "zh": {
+    "name": "西柚茉莉茶",
+    "description": "甜苦柚子与迷迭香融合，带来全新和谐的茉莉水果茶"
+   },
+   "ja": {
+    "name": "グレープフルーツジャスミンティー",
+    "description": "甘くてほろ苦いグレープフルーツとローズマリーが生み出す新しいハーモニーのジャスミンフルーツティー"
+   }
+  },
+  "얼그레이티": {
+   "en": {
+    "name": "Earl Grey Tea",
+    "description": "Fragrant bergamot Earl Grey tea (HOT / ICED)"
+   },
+   "zh": {
+    "name": "伯爵茶",
+    "description": "芳香佛手柑调味伯爵茶（冷热皆宜）"
+   },
+   "ja": {
+    "name": "アールグレイティー",
+    "description": "香り高いベルガモットの香りが加えられたアールグレイティー（HOT / ICED）"
+   }
+  },
+  "타로 밀크티": {
+   "en": {
+    "name": "Taro Milk Tea",
+    "description": "Nutty taro with milk combination (HOT / ICED)"
+   },
+   "zh": {
+    "name": "芋头奶茶",
+    "description": "香浓芋头与奶茶的完美搭配（冷热皆宜）"
+   },
+   "ja": {
+    "name": "タロミルクティー",
+    "description": "タロの香ばしさとミルクの組み合わせ（HOT / ICED）"
+   }
+  },
+  "블랙티": {
+   "en": {
+    "name": "Black Tea",
+    "description": "Representative black tea with rich aroma and sweet taste (HOT / ICED)"
+   },
+   "zh": {
+    "name": "红茶",
+    "description": "具有浓郁香味和甘甜口感的经典红茶（冷热皆宜）"
+   },
+   "ja": {
+    "name": "ブラックティー",
+    "description": "濃い香りと甘みを感じられる代表的な紅茶、ブラックティー（HOT / ICED）"
+   }
+  },
+  "우롱티": {
+   "en": {
+    "name": "Oolong Tea",
+    "description": "Nutty oolong tea with deep and heavy aroma (HOT / ICED)"
+   },
+   "zh": {
+    "name": "乌龙茶",
+    "description": "浓郁醇厚香气的香滑乌龙茶（冷热皆宜）"
+   },
+   "ja": {
+    "name": "ウーロンティー",
+    "description": "重厚で深い香りを持つ香ばしいウーロン茶（HOT / ICED）"
+   }
+  },
+  "자스민티": {
+   "en": {
+    "name": "Jasmine Tea",
+    "description": "Fresh and smooth jasmine tea with fragrant floral aroma"
+   },
+   "zh": {
+    "name": "茉莉茶",
+    "description": "芳香花香鲜嫩顺滑的茉莉茶"
+   },
+   "ja": {
+    "name": "ジャスミンティー",
+    "description": "香り高い花の香りを感じられるさわやかでなめらかなジャスミンティー"
+   }
+  },
+  "블랙 밀크티": {
+   "en": {
+    "name": "Black Milk Tea",
+    "description": "Black tea (Hongcha) and milk with rich aroma and taste (HOT / ICED)"
+   },
+   "zh": {
+    "name": "红茶奶茶",
+    "description": "浓郁红茶与奶制品完美融合（冷热皆宜）"
+   },
+   "ja": {
+    "name": "ブラックミルクティー",
+    "description": "濃い香りと味を感じられるブラックティー（紅茶）とミルクの出会い（HOT / ICED）"
+   }
+  },
+  "우롱 밀크티": {
+   "en": {
+    "name": "Oolong Milk Tea",
+    "description": "Oolong tea with deep aroma blended with milk (HOT / ICED)"
+   },
+   "zh": {
+    "name": "乌龙奶茶",
+    "description": "浓郁乌龙茶与奶制品融合的乌龙奶茶（冷热皆宜）"
+   },
+   "ja": {
+    "name": "ウーロンミルクティー",
+    "description": "重厚で深い香りのウーロン茶にミルクが加わったウーロンミルクティー（HOT / ICED）"
+   }
+  },
+  "자스민 밀크티": {
+   "en": {
+    "name": "Jasmine Milk Tea",
+    "description": "Smooth milk tea with fragrant floral jasmine tea"
+   },
+   "zh": {
+    "name": "茉莉奶茶",
+    "description": "香气浓郁的茉莉茶搭配顺滑奶茶"
+   },
+   "ja": {
+    "name": "ジャスミンミルクティー",
+    "description": "香り高い花の香りを感じられるジャスミンティーをなめらかに楽しむミルクティー"
+   }
+  },
+  "발아통밀 두부 과자": {
+   "en": {
+    "name": "Sprouted Wheat Tofu Snack",
+    "description": "Light and nutty snack made from sprouted whole wheat"
+   },
+   "zh": {
+    "name": "萌芽全麦豆腐糕",
+    "description": "采用自家发芽全麦制成，口味清淡香浓的小吃"
+   },
+   "ja": {
+    "name": "発芽全粒小麦豆腐スナック",
+    "description": "私たちの発芽全粒小麦で作り、あっさりとして香ばしいスナック"
+   }
+  },
+  "얼그레이 밀크티": {
+   "en": {
+    "name": "Earl Grey Milk Tea",
+    "description": "Milk tea combining bergamot Earl Grey tea and smooth milk (HOT / ICED)"
+   },
+   "zh": {
+    "name": "伯爵奶茶",
+    "description": "佛手柑香型伯爵红茶与奶制品柔和融合的奶茶（冷热皆宜）"
+   },
+   "ja": {
+    "name": "アールグレイミルクティー",
+    "description": "ベルガモットの香りのアールグレイティー（紅茶）とミルクがなめらかな調和を成すミルクティー（HOT / ICED）"
+   }
+  },
+  "제주 그린 스무디": {
+   "en": {
+    "name": "Jeju Green Tea Smoothie",
+    "description": "Jeju green tea powder and smooth milk foam smoothie"
+   },
+   "zh": {
+    "name": "济州绿茶冰沙",
+    "description": "绿茶粉与顺滑奶盖共同享用的济州绿茶冰沙"
+   },
+   "ja": {
+    "name": "済州グリーンティースムージー",
+    "description": "緑茶パウダーと柔らかいミルクフォームを一緒に楽しめる済州グリーンスムージー"
+   }
+  },
+  "바닐라 카페라떼": {
+   "en": {
+    "name": "Vanilla Cafe Latte",
+    "description": "Rich coffee with Madagascan vanilla beans for sweet, deep flavor"
+   },
+   "zh": {
+    "name": "香草拿铁",
+    "description": "浓郁咖啡配以马达加斯加香草荚，带来甜美浓厚风味的贡茶专属咖啡饮品"
+   },
+   "ja": {
+    "name": "バニラカフェラテ",
+    "description": "濃厚なコーヒーにマダガスカル産バニラビーンズが加わり甘く深い風味を感じられるゴンチャだけのコーヒードリンク"
+   }
+  },
+  "딸기 쥬얼리 밀크티": {
+   "en": {
+    "name": "Strawberry Jewelry Milk Tea",
+    "description": "Earl Grey milk tea with real strawberry juice and sweet-tart strawberry jewelry (Strawberry content UP!) (ONLY ICED)"
+   },
+   "zh": {
+    "name": "草莓宝石奶茶",
+    "description": "伯爵茶奶茶加入真实草莓果汁与酸甜草莓宝石（草莓含量提升）（仅冰饮）"
+   },
+   "ja": {
+    "name": "ストロベリージュエリーミルクティー",
+    "description": "アールグレイティーで作ったミルクティーにリアルストロベリー果汁が含まれた甘酸っぱいイチゴジュエリーを加えたドリンク（苺含有量UP！）（ONLY ICED）"
+   }
+  },
+  "딸기 쥬얼리 요구르트 크러쉬": {
+   "en": {
+    "name": "Strawberry Jewelry Yogurt Crush",
+    "description": "Yogurt crush with Earl Grey tea and sweet-tart real strawberry jewelry (ONLY ICED)"
+   },
+   "zh": {
+    "name": "草莓宝石酸奶碎冰沙",
+    "description": "伯爵茶制酸奶碎冰沙，加入真实草莓果汁与酸甜草莓宝石（仅冰饮）"
+   },
+   "ja": {
+    "name": "ストロベリージュエリーヨーグルトクラッシュ",
+    "description": "アールグレイティーを入れて作ったヨーグルトクラッシュにリアルストロベリー果汁が含まれた甘酸っぱいイチゴジュエリーを加えたドリンク（ONLY ICED）"
+   }
+  },
+  "브라운슈가 쥬얼리 밀크티": {
+   "en": {
+    "name": "Brown Sugar Jewelry Milk Tea",
+    "description": "Smooth, sweet brown sugar jewelry with fresh milk in milk tea"
+   },
+   "zh": {
+    "name": "黑糖宝石奶茶",
+    "description": "柔滑甜美的黑糖宝石与新鲜牛奶口味奶茶"
+   },
+   "ja": {
+    "name": "黒糖ジュエリーミルクティー",
+    "description": "なめらかで甘い黒糖ジュエリーと新鮮な牛乳の味が感じられるミルクティー"
+   }
+  },
+  "딸기 쿠키 스무디": {
+   "en": {
+    "name": "Strawberry Cookie Smoothie",
+    "description": "Earl Grey milk smoothie with sweet strawberries and crispy cookies"
+   },
+   "zh": {
+    "name": "草莓饼干冰沙",
+    "description": "伯爵茶奶茶冰沙加甜草莓与酥脆饼干"
+   },
+   "ja": {
+    "name": "ストロベリークッキースムージー",
+    "description": "アールグレイティーで作ったミルクスムージーに甘い苺とサクサククッキーを加えたスムージー"
+   }
+  },
+  "티마스터 머그 (레드 시그니처)": {
+   "en": {
+    "name": "Tea Master Mug (Red Signature)",
+    "description": "Mug with pearl-like gloss, soft texture, and comfortable grip ideal for tea"
+   },
+   "zh": {
+    "name": "茶师杯（红招牌）",
+    "description": "珍珠般柔和光泽，手感细腻且握持舒适，极适合享受茶饮的杯子"
+   },
+   "ja": {
+    "name": "ティーマスターマグ（レッドシグネチャー）",
+    "description": "真珠のような上品な光沢となめらかな手触り、手に馴染みやすいデザインでお茶（茶）を楽しむのに最適なマグです。"
+   }
+  },
+  "티마스터 머그 (화이트 시그니처)": {
+   "en": {
+    "name": "Tea Master Mug (White Signature)",
+    "description": "Mug with pearl-like gloss, soft texture, and comfortable grip ideal for tea"
+   },
+   "zh": {
+    "name": "茶师杯（白招牌）",
+    "description": "珍珠般柔和光泽，手感细腻且握持舒适，极适合享受茶饮的杯子"
+   },
+   "ja": {
+    "name": "ティーマスターマグ（ホワイトシグネチャー）",
+    "description": "真珠のような上品な光沢となめらかな手触り、手に馴染みやすいデザインでお茶（茶）を楽しむのに最適なマグです。"
+   }
+  },
+  "공차 허니 자몽 블랙티": {
+   "en": {
+    "name": "Gong Cha Honey Grapefruit Black Tea",
+    "description": "Premium blend stick type liquid tea for convenient strong black tea anytime, anywhere"
+   },
+   "zh": {
+    "name": "贡茶蜂蜜西柚红茶",
+    "description": "贡茶专属顶级混合配方，便捷冲泡，浓郁水溶性冲泡型果茶"
+   },
+   "ja": {
+    "name": "ゴンチャハニーグレープフルーツブラックティー",
+    "description": "ゴンチャだけのプレミアムブレンドレシピをいつでもどこでも簡単に水で濃く楽しめるスティックタイプの液状茶"
+   }
+  },
+  "공차 애플 히비스커스티": {
+   "en": {
+    "name": "Gong Cha Apple Hibiscus Tea",
+    "description": "Premium blend stick-type liquid tea to enjoy a rich taste easily anywhere by adding water."
+   },
+   "zh": {
+    "name": "贡茶苹果洛神花茶",
+    "description": "公茶专属的高级混合配方，方便随时随地用水浓郁享受的棒状液体茶"
+   },
+   "ja": {
+    "name": "ゴンチャ アップル ハイビスカスティー",
+    "description": "ゴンチャだけのプレミアムブレンドレシピをいつでも簡単に濃く楽しめるスティックタイプの液体ティー"
+   }
+  },
+  "쿠키 앤 크림 스틱 치즈케익": {
+   "en": {
+    "name": "Cookie And Cream Stick Cheesecake",
+    "description": "Premium stick cheesecake combining Kiri premium cream cheese with cookie and cream for a rich and sweet taste."
+   },
+   "zh": {
+    "name": "曲奇奶油芝士蛋糕棒",
+    "description": "纯正味道与浓郁口感的Kiri顶级奶油芝士与曲奇奶油完美结合，豪华甜美的棒形芝士蛋糕"
+   },
+   "ja": {
+    "name": "クッキー＆クリーム スティックチーズケーキ",
+    "description": "純粋な味と深い風味のクリリプレミアムクリームチーズとクッキー＆クリームが出会い、高級で甘く楽しめるスティック形態のプレミアムチーズケーキ"
+   }
+  },
+  "스틱 치즈케익": {
+   "en": {
+    "name": "Stick Cheesecake",
+    "description": "Premium stick cheesecake made with Kiri premium cream cheese for a soft and rich flavor."
+   },
+   "zh": {
+    "name": "芝士蛋糕棒",
+    "description": "采用纯正味道与浓郁口感的Kiri顶级奶油芝士，享受柔滑浓郁味道的棒形芝士蛋糕"
+   },
+   "ja": {
+    "name": "スティックチーズケーキ",
+    "description": "純粋な味と深い風味のクリリプレミアムクリームチーズを使った柔らかく深い味わいのスティック形態のプレミアムチーズケーキ"
+   }
+  },
+  "그릴드 핫치킨 브리또": {
+   "en": {
+    "name": "Grilled Hot Chicken Burrito",
+    "description": "A filling burrito with grilled hot chicken, garlic rice, and plenty of mozzarella cheese with a spicy kick."
+   },
+   "zh": {
+    "name": "烤辣鸡肉玉米卷",
+    "description": "玉米饼内装满烤辣鸡肉、大蒜饭和莫扎里拉奶酪，辛辣诱人的代餐玉米卷"
+   },
+   "ja": {
+    "name": "グリルドホットチキンブリトー",
+    "description": "トルティーヤに焼いたホットチキン、ガーリックライス、モッツァレラチーズがたっぷり入った辛さが魅力的な食事代用ブリトー"
+   }
+  },
+  "패션 프룻 히비스커스": {
+   "en": {
+    "name": "Passion Fruit Hibiscus",
+    "description": "Caffeine-free tea highlighting the sweet and sour harmony of passion fruit and hibiscus."
+   },
+   "zh": {
+    "name": "百香果洛神花茶",
+    "description": "酸甜百香果与洛神花的完美组合，无咖啡因饮品"
+   },
+   "ja": {
+    "name": "パッションフルーツ ハイビスカス",
+    "description": "酸味と甘味のあるパッションフルーツとハイビスカスの調和が際立つカフェインフリーのティー"
+   }
+  },
+  "제주 그린 밀크티": {
+   "en": {
+    "name": "Jeju Green Milk Tea",
+    "description": "Milk tea blending Jeju green tea with a bittersweet and sweet flavor."
+   },
+   "zh": {
+    "name": "济州绿奶茶",
+    "description": "采用济州绿茶制作，苦涩与甜味交融的奶茶"
+   },
+   "ja": {
+    "name": "済州グリーン ミルクティー",
+    "description": "済州緑茶を使用し、渋みと甘味が調和したミルクティー"
+   }
+  },
+  "피스타치오 밀크티": {
+   "en": {
+    "name": "Pistachio Milk Tea",
+    "description": "Sweet and nutty pistachio milk tea with green tea."
+   },
+   "zh": {
+    "name": "开心果奶茶",
+    "description": "添加绿茶的甜美浓郁开心果奶茶"
+   },
+   "ja": {
+    "name": "ピスタチオ ミルクティー",
+    "description": "グリーンティーを加えた甘く香ばしいピスタチオミルクティー"
+   }
+  },
+  "초콜렛 쿠키 & 크림 스무디": {
+   "en": {
+    "name": "Chocolate Cookie And Cream Smoothie",
+    "description": "Rich chocolate smoothie topped with crunchy cookies and milk foam."
+   },
+   "zh": {
+    "name": "巧克力曲奇奶盖冰沙",
+    "description": "浓郁巧克力冰沙搭配酥脆曲奇和奶盖"
+   },
+   "ja": {
+    "name": "チョコレート クッキー＆クリーム スムージー",
+    "description": "濃厚なチョコスムージーにサクサクのクッキーとミルクフォームが加わったスムージー"
+   }
+  },
+  "자몽 요구르트": {
+   "en": {
+    "name": "Grapefruit Yogurt",
+    "description": "Combination of sweet and bittersweet grapefruit with tangy yogurt."
+   },
+   "zh": {
+    "name": "葡萄柚酸奶",
+    "description": "甜美微苦的葡萄柚与酸奶的组合"
+   },
+   "ja": {
+    "name": "グレープフルーツ ヨーグルト",
+    "description": "甘く少し苦いグレープフルーツと酸味のあるヨーグルトの組み合わせ"
+   }
+  },
+  "공차슈페너": {
+   "en": {
+    "name": "Gong Cha Einspanner",
+    "description": "A special menu featuring Gong Cha's blended Americano with fragrant Earl Grey tea topped with sweet and salty milk foam."
+   },
+   "zh": {
+    "name": "贡茶埃因斯潘纳",
+    "description": "芳香伯爵茶加入贡茶专属混合美式咖啡，上面覆盖甜咸奶盖的特别饮品"
+   },
+   "ja": {
+    "name": "ゴンチャ シュペナー",
+    "description": "香り高いアールグレイティーを加えたゴンチャ独自のブレンドアメリカーノに甘くしょっぱいミルクフォームをのせたスペシャルメニュー"
+   }
+  },
+  "연유 크림 카스테라": {
+   "en": {
+    "name": "Condensed Milk Cream Castella"
+   },
+   "zh": {
+    "name": "炼乳奶油卡士达",
+    "description": null
+   },
+   "ja": {
+    "name": "練乳クリームカステラ",
+    "description": null
+   }
+  },
+  "어니언 크림 치즈 베이글 샌드위치": {
+   "en": {
+    "name": "Onion Cream Cheese Bagel Sandwich",
+    "description": "Bagel sandwich with soft onion cream cheese, dried cranberries, almond slices, and onion flakes."
+   },
+   "zh": {
+    "name": "洋葱奶油芝士百吉饼三明治",
+    "description": "柔软洋葱奶油芝士，加干蔓越莓、杏仁片和洋葱碎的百吉饼三明治"
+   },
+   "ja": {
+    "name": "オニオンクリームチーズ ベーグルサンド",
+    "description": "柔らかいオニオンクリームチーズにドライクランベリー、アーモンドスライス、オニオンフレークを加えたベーグルサンドイッチ"
+   }
+  },
+  "바질 토마토 크림치즈 베이글 샌드위치": {
+   "en": {
+    "name": "Basil Tomato Cream Cheese Bagel Sandwich",
+    "description": "Bagel sandwich with sun-dried tomato cream cheese and fragrant basil pesto."
+   },
+   "zh": {
+    "name": "罗勒番茄奶油芝士百吉饼三明治",
+    "description": "风味日晒番茄奶油芝士加香浓罗勒酱的百吉饼三明治"
+   },
+   "ja": {
+    "name": "バジルトマトクリームチーズ ベーグルサンド",
+    "description": "サンドライトマトクリームチーズに香り高いバジルペストを加えたベーグルサンドイッチ"
+   }
+  },
+  "초코멜로 스무디": {
+   "en": {
+    "name": "Choco Mallow Smoothie",
+    "description": "Smoothie with rich chocolate flavor."
+   },
+   "zh": {
+    "name": "巧克力棉花糖冰沙",
+    "description": "浓郁风味的巧克力冰沙"
+   },
+   "ja": {
+    "name": "チョコメロースムージー",
+    "description": "深い風味のチョコレートスムージー"
+   }
+  },
+  "우롱티 + 코코넛 + 밀크폼": {
+   "en": {
+    "name": "Oolong Tea with Coconut Jelly and Milk Foam",
+    "description": "Original tea with deep and savory oolong, coconut jelly, and sweet and salty milk foam for smooth enjoyment with varied textures."
+   },
+   "zh": {
+    "name": "乌龙茶+椰果+奶盖",
+    "description": "浓郁香醇的乌龙茶配椰果与甜咸奶盖，搭配多层次口感柔滑享用的原味茶"
+   },
+   "ja": {
+    "name": "ウーロンティー + ナタデココ + ミルクフォーム",
+    "description": "深く香ばしいウーロン茶にナタデココと甘じょっぱいミルクフォームをのせ、さまざまな食感と共に滑らかに楽しめるオリジナルティー"
+   }
+  },
+  "레몬 요구르트 스무디": {
+   "en": {
+    "name": "Lemon Yogurt Smoothie",
+    "description": "Seasonal limited drink combining refreshing lemon base with sweet yogurt for a cool taste."
+   },
+   "zh": {
+    "name": "柠檬酸奶冰沙",
+    "description": "清爽柠檬基底配甜美酸奶，冰爽享受的季节限定饮品"
+   },
+   "ja": {
+    "name": "レモン ヨーグルト スムージー",
+    "description": "さわやかなレモンベースに甘いヨーグルトが調和し、涼しく楽しめるシーズン限定ドリンク"
+   }
+  },
+  "타로 스무디": {
+   "en": {
+    "name": "Taro Smoothie",
+    "description": "Seasonal limited drink rich and sweet with plenty of nutty taro."
+   },
+   "zh": {
+    "name": "芋头冰沙",
+    "description": "满满香浓芋头，浓郁甜美的季节限定饮品"
+   },
+   "ja": {
+    "name": "タロスムージー",
+    "description": "香ばしいタロがたっぷり入り、濃厚で甘く楽しめるシーズン限定ドリンク"
+   }
+  },
+  "미니펄 딸기 크러쉬": {
+   "en": {
+    "name": "Mini Pearls Strawberry Crush",
+    "description": "Seasonal limited drink with fresh coconut crush, tangy strawberry slices and syrup, and chewy mini pearls for a special treat."
+   },
+   "zh": {
+    "name": "小珍珠草莓碎冰沙",
+    "description": "新鲜椰果碎冰搭配酸甜草莓片和草莓糖浆，加入Q弹小珍珠特别享用的季节限定饮品"
+   },
+   "ja": {
+    "name": "ミニパール ストロベリークラッシュ",
+    "description": "新鮮なナタデココクラッシュにさわやかなイチゴスライスとイチゴシロップ、もちもちのミニパールを加えた特別なシーズン限定ドリンク"
+   }
+  },
+  "미니펄 망고 크러쉬": {
+   "en": {
+    "name": "Mini Pearls Mango Crush",
+    "description": "Seasonal limited drink with fresh coconut crush, sweet apple mango, and chewy mini pearls for a special treat."
+   },
+   "zh": {
+    "name": "小珍珠芒果碎冰沙",
+    "description": "新鲜椰果碎冰配甜蜜苹果芒果和Q弹小珍珠，特别享用的季节限定饮品"
+   },
+   "ja": {
+    "name": "ミニパール マンゴークラッシュ",
+    "description": "新鮮なナタデココクラッシュに甘いアップルマンゴーともちもちのミニパールを加えた特別なシーズン限定ドリンク"
+   }
+  },
+  "미니펄 딸기 밀크티": {
+   "en": {
+    "name": "Mini Pearls Strawberry Milk Tea",
+    "description": "Seasonal limited drink blending fresh coconut milk and fragrant Earl Grey tea, topped with tangy strawberry slices, chewy coconut jelly, and chewy mini pearls."
+   },
+   "zh": {
+    "name": "小珍珠草莓奶茶",
+    "description": "新鲜椰果奶混合芳香伯爵茶，加入酸甜草莓片、Q弹椰果和Q弹小珍珠，丰盛享用的季节限定饮品"
+   },
+   "ja": {
+    "name": "ミニパール ストロベリーミルクティー",
+    "description": "新鮮なナタデココミルクに香り高いアールグレイティーをブレンドし、さわやかなイチゴスライスともちもちのナタデココ、もちもちのミニパールも加えて豊かに楽しめるシーズン限定ドリンク"
+   }
+  },
+  "미니펄 망고 밀크": {
+   "en": {
+    "name": "Mini Pearls Mango Milk",
+    "description": "Seasonal limited drink with coconut base, sweet apple mango, chewy coconut jelly, and chewy mini pearls."
+   },
+   "zh": {
+    "name": "小珍珠芒果牛奶",
+    "description": "椰果基底搭配甜蜜苹果芒果、Q弹椰果及Q弹小珍珠，丰盛享用的季节限定饮品"
+   },
+   "ja": {
+    "name": "ミニパール マンゴーミルク",
+    "description": "ナタデココベースに甘いアップルマンゴーともちもちのナタデココ、もちもちのミニパールも加えて豊かに楽しめるシーズン限定ドリンク"
+   }
+  },
+  "오리지널 펄볶이": {
+   "en": {
+    "name": "Original Pearl-bokki",
+    "description": "Sweet and spicy gochujang tteokbokki flavor pearl-bokki with large tapioca pearls and chewy bunmoja pearls."
+   },
+   "zh": {
+    "name": "原味珍珠辣炒年糕",
+    "description": "大号木薯珍珠与Q弹粉丸珍珠满满，甜辣韩式辣椒酱炒年糕风味的珍珠炒饮"
+   },
+   "ja": {
+    "name": "オリジナル パールボッキ",
+    "description": "大粒タピオカパールともちもちの分母ザパールがたっぷり入った甘辛いコチュジャントッポッキ味のパールポッキ"
+   }
+  },
+  "레몬 요구르트": {
+   "en": {
+    "name": "Lemon Yogurt",
+    "description": "Combination of refreshing lemon base and sweet and sour yogurt."
+   },
+   "zh": {
+    "name": "柠檬酸奶",
+    "description": "清爽柠檬基底配酸甜酸奶的组合"
+   },
+   "ja": {
+    "name": "レモン ヨーグルト",
+    "description": "さわやかなレモンベースに甘酸っぱいヨーグルトの組み合わせ"
+   }
+  },
+  "레몬 자스민티": {
+   "en": {
+    "name": "Lemon Jasmine Tea",
+    "description": "Jasmine fruit tea with refreshing lemon base and rosemary creating a new harmony."
+   },
+   "zh": {
+    "name": "柠檬茉莉茶",
+    "description": "清爽柠檬基底与迷迭香制造的新奇和谐茉莉水果茶"
+   },
+   "ja": {
+    "name": "レモン ジャスミンティー",
+    "description": "さわやかなレモンベースとローズマリーがつくる新しいハーモニーのジャスミンフルーツティー"
+   }
+  },
+  "브라운슈가 쥬얼리 치즈폼 스무디": {
+   "en": {
+    "name": "Brown Sugar Jewelry Cheese Foam Smoothie",
+    "description": "Smoothie topped with soft and sweet brown sugar jewelry and sweet and salty cheese foam."
+   },
+   "zh": {
+    "name": "黑糖宝石珍珠芝士奶盖冰沙",
+    "description": "柔滑甜美的黑糖宝石珍珠搭配甜咸芝士奶盖的冰沙"
+   },
+   "ja": {
+    "name": "黒糖ジュエリー チーズフォーム スムージー",
+    "description": "柔らかく甘い黒糖ジュエリーに甘じょっぱいチーズフォームを加えたスムージー"
+   }
+  },
+  "밀크 쿠앤크 스무디": {
+   "en": {
+    "name": "Milk Cookies And Cream Smoothie",
+    "description": "Milk smoothie filled with sweet and crunchy cookies."
+   },
+   "zh": {
+    "name": "牛奶曲奇冰沙",
+    "description": "甜美酥脆曲奇满满的牛奶冰沙"
+   },
+   "ja": {
+    "name": "ミルク クッキー＆クリーム スムージー",
+    "description": "甘くてサクサクなクッキーがたっぷり入ったミルクスムージー"
+   }
+  },
+  "카페 모카": {
+   "en": {
+    "name": "Cafe Mocha",
+    "description": "Gong Cha's coffee drink with rich coffee, Gong Cha chocolate, topped with sweet and salty milk foam."
+   },
+   "zh": {
+    "name": "咖啡摩卡",
+    "description": "浓郁咖啡加入贡茶巧克力，搭配甜咸奶盖的贡茶独家咖啡饮品"
+   },
+   "ja": {
+    "name": "カフェモカ",
+    "description": "濃厚なコーヒーにゴンチャのチョコレートを加え、甘じょっぱいミルクフォームと一緒に楽しむゴンチャだけのコーヒードリンク"
+   }
+  },
+  "얼그레이 아메리카노": {
+   "en": {
+    "name": "Earl Grey Americano",
+    "description": "Special coffee menu blending Gong Cha signature beans and fragrant Earl Grey tea."
+   },
+   "zh": {
+    "name": "伯爵美式咖啡",
+    "description": "贡茶招牌混合咖啡豆与芬芳伯爵茶完美融合的特别咖啡"
+   },
+   "ja": {
+    "name": "アールグレイ アメリカーノ",
+    "description": "ゴンチャシグネチャーブレンド豆と香り高いアールグレイティーの調和が良いスペシャルコーヒーメニュー"
+   }
+  },
+  "초코칩 청크 쿠키": {
+   "en": {
+    "name": "Choco Chip Chunk Cookie",
+    "description": "Cookie loaded with sweet chocolate chips."
+   },
+   "zh": {
+    "name": "巧克力碎片曲奇",
+    "description": "满满甜美巧克力碎片的曲奇"
+   },
+   "ja": {
+    "name": "チョコチップチャンククッキー",
+    "description": "甘いチョコチップがたっぷり入ったクッキー"
+   }
+  },
+  "마카다미아 쿠키": {
+   "en": {
+    "name": "Macadamia Cookie",
+    "description": "Cookie loaded with nutty macadamia nuts."
+   },
+   "zh": {
+    "name": "夏威夷果曲奇",
+    "description": "满满香浓夏威夷果的曲奇"
+   },
+   "ja": {
+    "name": "マカダミアクッキー",
+    "description": "香ばしいマカダミアがたっぷり入ったクッキー"
+   }
+  },
+  "리얼 브라우니 쿠키": {
+   "en": {
+    "name": "Real Brownie Cookie",
+    "description": "Chewy and rich brownie cookie."
+   },
+   "zh": {
+    "name": "真实布朗尼曲奇",
+    "description": "有嚼劲且浓郁的布朗尼曲奇"
+   },
+   "ja": {
+    "name": "リアルブラウニークッキー",
+    "description": "もちもちで濃厚なブラウニークッキー"
+   }
+  },
+  "공차 티 캡슐 8 플레이버": {
+   "en": {
+    "name": "Gong Cha Tea Capsules 8 Flavor",
+    "description": "Eight different flavors to enjoy according to your mood (1. Peppermint 2. Honey Grapefruit Black Tea 3. Signature Black Tea 4. Chamomile 5. Peach Oolong 6. Yuzu Blossom 7. Rooibos 8. Bangshow Earl Grey) / Compatible with Nespresso Original capsules"
+   },
+   "zh": {
+    "name": "贡茶茶胶囊8味",
+    "description": "根据心情享受多样的8种口味 (1.薄荷 2.蜂蜜葡萄柚红茶 3.招牌红茶 4.洋甘菊 5.蜜桃乌龙 6.柚子花 7.南非国宝 8.热红酒伯爵) / 兼容雀巢Nespresso原装胶囊"
+   },
+   "ja": {
+    "name": "ゴンチャティーカプセル 8フレーバー",
+    "description": "気分に合わせて楽しむ８種類のフレーバー（1.ペパーミント 2.ハニーグレープフルーツブラックティー 3.シグネチャーブラックティー 4.カモミール 5.ピーチウーロン 6.ユジャブロッサム 7.ルイボス 8.ヴァンショーアールグレイ）／ネスプレッソオリジナル互換カプセル"
+   }
+  },
+  "공차 데일리 티 캡슐 (시그니처 블랙티)": {
+   "en": {
+    "name": "Gong Cha Daily Tea Capsule Signature Black Tea",
+    "description": "Popular flavor in Korea / Compatible with Nespresso Original capsules"
+   },
+   "zh": {
+    "name": "贡茶每日茶胶囊(招牌红茶)",
+    "description": "韩国人喜爱的口味 / 兼容雀巢Nespresso原装胶囊"
+   },
+   "ja": {
+    "name": "ゴンチャデイリーティーカプセル シグネチャーブラックティー",
+    "description": "韓国の人々に人気のフレーバー／ネスプレッソオリジナル互換カプセル"
+   }
+  },
+  "공차 데일리 티 캡슐 (루이보스)": {
+   "en": {
+    "name": "Gong Cha Daily Tea Capsule Rooibos",
+    "description": "Popular flavor in Korea / Compatible with Nespresso Original capsules"
+   },
+   "zh": {
+    "name": "贡茶每日茶胶囊(南非国宝)",
+    "description": "韩国人喜爱的口味 / 兼容雀巢Nespresso原装胶囊"
+   },
+   "ja": {
+    "name": "ゴンチャデイリーティーカプセル ルイボス",
+    "description": "韓国の人々に人気のフレーバー／ネスプレッソオリジナル互換カプセル"
+   }
+  },
+  "공차 데일리 티 캡슐 (유자블라썸)": {
+   "en": {
+    "name": "Gong Cha Daily Tea Capsule Yuzu Blossom",
+    "description": "Popular flavor in Korea / Compatible with Nespresso Original capsules"
+   },
+   "zh": {
+    "name": "贡茶每日茶胶囊(柚子花)",
+    "description": "韩国人喜爱的口味 / 兼容雀巢Nespresso原装胶囊"
+   },
+   "ja": {
+    "name": "ゴンチャデイリーティーカプセル ユズブロッサム",
+    "description": "韓国の人々に人気のフレーバー／ネスプレッソオリジナル互換カプセル"
+   }
+  },
+  "딸기 쿠키 스무디 + 펄": {
+   "en": {
+    "name": "Strawberry Cookie Smoothie with Pearls",
+    "description": "Milk smoothie made with Earl Grey tea blended with sweet strawberries and crispy cookies, topped with chewy pearls"
+   },
+   "zh": {
+    "name": "草莓曲奇冰沙＋珍珠",
+    "description": "用伯爵茶制成的奶味冰沙，加入甜蜜草莓和酥脆曲奇，再加上有嚼劲的珍珠"
+   },
+   "ja": {
+    "name": "ストロベリークッキースムージー+パール",
+    "description": "アールグレイティーで作ったミルクスムージーに甘いイチゴとサクサククッキーを加えたスムージーともちもちのパール"
+   }
+  },
+  "아메리카노": {
+   "en": {
+    "name": "Americano",
+    "description": "A blend of five representative beans including Brazil and Colombia to achieve the optimal taste"
+   },
+   "zh": {
+    "name": "美式咖啡",
+    "description": "混合巴西、哥伦比亚等代表性五款咖啡豆，呈现最佳风味"
+   },
+   "ja": {
+    "name": "アメリカーノ",
+    "description": "ブラジル、コロンビアなど代表的なコーヒー豆5種をブレンドし、見つけた最適な味わい"
+   }
+  },
+  "카페 스무디 with 블랙티 (공차치노)": {
+   "en": {
+    "name": "Cafe Smoothie with Black Tea (Gong Cha-ccino)",
+    "description": "Smooth coffee blended softly with black tea and brown sugar aroma, a unique Gong Cha style menu"
+   },
+   "zh": {
+    "name": "黑茶咖啡冰沙(贡茶奇诺)",
+    "description": "柔滑咖啡，融合淡雅红茶和黑糖香味，公茶独创风味"
+   },
+   "ja": {
+    "name": "カフェスムージー+ブラックティー（ゴンチャチーノ）",
+    "description": "やわらかいコーヒーにほんのりブラックティーと黒糖の香りが溶け合い、ゴンチャだけのスタイルで誕生したメニュー"
+   }
+  },
+  "초코바른 피스타치오 스무디": {
+   "en": {
+    "name": "Choco-Coated Pistachio Smoothie",
+    "description": "Sweet and nutty pistachio smoothie with jasmine tea, topped with crispy choco-coating and cookies for added texture"
+   },
+   "zh": {
+    "name": "巧克力涂层开心果冰沙",
+    "description": "加入茉莉茶的甜香开心果冰沙，配以酥脆巧克力涂层和曲奇增加口感"
+   },
+   "ja": {
+    "name": "チョココーティングピスタチオスムージー",
+    "description": "ジャスミンティーを入れた甘く香ばしいピスタチオスムージーにサクサク崩れるチョココーティングとクッキーで食感を加えたスムージー"
+   }
+  },
+  "초코바른 제주 그린 스무디": {
+   "en": {
+    "name": "Choco-Coated Jeju Green Tea Smoothie",
+    "description": "Smoothie made with Jeju green tea, cookie crumbs, sweet and savory cheese foam, and chocolate-coated cup for visual appeal"
+   },
+   "zh": {
+    "name": "巧克力涂层济州绿冰沙",
+    "description": "用济州绿茶制作冰沙，配曲奇碎、甜咸芝士奶盖和杯边巧克力装饰"
+   },
+   "ja": {
+    "name": "チョココーティング済州グリーンスムージー",
+    "description": "済州産緑茶を使ったスムージーにクッキーブレイク、甘じょっぱいチーズフォーム、カップのまわりにチョコレートで見た目を彩ったスムージー"
+   }
+  },
+  "초코바른 초코 스무디": {
+   "en": {
+    "name": "Choco-Coated Choco Smoothie",
+    "description": "Sweet choco cookie smoothie topped with sweet and savory cheese foam and chocolate-coated cup for added visual appeal"
+   },
+   "zh": {
+    "name": "巧克力涂层巧克力冰沙",
+    "description": "甜巧克力曲奇冰沙，配甜咸芝士奶盖和杯缘巧克力装饰"
+   },
+   "ja": {
+    "name": "チョココーティングチョコスムージー",
+    "description": "甘いチョコクッキースムージーに甘じょっぱいチーズフォーム、カップのまわりにチョコレートで見た目を彩ったスムージー"
+   }
+  },
+  "초코 쿠키 슈스틱": {
+   "en": {
+    "name": "Choco Cookie Chou Stick",
+    "description": "Iced dessert with a nutty cookie chou filled generously with chocolate cream"
+   },
+   "zh": {
+    "name": "巧克力曲奇泡芙棒",
+    "description": "酥香曲奇泡芙内填满巧克力奶油，冰爽享用的甜点"
+   },
+   "ja": {
+    "name": "チョコクッキーシューズティック",
+    "description": "香ばしいクッキーシューの中にチョコクリームがたっぷり入ってひんやり楽しめるアイスデザート"
+   }
+  },
+  "요구르트 쿠키 슈스틱": {
+   "en": {
+    "name": "Yogurt Cookie Chou Stick",
+    "description": "Iced dessert with a nutty cookie chou filled generously with yogurt cream"
+   },
+   "zh": {
+    "name": "酸奶曲奇泡芙棒",
+    "description": "酥香曲奇泡芙内填满酸奶奶油，冰爽享用的甜点"
+   },
+   "ja": {
+    "name": "ヨーグルトクッキーシューズティック",
+    "description": "香ばしいクッキーシューの中にヨーグルトクリームがたっぷり入ってひんやり楽しめるアイスデザート"
+   }
+  },
+  "허니 자몽 블랙티": {
+   "en": {
+    "name": "Honey Grapefruit Black Tea",
+    "description": "Fruity blend of sweet and slightly bitter honey grapefruit combined with deep and rich black tea"
+   },
+   "zh": {
+    "name": "蜂蜜葡萄柚红茶",
+    "description": "甜中带微苦蜂蜜葡萄柚，搭配浓郁红茶的水果茶"
+   },
+   "ja": {
+    "name": "ハニーグレープフルーツブラックティー",
+    "description": "甘くてほろ苦いハニーグレープフルーツに深く濃いブラックティーを加えたフルーティー"
+   }
+  },
+  "제주 그린 밀크티 + 펄": {
+   "en": {
+    "name": "Jeju Green Milk Tea with Pearls",
+    "description": "Green milk tea made with Jeju green tea featuring a slightly bitter taste and rich milk flavor, combined with chewy pearls"
+   },
+   "zh": {
+    "name": "济州绿奶茶＋珍珠",
+    "description": "使用济州产绿茶，略带苦味与牛奶的浓郁风味搭配有嚼劲珍珠"
+   },
+   "ja": {
+    "name": "済州グリーンミルクティー+パール",
+    "description": "済州産緑茶を使用し、ほろ苦い味とミルクの豊かな味が際立つグリーンミルクティーともちもちパールのコンビネーション"
+   }
+  },
+  "초콜렛 밀크티 + 치즈폼": {
+   "en": {
+    "name": "Chocolate Milk Tea with Cheese Foam",
+    "description": "Chocolate milk tea with rich melted chocolate blended into smooth milk, topped with cheese foam"
+   },
+   "zh": {
+    "name": "巧克力奶茶＋芝士奶盖",
+    "description": "浓郁巧克力融入柔滑奶茶，配芝士奶盖"
+   },
+   "ja": {
+    "name": "チョコレートミルクティー+チーズフォーム",
+    "description": "なめらかなミルクに溶け込んだ濃厚なチョコレートを感じられるチョコレートミルクティーとチーズフォーム"
+   }
+  },
+  "미니펄 망고 밀크 + 리얼 망고": {
+   "en": {
+    "name": "Mini Pearls Mango Milk with Real Mango",
+    "description": "Mini pearls mango milk enriched with twice the amount of real mango for a richer flavor"
+   },
+   "zh": {
+    "name": "小珍珠芒果奶＋真芒果",
+    "description": "芒果用量加倍，更丰富的小珍珠芒果奶"
+   },
+   "ja": {
+    "name": "ミニパールマンゴーミルク+リアルマンゴー",
+    "description": "マンゴーを2倍たっぷり入れ、より豊かになったミニパールマンゴーミルク"
+   }
+  },
+  "자스민 망고티": {
+   "en": {
+    "name": "Jasmine Mango Tea",
+    "description": "Sweet and clean blended tea combining jasmine tea, mango powder, and pearl sugar, leaving a pleasant sweet taste"
+   },
+   "zh": {
+    "name": "茉莉芒果茶",
+    "description": "茉莉茶与芒果粉及珍珠糖结合，甜香清爽，口感愉悦"
+   },
+   "ja": {
+    "name": "ジャスミンマンゴーティー",
+    "description": "ジャスミンティーとマンゴーパウダー、パールシュガーが調和し、スイートでさっぱりしたブレンディングティー。口いっぱいに甘く広がる心地よい一口"
+   }
+  },
+  "페퍼민트티": {
+   "en": {
+    "name": "Peppermint Tea",
+    "description": "Herbal tea infused with refreshing peppermint aroma, perfect for a relaxing and healing moment on a drowsy afternoon"
+   },
+   "zh": {
+    "name": "薄荷茶",
+    "description": "清爽薄荷香的草本茶，适合慵懒午后和疲惫时刻的疗愈饮品"
+   },
+   "ja": {
+    "name": "ペパーミントティー",
+    "description": "さわやかなミントの香りのペパーミントをたたえたハーブティー、だるい午後、疲れた自分へのヒーリングタイム"
+   }
+  },
+  "버블티 프렌즈 인형 (딸기)": {
+   "en": {
+    "name": "Bubble Tea Friends Doll Strawberry"
+   },
+   "zh": {
+    "name": "珍珠奶茶好友娃娃(草莓)",
+    "description": null
+   },
+   "ja": {
+    "name": "バブルティーフレンズ人形（ストロベリー）",
+    "description": null
+   }
+  },
+  "버블티 프렌즈 인형 (타로)": {
+   "en": {
+    "name": "Bubble Tea Friends Doll Taro"
+   },
+   "zh": {
+    "name": "珍珠奶茶好友娃娃(芋头)",
+    "description": null
+   },
+   "ja": {
+    "name": "バブルティーフレンズ人形（タロ）",
+    "description": null
+   }
+  },
+  "버블티 프렌즈 인형 (블랙티)": {
+   "en": {
+    "name": "Bubble Tea Friends Doll Black Tea"
+   },
+   "zh": {
+    "name": "珍珠奶茶好友娃娃(红茶)",
+    "description": null
+   },
+   "ja": {
+    "name": "バブルティーフレンズ人形（ブラックティー）",
+    "description": null
+   }
+  },
+  "버블티 프렌즈 인형 (브라운)": {
+   "en": {
+    "name": "Bubble Tea Friends Doll Brown"
+   },
+   "zh": {
+    "name": "珍珠奶茶好友娃娃(布朗)",
+    "description": null
+   },
+   "ja": {
+    "name": "バブルティーフレンズ人形（ブラウン）",
+    "description": null
+   }
+  },
+  "시그니처 스콘": {
+   "en": {
+    "name": "Signature Scone",
+    "description": "Plain scone with a crispy outside and soft inside, featuring a subtle savory butter aroma and a clean flavor"
+   },
+   "zh": {
+    "name": "招牌司康",
+    "description": "外酥内软，浓郁奶油香，清爽淡雅的原味司康"
+   },
+   "ja": {
+    "name": "シグネチャースコーン",
+    "description": "外はカリっと中はしっとりの食感と香ばしいバターの香りがほのかに広がるあっさりとしたプレーンスコーン"
+   }
+  },
+  "밀크티 소프트 아이스크림": {
+   "en": {
+    "name": "Milk Tea Soft Ice Cream"
+   },
+   "zh": {
+    "name": "奶茶软冰淇淋",
+    "description": null
+   },
+   "ja": {
+    "name": "ミルクティーソフトアイスクリーム",
+    "description": null
+   }
+  },
+  "타로 소프트 아이스크림": {
+   "en": {
+    "name": "Taro Soft Ice Cream"
+   },
+   "zh": {
+    "name": "芋头软冰淇淋",
+    "description": null
+   },
+   "ja": {
+    "name": "タロソフトアイスクリーム",
+    "description": null
+   }
+  },
+  "브라운슈가 시그니처 밀크티 +펄": {
+   "en": {
+    "name": "Brown Sugar Signature Milk Tea with Pearls",
+    "description": "Gong Cha's signature milk tea that blends brown sugar menu and black milk tea! Enjoy the deep flavor of black tea, chewy pearls topping No.1, and sweet brown sugar"
+   },
+   "zh": {
+    "name": "黑糖招牌奶茶＋珍珠",
+    "description": "公茶黑糖系列与招牌黑奶茶完美结合！浓郁红茶风味，No.1弹牙珍珠，甜润黑糖香，共享公茶招牌奶茶"
+   },
+   "ja": {
+    "name": "黒糖シグネチャーミルクティー+パール",
+    "description": "ゴンチャの黒糖メニューとシグネチャーミルクティーであるブラックミルクティーの調和！ブラックティーの深い風味、トッピングNo.1のもちもちパール、甘い黒糖と一緒に楽しむゴンチャのシグネチャーミルクティー"
+   }
+  },
+  "브라운슈가 시그니처 밀크티 +미니펄": {
+   "en": {
+    "name": "Brown Sugar Signature Milk Tea with Mini Pearls",
+    "description": "Gong Cha's signature milk tea combining brown sugar menu and black milk tea! Enjoy the deep flavor of black tea, soft chewy mini pearls, and sweet brown sugar"
+   },
+   "zh": {
+    "name": "黑糖招牌奶茶＋小珍珠",
+    "description": "公茶黑糖系列与招牌黑奶茶完美结合！浓郁红茶风味，柔软弹牙小珍珠，甜润黑糖香，共享公茶招牌奶茶"
+   },
+   "ja": {
+    "name": "黒糖シグネチャーミルクティー+ミニパール",
+    "description": "ゴンチャの黒糖メニューとシグネチャーミルクティーであるブラックミルクティーの調和！ブラックティーの深い風味、柔らかくもちもちのミニパール、甘い黒糖と一緒に楽しむゴンチャのシグネチャーミルクティー"
+   }
+  },
+  "스모크 불고기 브리또": {
+   "en": {
+    "name": "Smoked Bulgogi Burrito",
+    "description": "A nutritious meal-replacement burrito designed by nutritionist Minji Kim! Contains sweet smoked bulgogi, garlic rice, and triple cheese, offering a sweet and salty charm"
+   },
+   "zh": {
+    "name": "烟熏韩式烤肉卷饼",
+    "description": "营养师金敏智设计的营养满分代餐卷饼！甜美烟熏韩式烤肉、蒜香饭与三重芝士，甜咸魅力享受"
+   },
+   "ja": {
+    "name": "スモークプルコギブリトー",
+    "description": "キム・ミンジ栄養士が設計した栄養満点の食事代替ブリトー！甘いスモークプルコギとガーリックライス、トリプルチーズが入った甘じょっぱさが魅力のブリトー"
+   }
+  },
+  "투움바 소시지 브리또": {
+   "en": {
+    "name": "Toowoomba Sausage Burrito",
+    "description": "A nutritious meal-replacement burrito designed by nutritionist Minji Kim! Contains spicy creamy Toowoomba rice, triple cheese, and juicy pepper sausage"
+   },
+   "zh": {
+    "name": "图翁巴香肠卷饼",
+    "description": "营养师金敏智设计的营养满分代餐卷饼！香辣浓郁图翁巴饭，三重芝士和多汁胡椒香肠组成"
+   },
+   "ja": {
+    "name": "トゥームバソーセージブリトー",
+    "description": "キム・ミンジ栄養士が設計した栄養満点の食事代替ブリトー！ピリ辛クリーミーなトゥウムバライスとトリプルチーズ、肉汁たっぷりなペッパーソーセージが入ったブリトー"
+   }
+  },
+  "타로 쥬얼리 시그니처 스무디": {
+   "en": {
+    "name": "Taro Jewelry Signature Smoothie",
+    "description": "Signature taro smoothie featuring a nutty taro base, smooth taro foam, and chewy taro jewelry for a rich taro experience"
+   },
+   "zh": {
+    "name": "芋头宝石招牌冰沙",
+    "description": "高香的芋头基底，搭配细滑的芋头奶盖和弹牙的芋头宝石，凉爽享受浓郁芋头魅力的招牌芋头冰沙"
+   },
+   "ja": {
+    "name": "タロ ジュエリ シグネチャースムージー",
+    "description": "香ばしいタロのベースに滑らかなタロフォーム、もちもちしたタロジュエリーを加え、濃厚なタロの魅力を涼しく楽しむシグネチャーのタロスムージーです。"
+   }
+  },
+  "아메리카노 1L": {
+   "en": {
+    "name": "Americano 1L",
+    "description": "Large quantity menu to enjoy Gong Cha Americano"
+   },
+   "zh": {
+    "name": "美式咖啡1L",
+    "description": "可以大容量享用贡茶美式咖啡的菜单。"
+   },
+   "ja": {
+    "name": "アメリカーノ 1L",
+    "description": "ゴンチャのアメリカーノを大容量で楽しめるメニューです。"
+   }
+  },
+  "블랙 밀크티 + 펄 1L": {
+   "en": {
+    "name": "Black Milk Tea with Pearls 1L",
+    "description": "Delivery-exclusive large size menu to enjoy Gong Cha's bestseller black milk tea chilled with pearls"
+   },
+   "zh": {
+    "name": "红茶奶茶加珍珠1L",
+    "description": "贡茶畅销款红茶奶茶的大容量冰爽送餐限定菜单。"
+   },
+   "ja": {
+    "name": "ブラックミルクティー+パール 1L",
+    "description": "ゴンチャのベストセラー、ブラックミルクティーを大容量で冷たく楽しむデリバリー限定メニューです。"
+   }
+  },
+  "망고 자스민티 + 화이트펄 1L": {
+   "en": {
+    "name": "Mango Jasmine Tea with White Pearls 1L",
+    "description": "Fragrant jasmine tea with mango enjoyed sweetly in large quantity fruit tea with white pearls"
+   },
+   "zh": {
+    "name": "芒果茉莉茶加白珍珠1L",
+    "description": "芳香茉莉茶加芒果，甜蜜大容量享用的果茶。"
+   },
+   "ja": {
+    "name": "マンゴージャスミンティー+ホワイトパール 1L",
+    "description": "香り豊かなジャスミンティーにマンゴーを加え、大容量で甘く楽しむフルーティーです。"
+   }
+  },
+  "아이스 밀크티 펄케이크": {
+   "en": {
+    "name": "Iced Milk Tea Pearl Cake",
+    "description": "Signature Gong Cha cake topped with chewy pearls on iced milk tea pearl cake, enjoyed chilled (quality enhanced with 100% animal cream)"
+   },
+   "zh": {
+    "name": "冰奶茶珍珠蛋糕",
+    "description": "冰奶茶珍珠蛋糕上覆盖弹牙的珍珠，冰爽享受贡茶独特招牌蛋糕（100%动物性奶油提升品质）"
+   },
+   "ja": {
+    "name": "アイスミルクティーパールケーキ",
+    "description": "アイスミルクティーパールケーキの上にもちもちしたパールをのせた、涼しく楽しむゴンチャ独自のシグネチャーケーキです。（100％動物性クリーム使用で製品の品質向上）"
+   }
+  },
+  "블랙 스모어 쫀득바": {
+   "en": {
+    "name": "Black S'more Chewy Bar"
+   },
+   "zh": {
+    "name": "黑巧热焰软糖棒",
+    "description": null
+   },
+   "ja": {
+    "name": "ブラックスモア チューイーバー",
+    "description": null
+   }
+  },
+  "솔티드 황치즈 쫀득바": {
+   "en": {
+    "name": "Salted Yellow Cheese Chewy Bar"
+   },
+   "zh": {
+    "name": "咸黄芝士软糖棒",
+    "description": null
+   },
+   "ja": {
+    "name": "ソルティドイエローチーズ チューイーバー",
+    "description": null
+   }
+  },
+  "블랙 밀크티 아이스크림 플로트": {
+   "en": {
+    "name": "Black Milk Tea Ice Cream Float",
+    "description": "Premium soft ice cream float drink combining classic black milk tea, mini pearls, and rich black milk tea ice cream"
+   },
+   "zh": {
+    "name": "红茶奶茶冰淇淋漂浮饮",
+    "description": "经典红茶奶茶搭配小珍珠和浓郁风味的红茶奶茶冰淇淋，享受高级软冰淇淋漂浮饮。"
+   },
+   "ja": {
+    "name": "ブラックミルクティーアイスクリームフロート",
+    "description": "クラシックなブラックミルクティーとミニパール、濃厚な風味のブラックミルクティーアイスクリームを浮かべてプレミアムに楽しめるソフトアイスクリームフロートドリンクです。"
+   }
+  },
+  "브라운슈가 밀크티 아이스크림 플로트": {
+   "en": {
+    "name": "Brown Sugar Milk Tea Ice Cream Float",
+    "description": "Soft ice cream float drink featuring signature brown sugar milk tea, chewy pearls, and rich black milk tea ice cream"
+   },
+   "zh": {
+    "name": "黑糖奶茶冰淇淋漂浮饮",
+    "description": "招牌黑糖奶茶配弹牙珍珠和浓郁红茶奶茶冰淇淋的软冰淇淋漂浮饮。"
+   },
+   "ja": {
+    "name": "黒糖ミルクティーアイスクリームフロート",
+    "description": "シグネチャーの黒糖ミルクティーともちもちのパール、濃厚な風味のブラックミルクティーアイスクリームを浮かべたソフトアイスクリームフロートドリンクです。"
+   }
+  },
+  "트러플 베이글칩": {
+   "en": {
+    "name": "Truffle Bagel Chip",
+    "description": "Premium bagel chips baked thinly sliced with rich truffle flavor."
+   },
+   "zh": {
+    "name": "松露百吉饼脆片",
+    "description": "松露的高级香气浓郁，烤箱烘烤的清淡百吉饼切片再烤制的高级百吉饼脆片。"
+   },
+   "ja": {
+    "name": "トリュフベーグルチップ",
+    "description": "トリュフの上品な香りがたっぷりで、オーブンで焼き上げたあっさりしたベーグルを薄く切ってもう一度焼いたプレミアムベーグルチップです。"
+   }
+  },
+  "밀크티 롤 크레이프": {
+   "en": {
+    "name": "Milk Tea Roll Crepe",
+    "description": "Ice cake filled with Gong Cha's cream milk tea inside a savory crepe."
+   },
+   "zh": {
+    "name": "奶茶卷可丽饼",
+    "description": "香浓可丽饼中包裹贡茶独特奶茶奶油的冰蛋糕。"
+   },
+   "ja": {
+    "name": "ミルクティーロールクレープ",
+    "description": "香ばしい風味のクレープの中にゴンチャ特製ミルクティークリームがたっぷり入ったアイスケーキです。"
+   }
+  },
+  "신라면툼바 펄볶이": {
+   "en": {
+    "name": "Shin Ramyun Toowoomba Pearl-bokki",
+    "description": "Spicy creamy pearl-bokki with large tapioca pearls and chewy rice cake pearls."
+   },
+   "zh": {
+    "name": "辛拉面Toowoomba珍珠炒",
+    "description": "大王木薯珍珠和弹牙粉条珍珠丰富，麻辣浓郁奶油味辛拉面Toowoomba风味珍珠炒。"
+   },
+   "ja": {
+    "name": "シンラーメントゥンバ パールポッキ",
+    "description": "大粒タピオカパールともちもちの分離粉パールがたっぷり入った、ピリ辛で濃厚でクリーミーなシンラーメントゥンバ味のパール炒めです。"
+   }
+  },
+  "딸기 쥬얼리 시그니처 밀크티": {
+   "en": {
+    "name": "Strawberry Jewelry Signature Milk Tea",
+    "description": "Signature milk tea with tangy chewy strawberry jewelry and Gong Cha's rich tea aroma."
+   },
+   "zh": {
+    "name": "草莓宝石招牌奶茶",
+    "description": "酸甜弹牙的草莓宝石和贡茶独特浓郁茶香，充分展现的草莓宝石招牌奶茶。"
+   },
+   "ja": {
+    "name": "ストロベリージュエリ シグネチャーミルクティー",
+    "description": "酸味のあるもちもちしたストロベリージュエリーとゴンチャ特製濃厚なティーの香りを存分に引き立てたストロベリージュエリーシグネチャーミルクティーです。"
+   }
+  },
+  "머쉬룸 수프": {
+   "en": {
+    "name": "Mushroom Soup",
+    "description": "Meal replacement soup with rich flavor of button mushrooms."
+   },
+   "zh": {
+    "name": "蘑菇汤",
+    "description": "用蘑菇的浓郁风味享用的代餐汤。"
+   },
+   "ja": {
+    "name": "マッシュルームスープ",
+    "description": "マッシュルームの濃厚な風味で食事代わりに楽しむスープです。"
+   }
+  },
+  "사리곰탕 펄국": {
+   "en": {
+    "name": "Sarigomtang Pearl Soup",
+    "description": "New Year special pearl soup with deep sarigomtang broth, large tapioca pearls, and chewy rice cake pearls."
+   },
+   "zh": {
+    "name": "韩式牛骨汤珍珠汤",
+    "description": "浓郁韩式牛骨汤底加大王木薯珍珠和弹牙粉条珍珠的新年春节限定珍珠汤。"
+   },
+   "ja": {
+    "name": "サリコムタンスープパール",
+    "description": "深く濃厚なサリコムタンスープに大粒タピオカパールともちもち分離粉パールを加えた、新年の旧正月限定パールスープです。"
+   }
+  },
+  "리얼 퍼지 브라우니": {
+   "en": {
+    "name": "Real Fudge Brownie",
+    "description": "Classic fudge brownie with rich chocolate flavor and dense moist texture."
+   },
+   "zh": {
+    "name": "浓郁巧克力布朗尼",
+    "description": "浓厚巧克力风味搭配稠密口感享受的经典巧克力布朗尼。"
+   },
+   "ja": {
+    "name": "リアルファッジブラウニー",
+    "description": "濃厚なチョコレート風味としっとり濃密な食感で楽しむクラシックなファッジブラウニーです。"
+   }
+  },
+  "두바이 스틱케이크": {
+   "en": {
+    "name": "Dubai Stick Cake",
+    "description": "Premium stick cake with rich chocolate, pistachio kadaif filling, and crispy chocolate coating."
+   },
+   "zh": {
+    "name": "迪拜棒蛋糕",
+    "description": "浓郁巧克力蛋糕加香脆开心果卡达伊夫馅，外层巧克力涂层酥脆包裹的高级棒蛋糕。"
+   },
+   "ja": {
+    "name": "ドバイスティックケーキ",
+    "description": "濃厚なチョコケーキに香ばしいピスタチオカダイフフィリングを加え、外側はチョコレートコーティングでサクサクに包んだプレミアムスティックケーキです。"
+   }
+  },
+  "말차 카스테라 샌드": {
+   "en": {
+    "name": "Matcha Castella Sandwich",
+    "description": "Soft matcha castella sandwich filled with rich matcha cream."
+   },
+   "zh": {
+    "name": "抹茶蜂蜜蛋糕夹心",
+    "description": "柔软抹茶蜂蜜蛋糕夹心浓郁抹茶奶油的蛋糕。"
+   },
+   "ja": {
+    "name": "抹茶カステラサンド",
+    "description": "柔らかな抹茶カステラに濃厚な抹茶クリームをサンドしたケーキです。"
+   }
+  },
+  "자스민 코코 with 말차폼": {
+   "en": {
+    "name": "Jasmine Coco with Matcha Foam",
+    "description": "Iced tea combining aromatic jasmine tea, refreshing coconut water, and bittersweet matcha foam."
+   },
+   "zh": {
+    "name": "茉莉椰果抹茶奶盖",
+    "description": "芳香茉莉茶和清爽椰果水与微苦抹茶奶盖清爽融合的冰茶。"
+   },
+   "ja": {
+    "name": "ジャスミンココ+抹茶フォーム",
+    "description": "香り高いジャスミンティーとさっぱりしたココナッツウォーターがほろ苦い抹茶フォームとすっきり調和したアイスティーです。"
+   }
+  },
+  "얼그레이 말차 밀크티 + 펄": {
+   "en": {
+    "name": "Earl Grey Matcha Milk Tea with Pearls",
+    "description": "Smooth milk tea blending fragrant earl grey, bittersweet matcha, and chewy pearls."
+   },
+   "zh": {
+    "name": "伯爵抹茶奶茶加珍珠",
+    "description": "芬芳伯爵茶和微苦抹茶搭配弹牙珍珠，呈现柔滑深邃和谐的奶茶。"
+   },
+   "ja": {
+    "name": "アールグレイ抹茶ミルクティー+パール",
+    "description": "香り高いアールグレイティーと甘苦い抹茶にもちもちのパールを加え、滑らかで深い調和を伝えるミルクティーです。"
+   }
+  },
+  "더블 말차 밀크티": {
+   "en": {
+    "name": "Double Matcha Milk Tea",
+    "description": "Milk tea with aromatic jasmine tea, deep matcha flavor, and bittersweet matcha foam."
+   },
+   "zh": {
+    "name": "双倍抹茶奶茶",
+    "description": "芳香茉莉茶与浓郁抹茶风味，加上微苦抹茶奶盖，带来柔和沉稳余韵的奶茶。"
+   },
+   "ja": {
+    "name": "ダブル抹茶ミルクティー",
+    "description": "香り豊かなジャスミンティーと深い抹茶の風味にほろ苦い抹茶フォームが調和し、滑らかで穏やかな余韻を伝えるミルクティーです。"
+   }
+  },
+  "그릭요거티 & 딸기 크러쉬": {
+   "en": {
+    "name": "Greek Yogurt Tea & Strawberry Crush",
+    "description": "Crush drink combining Greek Yogurt Greek Day Light, strawberry, and earl grey tea."
+   },
+   "zh": {
+    "name": "希腊酸奶草莓碎冰沙",
+    "description": "希腊酸奶Greek Day Light加入草莓和伯爵茶的碎冰沙。"
+   },
+   "ja": {
+    "name": "ギリシャヨーグルト&ストロベリークラッシュ",
+    "description": "ギリシャヨーグルト ギリシャデイライトにストロベリーとアールグレイティーを加えたクラッシュです。"
+   }
+  },
+  "그릭요거티 & 망고 크러쉬": {
+   "en": {
+    "name": "Greek Yogurt Tea & Mango Crush",
+    "description": "Crush drink with Greek Yogurt Greek Day Light, aromatic jasmine tea, and sweet mango."
+   },
+   "zh": {
+    "name": "希腊酸奶芒果碎冰沙",
+    "description": "希腊酸奶Greek Day Light加入芳香茉莉茶和甜美芒果的碎冰沙。"
+   },
+   "ja": {
+    "name": "ギリシャヨーグルト&マンゴークラッシュ",
+    "description": "ギリシャヨーグルト ギリシャデイライトに香り豊かなジャスミンティーと甘いマンゴーが入ったクラッシュです。"
+   }
+  },
+  "그릭요거티 & 펄 크러쉬": {
+   "en": {
+    "name": "Greek Yogurt Tea & Pearls Crush",
+    "description": "Milk tea crush blending Greek Yogurt Greek Day Light and earl grey tea."
+   },
+   "zh": {
+    "name": "希腊酸奶珍珠碎冰沙",
+    "description": "希腊酸奶Greek Day Light融合伯爵奶茶的碎冰沙。"
+   },
+   "ja": {
+    "name": "ギリシャヨーグルト&パールクラッシュ",
+    "description": "ギリシャヨーグルト ギリシャデイライトにアールグレイティーがブレンドされたミルクティークラッシュです。"
+   }
+  },
+  "그릭요거티 & 자몽 망고 미니펄 크러쉬": {
+   "en": {
+    "name": "Greek Yogurt Tea & Grapefruit Mango Mini Pearls Crush",
+    "description": "Crush drink with Greek Yogurt Greek Day Light, sweet mango, and fresh grapefruit."
+   },
+   "zh": {
+    "name": "希腊酸奶西柚芒果小珍珠碎冰沙",
+    "description": "希腊酸奶Greek Day Light添加甜美芒果与清爽西柚，享受的碎冰沙。"
+   },
+   "ja": {
+    "name": "ギリシャヨーグルト&グレープフルーツマンゴーミニパールクラッシュ",
+    "description": "ギリシャヨーグルト ギリシャデイライトに甘いマンゴーと酸味のあるグレープフルーツを加えて楽しむクラッシュです。"
+   }
+  },
+  "퍼르곤졸라 피자": {
+   "en": {
+    "name": "Pearl-gonzola Pizza",
+    "description": "Dessert pizza topped with rich gorgonzola cheese and sweet pearls."
+   },
+   "zh": {
+    "name": "珍珠戈尔根朱拉蓝芝士披萨",
+    "description": "芝士浓郁戈尔根朱拉蓝芝士披萨上覆盖甜美珍珠的甜点披萨。"
+   },
+   "ja": {
+    "name": "パールゴルゴンゾーラピザ",
+    "description": "チーズの風味たっぷりのゴルゴンゾーラピザの上に甘いパールをのせたデザートピザです。"
+   }
+  },
+  "타로 쥬얼리 시그니처 밀크티": {
+   "en": {
+    "name": "Taro Jewelry Signature Milk Tea",
+    "description": "Signature taro milk tea with creamy taro foam and chewy taro jewelry."
+   },
+   "zh": {
+    "name": "芋头宝石招牌奶茶",
+    "description": "高香芋头基底搭配细滑芋头奶盖和弹牙芋头宝石，浓郁芋头魅力的招牌芋头奶茶。"
+   },
+   "ja": {
+    "name": "タロ ジュエリ シグネチャーミルクティー",
+    "description": "香ばしいタロのベースに滑らかなタロフォーム、もちもちしたタロジュエリーを加え、濃厚なタロの魅力を込めたシグネチャータロミルクティーです。"
+   }
+  },
+  "말차 초코 스무디": {
+   "en": {
+    "name": "Matcha Choco Smoothie",
+    "description": "Sweet chocolate smoothie enjoyed with bittersweet matcha foam."
+   },
+   "zh": {
+    "name": "抹茶巧克力冰沙",
+    "description": "甜美巧克力冰沙与微苦抹茶奶盖一同享用的冰沙。"
+   },
+   "ja": {
+    "name": "抹茶チョコスムージー",
+    "description": "甘いチョコスムージーにほろ苦い抹茶フォームを一緒に楽しむスムージーです。"
+   }
+  },
+  "말차샷 타로 밀크티": {
+   "en": {
+    "name": "Matcha Shot Taro Milk Tea",
+    "description": "Creamy taro milk tea enjoyed with a shot of bittersweet matcha."
+   },
+   "zh": {
+    "name": "抹茶浓缩芋头奶茶",
+    "description": "香浓芋头奶茶搭配微苦抹茶浓缩的奶茶。"
+   },
+   "ja": {
+    "name": "抹茶ショットタロミルクティー",
+    "description": "香ばしいタロミルクティーにほろ苦い抹茶ショットを一緒に楽しむミルクティーです。"
+   }
+  },
+  "납작복숭아 아이스티 얼그레이 + 샷": {
+   "en": {
+    "name": "Flat Peach Iced Earl Grey Tea with Espresso Shot",
+    "description": "Refreshing Gong Cha iced tea combining aromatic earl grey, sweet flat peach, and an espresso shot."
+   },
+   "zh": {
+    "name": "蟠桃伯爵冰茶加浓缩咖啡",
+    "description": "自泡芳香贡茶伯爵茶加甜美蟠桃，搭配浓缩咖啡浓郁微苦凉爽享用的贡茶冰茶。"
+   },
+   "ja": {
+    "name": "蟠桃アイスティー アールグレイ+エスプレッソショット",
+    "description": "自家淹れの香り高いゴンチャ アールグレイティーと甘い蟠桃を加え、エスプレッソショットと一緒に甘くほろ苦く爽やかに楽しむゴンチャのアイスティーです。"
+   }
+  },
+  "납작복숭아 아이스티 블랙 + 미니펄": {
+   "en": {
+    "name": "Flat Peach Iced Black Tea with Mini Pearls",
+    "description": "Refreshing Gong Cha iced tea with aromatic black tea, sweet flat peach, and chewy mini pearls."
+   },
+   "zh": {
+    "name": "蟠桃红茶冰茶加小珍珠",
+    "description": "直接冲泡的香浓贡茶红茶，搭配甜美蟠桃与软糯小珍珠，冰凉畅饮的贡茶冰茶"
+   },
+   "ja": {
+    "name": "蟠桃アイスブラック+ミニパール",
+    "description": "自家製の香り高いゴンチャブラックティーと甘い平たい桃を加え、柔らかくもちもちしたミニパールと一緒に爽やかに楽しむゴンチャアイスティー"
+   }
+  },
+  "납작복숭아 아이스티 얼그레이 + 미니펄": {
+   "en": {
+    "name": "Flat Peach Iced Earl Grey Tea with Mini Pearls",
+    "description": "Refreshing Gong Cha iced tea with aromatic earl grey, sweet flat peach, and chewy mini pearls."
+   },
+   "zh": {
+    "name": "蟠桃伯爵冰茶加小珍珠",
+    "description": "直接冲泡的香浓贡茶伯爵茶，搭配甜美蟠桃与软糯小珍珠，冰凉畅饮的贡茶冰茶"
+   },
+   "ja": {
+    "name": "蟠桃アイスアールグレイ+ミニパール",
+    "description": "自家製の香り高いゴンチャアールグレーティーと甘い平たい桃を加え、柔らかくもちもちしたミニパールと一緒に爽やかに楽しむゴンチャアイスティー"
+   }
+  },
+  "브라운슈가 시그니처 얼그레이 밀크티 + 펄": {
+   "en": {
+    "name": "Brown Sugar Signature Earl Grey Milk Tea with Pearls",
+    "description": "Gong Cha signature milk tea with bergamot-flavored earl grey, sweet brown sugar, and chewy pearls."
+   },
+   "zh": {
+    "name": "黑糖招牌伯爵奶茶加珍珠",
+    "description": "伯爵奶茶带有佛手柑香气，加入甜蜜黑糖和Q弹珍珠的贡茶招牌菜单"
+   },
+   "ja": {
+    "name": "黒糖シグネチャーアールグレイミルクティー+パール",
+    "description": "ベルガモットの香り豊かなアールグレイミルクティーに甘い黒糖ともちもちのパールを加えたゴンチャのシグネチャーメニュー"
+   }
+  },
+  "브라운슈가 시그니처 우롱 밀크티 + 펄": {
+   "en": {
+    "name": "Brown Sugar Signature Oolong Milk Tea with Pearls",
+    "description": "Gong Cha signature milk tea with deep oolong flavor, sweet brown sugar, and chewy pearls."
+   },
+   "zh": {
+    "name": "黑糖招牌乌龙奶茶加珍珠",
+    "description": "浓厚醇香的乌龙奶茶，加甜蜜黑糖与Q弹珍珠的贡茶招牌菜单"
+   },
+   "ja": {
+    "name": "黒糖シグネチャーウーロンミルクティー+パール",
+    "description": "重厚で深い香りのウーロンミルクティーに甘い黒糖ともちもちのパールを加えたゴンチャのシグネチャーメニュー"
+   }
+  },
+  "말차 쥬얼리 시그니처 밀크티": {
+   "en": {
+    "name": "Matcha Jewelry Signature Milk Tea",
+    "description": "Milk tea with bittersweet matcha and chewy matcha jewelry."
+   },
+   "zh": {
+    "name": "抹茶宝石珍珠招牌奶茶",
+    "description": "甜苦适中的抹茶，搭配Q弹抹茶宝石珍珠享用的奶茶"
+   },
+   "ja": {
+    "name": "抹茶ジュエリーシグネチャーミルクティー",
+    "description": "甘くてほろ苦い抹茶をもちもちの抹茶ジュエリーと一緒に楽しむミルクティー"
+   }
+  },
+  "망고 쥬얼리 시그니처 밀크티": {
+   "en": {
+    "name": "Mango Jewelry Signature Milk Tea",
+    "description": "Milk tea with aromatic jasmine tea, sweet mango, and chewy mango jewelry."
+   },
+   "zh": {
+    "name": "芒果宝石珍珠招牌奶茶",
+    "description": "清香茉莉茶与甜美芒果，配Q弹芒果宝石珍珠的奶茶"
+   },
+   "ja": {
+    "name": "マンゴージュエリーシグネチャーミルクティー",
+    "description": "香り高いジャスミンティーと甘いマンゴーをもちもちのマンゴージュエリーと一緒に楽しむミルクティー"
+   }
+  },
+  "말차샷 밀크티 아이스크림": {
+   "en": {
+    "name": "Matcha Shot Milk Tea Ice Cream"
+   },
+   "zh": {
+    "name": "抹茶浓缩奶茶冰淇淋",
+    "description": null
+   },
+   "ja": {
+    "name": "抹茶ショットミルクティーアイスクリーム",
+    "description": null
+   }
+  },
+  "밀크티 모찌 빙수 쉐이크 + 소프트 아이스크림": {
+   "en": {
+    "name": "Milk Tea Mochi Bingsoo Shake with Soft Ice Cream",
+    "description": "Traditional bingsoo shake with Gong Cha milk tea shake, chewy rice mochi, rice cakes, domestic red beans, and milk tea ice cream."
+   },
+   "zh": {
+    "name": "奶茶糯米团碎冰沙加软冰淇淋",
+    "description": "融合贡茶特色奶茶碎冰沙，软Q糯米团、年糕、国产红豆与奶茶冰淇淋的传统刨冰碎冰沙"
+   },
+   "ja": {
+    "name": "ミルクティー餅かき氷シェイク+ソフトアイス",
+    "description": "ゴンチャのアイデンティティを生かしたミルクティーシェイクに柔らかくもちもちの米餅、餅、国産紅豆、ミルクティーアイスクリームを加えた伝統的なかき氷シェイク"
+   }
+  },
+  "망고 가득 모찌 빙수 쉐이크": {
+   "en": {
+    "name": "Mango Filled Mochi Bingsoo Shake",
+    "description": "Mango bingsoo shake with aromatic jasmine tea, mango dice, and chewy mochi."
+   },
+   "zh": {
+    "name": "满满芒果糯米团碎冰沙",
+    "description": "清香茉莉茶搭配质感十足的芒果丁与软Q糯米团，带来丰富口感的芒果刨冰碎冰沙"
+   },
+   "ja": {
+    "name": "マンゴーたっぷり餅かき氷シェイク",
+    "description": "香り高いジャスミンティーと食感が生きたマンゴーダイス、柔らかくもちもちのモチがそのままのって食感の楽しさを生かしたマンゴーかき氷シェイク"
+   }
+  },
+  "완두말차 모찌 빙수 쉐이크": {
+   "en": {
+    "name": "Green Pea Matcha Mochi Bingsoo Shake",
+    "description": "Unique bingsoo shake combining sweet green pea paste, bittersweet matcha, chewy mochi, and jasmine tea."
+   },
+   "zh": {
+    "name": "绿豆抹茶糯米团碎冰沙",
+    "description": "甜美绿豆馅与略苦抹茶的结合，搭配软Q糯米团与茉莉茶，别具风味的刨冰碎冰沙"
+   },
+   "ja": {
+    "name": "グリーンピース抹茶餅かき氷シェイク",
+    "description": "甘いえんどうあんの魅力とほろ苦い抹茶の出会い、柔らかくもちもちのモチとジャスミンティーを加えた異なる魅力のかき氷シェイク"
+   }
+  },
+  "밀크티 모찌 빙수 쉐이크": {
+   "en": {
+    "name": "Milk Tea Mochi Bingsoo Shake",
+    "description": "Traditional bingsoo shake with Gong Cha's signature milk tea shake, soft chewy rice mochi, rice cake, and domestic red beans."
+   },
+   "zh": {
+    "name": "奶茶糯米团碎冰沙",
+    "description": "融合贡茶特色奶茶碎冰沙，软Q糯米团、年糕及国产红豆的传统刨冰碎冰沙"
+   },
+   "ja": {
+    "name": "ミルクティー餅かき氷シェイク",
+    "description": "ゴンチャのアイデンティティを生かしたミルクティーシェイクに柔らかくもちもちの米餅、餅、国産紅豆を加えた伝統的なかき氷シェイク"
+   }
+  },
+  "크런치 밀크티 아이스크림": {
+   "en": {
+    "name": "Crunch Milk Tea Ice Cream",
+    "description": "Premium milk tea ice cream topped with chewy pearls and crispy Poyotin."
+   },
+   "zh": {
+    "name": "酥脆奶茶冰淇淋",
+    "description": "柔滑冰淇淋搭配Q弹珍珠及酥脆波堤脆的高端奶茶冰淇淋"
+   },
+   "ja": {
+    "name": "クランチミルクティーアイスクリーム",
+    "description": "なめらかなアイスクリームにもちもちパールとサクサクのポヨティンをのせたプレミアムトッピング型ミルクティーアイスクリーム"
+   }
+  },
+  "모나카 밀크티 아이스크림": {
+   "en": {
+    "name": "Monaka Milk Tea Ice Cream",
+    "description": "Premium milk tea ice cream topped with crispy monaka, red beans, and rice cake."
+   },
+   "zh": {
+    "name": "最中奶茶冰淇淋",
+    "description": "酥脆最中皮、红豆与年糕的高端奶茶冰淇淋"
+   },
+   "ja": {
+    "name": "最中ミルクティーアイスクリーム",
+    "description": "サクサクのモナカ、あんこ、餅をのせたプレミアムトッピング型ミルクティーアイスクリーム"
+   }
+  },
+  "고구마 말랭이": {
+   "en": {
+    "name": "Dried Sweet Potato",
+    "description": "Dried sweet potato with natural sweetness and chewy texture."
+   },
+   "zh": {
+    "name": "蜜饯红薯",
+    "description": "自然甜味与Q弹口感的红薯蜜饯"
+   },
+   "ja": {
+    "name": "干しサツマイモ",
+    "description": "自然な甘さともちもちした食感で楽しむさつまいもドライ"
+   }
+  },
+  "하트 파이": {
+   "en": {
+    "name": "Heart Pie",
+    "description": "Heart-shaped crispy pastry pie with buttery flavor."
+   },
+   "zh": {
+    "name": "心形酥饼",
+    "description": "黄油香味浓郁的心形酥脆百利甜饼"
+   },
+   "ja": {
+    "name": "ハートパイ",
+    "description": "バターの風味が生きたハート形のサクサクパイ"
+   }
+  },
+  "저당 초콜렛 밀크티 + 치즈폼": {
+   "en": {
+    "name": "Low Sugar Chocolate Milk Tea with Cheese Foam",
+    "description": "Low sugar chocolate milk tea with cheese foam that contains 77% less sugar compared to the recommended sweetness of the original chocolate milk tea with cheese foam."
+   },
+   "zh": {
+    "name": "低糖巧克力奶茶加芝士奶盖",
+    "description": "较推荐甜度降低77%的低糖巧克力奶茶加芝士奶盖"
+   },
+   "ja": {
+    "name": "低糖チョコレートミルクティー+チーズフォーム",
+    "description": "従来のチョコレートミルクティー＋チーズフォーム推奨糖度に比べ糖類が77%減少した低糖チョコレートミルクティー＋チーズフォームです。"
+   }
+  },
+  "저당 초콜렛 밀크티": {
+   "en": {
+    "name": "Low Sugar Chocolate Milk Tea",
+    "description": "Low sugar chocolate milk tea that contains 90% less sugar compared to the recommended sweetness of the original chocolate milk tea."
+   },
+   "zh": {
+    "name": "低糖巧克力奶茶",
+    "description": "较推荐甜度降低90%的低糖巧克力奶茶"
+   },
+   "ja": {
+    "name": "低糖チョコレートミルクティー",
+    "description": "従来のチョコレートミルクティー推奨糖度に比べ糖類が90%減少した低糖チョコレートミルクティーです。"
+   }
+  },
+  "저당 자스민 오리지널 티": {
+   "en": {
+    "name": "Low Sugar Jasmine Original Tea",
+    "description": "Low sugar jasmine original tea with zero sugar."
+   },
+   "zh": {
+    "name": "低糖茉莉原味茶",
+    "description": "可享受无糖的低糖茉莉原味茶"
+   },
+   "ja": {
+    "name": "低糖ジャスミンオリジナルティー",
+    "description": "糖分ゼロで楽しめる低糖ジャスミンオリジナルティーです。"
+   }
+  },
+  "저당 우롱 오리지널 티": {
+   "en": {
+    "name": "Low Sugar Oolong Original Tea",
+    "description": "Low sugar oolong original tea with zero sugar."
+   },
+   "zh": {
+    "name": "低糖乌龙原味茶",
+    "description": "可享受无糖的低糖乌龙原味茶"
+   },
+   "ja": {
+    "name": "低糖ウーロンオリジナルティー",
+    "description": "糖分ゼロで楽しめる低糖ウーロンオリジナルティーです。"
+   }
+  },
+  "저당 얼그레이 오리지널 티": {
+   "en": {
+    "name": "Low Sugar Earl Grey Original Tea",
+    "description": "Low sugar earl grey original tea with zero sugar."
+   },
+   "zh": {
+    "name": "低糖伯爵原味茶",
+    "description": "可享受无糖的低糖伯爵原味茶"
+   },
+   "ja": {
+    "name": "低糖アールグレイオリジナルティー",
+    "description": "糖分ゼロで楽しめる低糖アールグレイオリジナルティーです。"
+   }
+  },
+  "저당 블랙 오리지널 티": {
+   "en": {
+    "name": "Low Sugar Black Original Tea",
+    "description": "Low sugar black original tea with zero sugar."
+   },
+   "zh": {
+    "name": "低糖红茶原味茶",
+    "description": "可享受无糖的低糖红茶原味茶"
+   },
+   "ja": {
+    "name": "低糖ブラックオリジナルティー",
+    "description": "糖分ゼロで楽しめる低糖ブラックオリジナルティーです。"
+   }
+  },
+  "저당 자스민 밀크티 + 펄": {
+   "en": {
+    "name": "Low Sugar Jasmine Milk Tea with Pearls",
+    "description": "Low sugar jasmine milk tea with pearls that contains 65% less sugar compared to the recommended sweetness of the original jasmine milk tea."
+   },
+   "zh": {
+    "name": "低糖茉莉奶茶加珍珠",
+    "description": "较推荐甜度降低65%的低糖茉莉奶茶"
+   },
+   "ja": {
+    "name": "低糖ジャスミンミルクティー+パール",
+    "description": "従来のジャスミンミルクティー推奨糖度に比べ糖類が65%減少した低糖ジャスミンミルクティーです。"
+   }
+  },
+  "저당 우롱 밀크티 + 펄": {
+   "en": {
+    "name": "Low Sugar Oolong Milk Tea with Pearls",
+    "description": "Low sugar oolong milk tea with pearls that contains 65% less sugar compared to the recommended sweetness of the original oolong milk tea."
+   },
+   "zh": {
+    "name": "低糖乌龙奶茶加珍珠",
+    "description": "较推荐甜度降低65%的低糖乌龙奶茶"
+   },
+   "ja": {
+    "name": "低糖ウーロンミルクティー+パール",
+    "description": "従来のウーロンミルクティー推奨糖度に比べ糖類が65%減少した低糖ウーロンミルクティーです。"
+   }
+  },
+  "저당 얼그레이 밀크티 + 펄": {
+   "en": {
+    "name": "Low Sugar Earl Grey Milk Tea with Pearls",
+    "description": "Low sugar earl grey milk tea with pearls that contains 65% less sugar compared to the recommended sweetness of the original earl grey milk tea."
+   },
+   "zh": {
+    "name": "低糖伯爵奶茶加珍珠",
+    "description": "较推荐甜度降低65%的低糖伯爵奶茶"
+   },
+   "ja": {
+    "name": "低糖アールグレイミルクティー+パール",
+    "description": "従来のアールグレイミルクティー推奨糖度に比べ糖類が65%減少した低糖アールグレイミルクティーです。"
+   }
+  },
+  "저당 블랙 밀크티 + 펄": {
+   "en": {
+    "name": "Low Sugar Black Milk Tea with Pearls",
+    "description": "Low sugar black milk tea with pearls that contains 65% less sugar compared to the recommended sweetness of the original black milk tea."
+   },
+   "zh": {
+    "name": "低糖红茶奶茶加珍珠",
+    "description": "较推荐甜度降低65%的低糖红茶奶茶"
+   },
+   "ja": {
+    "name": "低糖ブラックミルクティー+パール",
+    "description": "従来のブラックミルクティー推奨糖度に比べ糖類が65%減少した低糖ブラックミルクティーです。"
+   }
+  },
+  "저당 자스민 밀크티": {
+   "en": {
+    "name": "Low Sugar Jasmine Milk Tea",
+    "description": "Low sugar jasmine milk tea that contains 81% less sugar compared to the recommended sweetness of the original jasmine milk tea."
+   },
+   "zh": {
+    "name": "低糖茉莉奶茶",
+    "description": "较推荐甜度降低81%的低糖茉莉奶茶"
+   },
+   "ja": {
+    "name": "低糖ジャスミンミルクティー",
+    "description": "従来のジャスミンミルクティー推奨糖度に比べ糖類が81%減少した低糖ジャスミンミルクティーです。"
+   }
+  },
+  "저당 우롱 밀크티": {
+   "en": {
+    "name": "Low Sugar Oolong Milk Tea",
+    "description": "Low sugar oolong milk tea that contains 81% less sugar compared to the recommended sweetness of the original oolong milk tea."
+   },
+   "zh": {
+    "name": "低糖乌龙奶茶",
+    "description": "较推荐甜度降低81%的低糖乌龙奶茶"
+   },
+   "ja": {
+    "name": "低糖ウーロンミルクティー",
+    "description": "従来のウーロンミルクティー推奨糖度に比べ糖類が81%減少した低糖ウーロンミルクティーです。"
+   }
+  },
+  "저당 얼그레이 밀크티": {
+   "en": {
+    "name": "Low Sugar Earl Grey Milk Tea",
+    "description": "Low sugar earl grey milk tea that contains 81% less sugar compared to the recommended sweetness of the original earl grey milk tea."
+   },
+   "zh": {
+    "name": "低糖伯爵奶茶",
+    "description": "较推荐甜度降低81%的低糖伯爵奶茶"
+   },
+   "ja": {
+    "name": "低糖アールグレイミルクティー",
+    "description": "従来のアールグレイミルクティー推奨糖度に比べ糖類が81%減少した低糖アールグレイミルクティーです。"
+   }
+  },
+  "저당 블랙 밀크티": {
+   "en": {
+    "name": "Low Sugar Black Milk Tea",
+    "description": "Low sugar black milk tea that contains 81% less sugar compared to the recommended sweetness of the original black milk tea."
+   },
+   "zh": {
+    "name": "低糖红茶奶茶",
+    "description": "较推荐甜度降低81%的低糖红茶奶茶"
+   },
+   "ja": {
+    "name": "低糖ブラックミルクティー",
+    "description": "従来のブラックミルクティー推奨糖度に比べ糖類が81%減少した低糖ブラックミルクティーです。"
+   }
+  },
+  "제로 피치 우롱 아이스티 + 알로에": {
+   "en": {
+    "name": "Zero Sugar Peach Oolong Iced Tea with Aloe",
+    "description": "Zero sugar peach iced tea with aloe and subtle oolong tea."
+   },
+   "zh": {
+    "name": "零糖桃味乌龙冰茶加芦荟",
+    "description": "含芦荟与细腻乌龙茶的零糖桃味冰茶"
+   },
+   "ja": {
+    "name": "ゼロシュガーピーチウーロンアイスティー+アロエ",
+    "description": "アロエとほのかなウーロンティーが加えられたゼロシュガーピーチアイスティーです。"
+   }
+  },
+  "저당 햅쌀 미숫가루 밀크티 + 펄": {
+   "en": {
+    "name": "Low Sugar New Rice Misugaru Milk Tea with Pearls",
+    "description": "Low sugar misugaru milk tea unique to Gong Cha made with new rice."
+   },
+   "zh": {
+    "name": "低糖新米韩式谷物粉奶茶+珍珠",
+    "description": "含有新米的贡茶独家低糖韩式谷物粉。"
+   },
+   "ja": {
+    "name": "低糖新米ミスカルミルクティー+パール",
+    "description": "新米が入ったゴンチャだけの低糖ミスカルです。"
+   }
+  },
+  "대만식 수박 빙수 밀크": {
+   "en": {
+    "name": "Taiwanese Style Watermelon Bingsoo Milk",
+    "description": "Taiwanese style bingsoo drink with sweet watermelon base and Gong Cha's various toppings such as pearls and coconut jelly."
+   },
+   "zh": {
+    "name": "台湾式西瓜冰沙奶",
+    "description": "甜美西瓜底，加珍珠、椰果等贡茶多样配料，共享台湾式冰沙饮品。"
+   },
+   "ja": {
+    "name": "台湾式スイカかき氷ミルク",
+    "description": "甘いスイカベースにパール、ナタデココなどゴンチャのさまざまなトッピングを入れて楽しむ台湾式かき氷タイプのドリンクです。"
+   }
+  },
+  "리얼 수박 주스 BIG 컵": {
+   "en": {
+    "name": "Real Watermelon Juice Big Cup",
+    "description": "Watermelon juice enjoyed with fresh watermelon, fragrant jasmine tea, and crunchy aloe."
+   },
+   "zh": {
+    "name": "新鲜西瓜茉莉花茶芦荟大杯",
+    "description": "新鲜西瓜与香茉莉茶，加脆爽芦荟一起享用的西瓜汁。"
+   },
+   "ja": {
+    "name": "リアルスイカジュースBIGカップ",
+    "description": "フレッシュなスイカを香り豊かなジャスミンティー、シャキシャキしたアロエと一緒に楽しむスイカジュースです。"
+   }
+  },
+  "수박 밀크티+펄": {
+   "en": {
+    "name": "Watermelon Milk Tea with Pearls",
+    "description": "Milk tea with fragrant jasmine tea and sweet watermelon base served with chewy pearls."
+   },
+   "zh": {
+    "name": "西瓜奶茶+珍珠",
+    "description": "香茉莉茶与甜西瓜融合，搭配嚼劲十足珍珠的奶茶。"
+   },
+   "ja": {
+    "name": "スイカミルクティー+パール",
+    "description": "香り高いジャスミンティーに甘いスイカベースを加え、もちもちしたパールと一緒に楽しむミルクティーです。"
+   }
+  },
+  "아이스티 플로트": {
+   "en": {
+    "name": "Iced Tea Float",
+    "description": "Original Gong Cha float with flat peach iced tea topped with milk tea ice cream for a sweet peach and milk tea harmony."
+   },
+   "zh": {
+    "name": "蟠桃冰茶奶盖漂浮",
+    "description": "蟠桃冰茶上覆盖奶茶冰淇淋，感受甜美蟠桃与奶茶融合的贡茶专属漂浮饮。"
+   },
+   "ja": {
+    "name": "アイスティーフロート",
+    "description": "蟠桃アイスティーの上にミルクティーアイスクリームを乗せ、甘い蟠桃とミルクティーの調和を感じられるゴンチャだけのフロートです。"
+   }
+  },
+  "아메리티노 플로트 (얼그레이티)": {
+   "en": {
+    "name": "Ameritino Float (Earl Grey Tea)",
+    "description": "Original Gong Cha float with crushed earl grey Ameritino topped with milk tea ice cream for a bittersweet contrast."
+   },
+   "zh": {
+    "name": "美式冰茶漂浮（伯爵茶）",
+    "description": "碎冰伯爵美式冰茶上覆盖奶茶冰淇淋，感受微苦伯爵与奶茶对比的贡茶专属漂浮饮。"
+   },
+   "ja": {
+    "name": "アメリティノフロート(アールグレイティー)",
+    "description": "クラッシュアールグレイアメリティノの上にミルクティーアイスクリームを乗せ、ほろ苦いアメリティノとミルクティーの対比を感じられるゴンチャだけのフロートです。"
+   }
+  },
+  "아메리티노 플로트 (블랙티)": {
+   "en": {
+    "name": "Ameritino Float (Black Tea)",
+    "description": "Original Gong Cha float with crushed black tea Ameritino topped with milk tea ice cream for a bittersweet contrast."
+   },
+   "zh": {
+    "name": "美式冰茶漂浮（红茶）",
+    "description": "碎冰红茶美式冰茶上覆盖奶茶冰淇淋，感受微苦红茶与奶茶对比的贡茶专属漂浮饮。"
+   },
+   "ja": {
+    "name": "アメリティノフロート(ブラックティー)",
+    "description": "クラッシュブラックティーアメリティノの上にミルクティーアイスクリームを乗せ、ほろ苦いアメリティノとミルクティーの対比を感じられるゴンチャだけのフロートです。"
+   }
+  },
+  "아삭 참외 스무디": {
+   "en": {
+    "name": "Crisp Oriental Melon Smoothie",
+    "description": "Smoothie made with jasmine coconut water, sweet oriental melon base, and oriental melon dice for a refreshing taste."
+   },
+   "zh": {
+    "name": "香茉莉椰果甜瓜冰沙",
+    "description": "香茉莉椰果水加入甜甜哈密瓜底及甜瓜丁，冰爽享用的冰沙。"
+   },
+   "ja": {
+    "name": "シャキシャキオリエンタルメロンスムージー",
+    "description": "ジャスミンナタデココウォーターに甘いオリエンタルメロンベース、オリエンタルメロンダイスを加えてさわやかに楽しむスムージーです。"
+   }
+  },
+  "아삭 참외 밀크티": {
+   "en": {
+    "name": "Crisp Oriental Melon Milk Tea",
+    "description": "Milk tea with fragrant jasmine tea, sweet oriental melon base, mini pearls, and oriental melon dice."
+   },
+   "zh": {
+    "name": "甜瓜奶茶+小珍珠",
+    "description": "香茉莉茶融合甜甜哈密瓜底，配以小珍珠和甜瓜丁享用的奶茶。"
+   },
+   "ja": {
+    "name": "シャキシャキオリエンタルメロンミルクティー",
+    "description": "香り高いジャスミンティーに甘いオリエンタルメロンベースを加え、ミニパールとオリエンタルメロンダイスを一緒に楽しむミルクティーです。"
+   }
+  },
+  "망고 트로피컬 블러쉬 스무디": {
+   "en": {
+    "name": "Mango Tropical Blush Smoothie",
+    "description": "Rich mango tropical smoothie with chewy coconut topping."
+   },
+   "zh": {
+    "name": "芒果热带宝石冰沙",
+    "description": "口感弹牙的椰果配料，浓郁芒果热带冰沙。"
+   },
+   "ja": {
+    "name": "マンゴートロピカルブラッシュスムージー",
+    "description": "もちもちしたナタデココトッピングの食感が生きている濃厚なマンゴートロピカルスムージーです。"
+   }
+  },
+  "트로피컬 블러쉬 아이스티": {
+   "en": {
+    "name": "Tropical Blush Iced Tea",
+    "description": "A jasmine iced tea with a tropical mood featuring the chewy texture of white pearls."
+   },
+   "zh": {
+    "name": "热带宝石茉莉冰茶",
+    "description": "口感脆弹的白珍珠，清新热带氛围茉莉冰茶。"
+   },
+   "ja": {
+    "name": "トロピカルブラッシュアイスティー",
+    "description": "コリコリしたホワイトパールの食感が生きているトロピカルムードのジャスミンアイスティーです。"
+   }
+  },
+  "포도 말랑 크러쉬": {
+   "en": {
+    "name": "Grape Soft Crush",
+    "description": "A summer limited crush with grape oolong crush, grape water jelly, and a refreshing texture."
+   },
+   "zh": {
+    "name": "葡萄软碎冰",
+    "description": "葡萄乌龙碎冰，加入葡萄水晶冻，清爽口感的夏日限定碎冰。"
+   },
+   "ja": {
+    "name": "グレープソフトクラッシュ",
+    "description": "グレープウーロンクラッシュにグレープウォータージェリー、さわやかな食感が加わった夏限定クラッシュです。"
+   }
+  },
+  "포도 말랑 밀크티": {
+   "en": {
+    "name": "Grape Soft Milk Tea",
+    "description": "A grape milk tea harmonizing fragrant earl grey milk tea and luxurious grape flavor."
+   },
+   "zh": {
+    "name": "葡萄奶茶",
+    "description": "香伯爵奶茶与高贵葡萄香气融合的葡萄奶茶。"
+   },
+   "ja": {
+    "name": "グレープソフトミルクティー",
+    "description": "香り高いアールグレイミルクティーと上品なグレープの香りが調和したグレープミルクティーです。"
+   }
+  },
+  "핑크구아바 봉봉 아이스티": {
+   "en": {
+    "name": "Pink Guava Bongbong Iced Tea",
+    "description": "A jasmine iced tea with pink guava and a refreshing texture."
+   },
+   "zh": {
+    "name": "粉红番石榴冰茶",
+    "description": "香茉莉茶与番石榴融合，添入清爽口感的冰茶。"
+   },
+   "ja": {
+    "name": "ピンクグアバボンボンアイスティー",
+    "description": "香り高いジャスミンティーとグアバ、さわやかな食感が加わったアイスティーです。"
+   }
+  },
+  "핑크구아바 밀크티": {
+   "en": {
+    "name": "Pink Guava Milk Tea",
+    "description": "A pink guava milk tea with bright and floral charm."
+   },
+   "zh": {
+    "name": "粉红番石榴奶茶",
+    "description": "明亮花香魅力的粉红番石榴奶茶。"
+   },
+   "ja": {
+    "name": "ピンクグアバミルクティー",
+    "description": "華やかでフローラルな魅力のピンクグアバミルクティーです。"
+   }
+  },
+  "더블 말차 밀크티 + 펄": {
+   "en": {
+    "name": "Double Matcha Milk Tea with Pearls",
+    "description": "A milk tea delivering a soft and calm finish with fragrant jasmine tea, deep matcha flavor, and bittersweet matcha foam."
+   },
+   "zh": {
+    "name": "双倍抹茶奶茶+珍珠",
+    "description": "香茉莉茶与浓郁抹茶风味，搭配微苦抹茶奶盖，带来细腻安静回味的奶茶。"
+   },
+   "ja": {
+    "name": "ダブル抹茶ミルクティー+パール",
+    "description": "香り高いジャスミンティーと深い抹茶の風味にほろ苦い抹茶フォームが調和し、柔らかく落ち着いた余韻を伝えるミルクティーです。"
+   }
+  },
+  "리얼 참외 주스 BIG 컵": {
+   "en": {
+    "name": "Real Oriental Melon Juice Big Cup",
+    "description": "A refreshing oriental melon juice enjoyed with fresh melon and cool coconut water."
+   },
+   "zh": {
+    "name": "新鲜甜瓜椰果大杯",
+    "description": "新鲜甜瓜加清凉椰果水，冰爽享用的甜瓜汁。"
+   },
+   "ja": {
+    "name": "リアルオリエンタルメロンジュースBIGカップ",
+    "description": "フレッシュなオリエンタルメロンを爽やかなナタデココウォーターに加えてさっぱり楽しむオリエンタルメロンジュースです。"
+   }
+  },
+  "참외 자스민티": {
+   "en": {
+    "name": "Oriental Melon Jasmine Tea",
+    "description": "A milk tea with fragrant jasmine tea, sweet melon base, and crunchy melon dices."
+   },
+   "zh": {
+    "name": "甜瓜茉莉茶",
+    "description": "香茉莉茶搭配甜甜哈密瓜底，配脆甜瓜丁享用。"
+   },
+   "ja": {
+    "name": "オリエンタルメロンジャスミンティー",
+    "description": "香り高いジャスミンティーに甘いオリエンタルメロンベースを加え、シャキシャキしたオリエンタルメロンダイスと一緒に楽しむミルクティーです。"
+   }
+  },
+  "초코바른 딸기 스무디 with 쿠키": {
+   "en": {
+    "name": "Choco-Coated Strawberry Smoothie with Cookie",
+    "description": "A smoothie featuring crunchy chocolate croquant and dark chewy chocolate in sweet and tangy strawberry earl grey smoothie."
+   },
+   "zh": {
+    "name": "巧克力裹草莓冰沙配饼干",
+    "description": "脆巧克力可可郎、酸甜草莓伯爵茶冰沙内巧克力嚼感十足的迷人冰沙。"
+   },
+   "ja": {
+    "name": "チョココーティングいちごスムージー+クッキー",
+    "description": "砕けるチョコクロッカンと甘酸っぱいイチゴアールグレイスムージーの中に濃厚に噛み締められるチョコレートが魅力のスムージーです。"
+   }
+  },
+  "초콜릿 시그니처 밀크티+펄": {
+   "en": {
+    "name": "Chocolate Signature Milk Tea with Pearls",
+    "description": "A premium chocolate signature milk tea with sweet and bitter chocolate body wrapped in oolong tea."
+   },
+   "zh": {
+    "name": "巧克力招牌奶茶+珍珠",
+    "description": "甜中带苦的厚重巧克力风味搭配乌龙茶，更显高级的巧克力招牌奶茶。"
+   },
+   "ja": {
+    "name": "チョコレートシグネチャーミルクティー+パール",
+    "description": "甘くほろ苦いチョコレートの重みのあるボディ感とウーロンティーをまとい、一段とプレミアムになったチョコレートシグネチャーミルクティーです。"
+   }
+  },
+  "밤 크림 밀크티+펄": {
+   "en": {
+    "name": "Chestnut Cream Milk Tea with Pearls",
+    "description": "A milk tea blending sweet chestnut and oolong tea enjoyed with chewy pearls."
+   },
+   "zh": {
+    "name": "栗子奶盖奶茶+珍珠",
+    "description": "甜栗子加入乌龙茶，配嚼劲十足的珍珠享用的奶茶。"
+   },
+   "ja": {
+    "name": "栗クリームミルクティー+パール",
+    "description": "甘い栗にウーロンティーを加え、もちもちのパールと一緒に楽しむミルクティーです。"
+   }
+  },
+  "쑥 크림 밀크티+펄": {
+   "en": {
+    "name": "Mugwort Cream Milk Tea with Pearls",
+    "description": "A milk tea with fragrant earl grey and mugwort enjoyed with chewy pearls."
+   },
+   "zh": {
+    "name": "艾草奶盖奶茶+珍珠",
+    "description": "香伯爵茶与艾草，搭配嚼劲珍珠共享的奶茶。"
+   },
+   "ja": {
+    "name": "よもぎクリームミルクティー+パール",
+    "description": "香り高いアールグレイとよもぎをもちもちのパールと一緒に楽しむミルクティーです。"
+   }
+  },
+  "애플 크럼블": {
+   "en": {
+    "name": "Apple Crumble",
+    "description": "A dessert with crispy and savory crumble sandwiched with sweet apple cinnamon filling."
+   },
+   "zh": {
+    "name": "苹果香料脆片蛋糕",
+    "description": "酥脆香浓脆片中夹入甜苹果肉桂馅的甜点。"
+   },
+   "ja": {
+    "name": "アップルクランブル",
+    "description": "サクサク香ばしいクランブルの間に甘いアップルシナモンフィリングがサンドされたデザート"
+   }
+  },
+  "리얼 애플 오미자티": {
+   "en": {
+    "name": "Real Apple Omija Tea",
+    "description": "A special Gong Cha fruit tea adding Korean charm with sour omija, sweet apple, and fragrant jasmine tea."
+   },
+   "zh": {
+    "name": "新鲜苹果五味子茶",
+    "description": "酸香五味子与甜苹果、香茉莉茶融合，增添韩风魅力的贡茶特色水果茶。"
+   },
+   "ja": {
+    "name": "リアルアップルオミジャティー",
+    "description": "酸味のあるオミジャと甘いリンゴ、香り高いジャスミンティーに韓国的魅力を加えたゴンチャだけのスペシャルフルーツティーです。"
+   }
+  },
+  "리얼 애플 카라멜 밀크티": {
+   "en": {
+    "name": "Real Apple Caramel Milk Tea",
+    "description": "A special apple pie-flavored milk tea with sweet apple, baked caramel, subtle oolong tea, and crunchy apple dices."
+   },
+   "zh": {
+    "name": "新鲜苹果焦糖奶茶",
+    "description": "甜苹果加焦糖烤制，细腻乌龙茶，加入脆苹果丁的苹果派风味特别奶茶。"
+   },
+   "ja": {
+    "name": "リアルアップルキャラメルミルクティー",
+    "description": "甘いリンゴにベイクドキャラメル、ほのかなウーロンティーにシャキシャキのリンゴダイスを加えたアップルパイ風味のスペシャルミルクティーです。"
+   }
+  }
+ }
+}

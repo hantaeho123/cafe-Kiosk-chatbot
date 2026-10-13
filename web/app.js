@@ -25,11 +25,20 @@ function t(key, vars = {}) {
 
 // 다른 언어 화면에서는 번역한 메뉴명을 먼저 보여 주고, 공식 한글 이름을 작게 붙인다 (메뉴 영문명은 번역 데이터).
 function menuName(item) {
-  return state.lang !== "ko" && item.name_en ? item.name_en : item.name;
+  return (state.lang !== "ko" && item.names && (item.names[state.lang] || item.names.en)) || item.name;
 }
 
 function nativeName(item) {
-  return state.lang !== "ko" && item.name_en ? el("small", { class: "native-name" }, item.name) : null;
+  return menuName(item) !== item.name ? el("small", { class: "native-name" }, item.name) : null;
+}
+
+// 메뉴 데이터에 든 한국어 낱말(카테고리, 맛, 알레르기 성분, 영양 항목 등)을 화면 언어로 바꾼다. 없는 낱말은 그대로 둔다.
+function word(text) {
+  return (VOCAB[state.lang] && VOCAB[state.lang][text]) || text;
+}
+
+function words(list) {
+  return list.map(word).join(", ");
 }
 
 function money(amount) {
@@ -211,7 +220,7 @@ function openStart() {
       onclick: () => choose(key) }, t(`${key}_long`));
     return el("section", { class: "sheet start", role: "dialog", "aria-modal": "true" },
       el("div", { class: "sheet-body" },
-        el("p", { class: "start-store" }, `공차 ${state.config.store.name}`),
+        el("p", { class: "start-store" }, storeName()),
         el("h3", {}, t("start_title")),
         el("p", { class: "muted" }, t("start_sub")),
         el("div", { class: "start-row" }, el("span", {}, t("start_language")), languageButtons()),
@@ -290,23 +299,23 @@ function menuFacts(item) {
   const facts = [];
   if (!item.orderable) facts.push([t("price"), t("price_ask")]);
   if (item.kind === "drink") {
-    if (item.included_toppings.length) facts.push([t("toppings_included"), item.included_toppings.join(", ")]);
-    if (item.flavors.length) facts.push([t("flavor"), item.flavors.join(", ")]);
-    if (item.caffeine) facts.push([t("caffeine"), item.caffeine]);
+    if (item.included_toppings.length) facts.push([t("toppings_included"), words(item.included_toppings)]);
+    if (item.flavors.length) facts.push([t("flavor"), words(item.flavors)]);
+    if (item.caffeine) facts.push([t("caffeine"), word(item.caffeine)]);
   }
-  facts.push([t("allergens"), item.allergens.length ? item.allergens.join(", ") : t("none")]);
+  facts.push([t("allergens"), item.allergens.length ? words(item.allergens) : t("none")]);
   let nutrition = null;
   if (item.nutrition && item.nutrition.length) {
     const columns = Object.keys(item.nutrition[0].values);
     nutrition = el("table", { class: "nutrition" },
-      el("thead", {}, el("tr", {}, el("th", {}, ""), columns.map((c) => el("th", {}, c)))),
-      el("tbody", {}, item.nutrition.map((row) => el("tr", {}, el("td", {}, row.label), columns.map((c) => el("td", {}, String(row.values[c] ?? "-")))))));
+      el("thead", {}, el("tr", {}, el("th", {}, ""), columns.map((c) => el("th", {}, word(c))))),
+      el("tbody", {}, item.nutrition.map((row) => el("tr", {}, el("td", {}, word(row.label)), columns.map((c) => el("td", {}, String(row.values[c] ?? "-")))))));
   }
   return el("details", { class: "more", open: !item.orderable },
     el("summary", {}, t("more_info")),
     el("dl", { class: "facts" }, facts.map(([k, v]) => [el("dt", {}, k), el("dd", {}, v)])),
     nutrition,
-    nutrition && item.nutrition_basis && el("div", { class: "muted" }, item.nutrition_basis),
+    nutrition && item.nutrition_basis && el("div", { class: "muted" }, word(item.nutrition_basis)),
     el("button", { class: "link", type: "button",
       onclick: () => { closeScreen("detail"); send(t("ask_allergy_template", { name: item.name })); } }, t("ask_allergy")));
 }
@@ -418,8 +427,8 @@ async function openDetail(id, line = null, { draft = false, fromSuggestion = fal
   const header = [
     el("div", { class: "photo" }, item.image && el("img", { src: item.image, alt: item.name })),
     el("h3", {}, menuName(item), nativeName(item)),
-    el("div", { class: "muted" }, item.category),
-    item.description && el("p", { class: "description" }, item.description),
+    el("div", { class: "muted" }, word(item.category)),
+    item.description && el("p", { class: "description" }, (state.lang !== "ko" && item.descriptions[state.lang]) || item.description),
     // 가격·칼로리·카페인은 펼치지 않아도 바로 보인다
     item.kind === "drink" && item.kcal != null && el("p", { class: "quick-facts" },
       t("quick_facts", { kcal: item.kcal, mg: item.caffeine_mg ?? "-" }), el("small", {}, t("quick_basis", { basis: item.ref_basis }))),
@@ -450,7 +459,7 @@ async function openDetail(id, line = null, { draft = false, fromSuggestion = fal
         renderChips(session.chips);
         if (draft) return;  // 변경 확인 화면으로 돌아가 [확인]을 받는다
         state.started = true;
-        showToast([t(line ? "saved" : "added", { name: item.name }), ...session.notes].join(" "));
+        showToast([t(line ? "saved" : "added", { name: menuName(item) }), ...session.notes].join(" "));
         if (!line && !fromSuggestion && session.suggestions && session.suggestions.length) openSuggest(item, session);
         else showLine(session.line_id);
       } catch (error) {
@@ -485,7 +494,7 @@ async function openDetail(id, line = null, { draft = false, fromSuggestion = fal
 function openSuggest(item, session) {
   const close = () => { closeScreen("suggest"); showLine(session.line_id); };
   openScreen({ name: "suggest", back: close, render: () => sheet({
-    title: `✓ ${t("suggest_title", { name: item.name })}`, sub: t("suggest_sub"), close,
+    title: `✓ ${t("suggest_title", { name: menuName(item) })}`, sub: t("suggest_sub"), close,
     body: el("div", { class: "suggest-cards" }, session.suggestions.map((card) =>
       menuCard(card, () => { closeScreen("suggest"); openDetail(card.id, null, { fromSuggestion: true }); }))),
     actions: [el("button", { class: "primary", type: "button", onclick: close }, t("suggest_no"))],
@@ -808,13 +817,13 @@ function compareTable(items) {
         m.image && el("img", { src: m.image, alt: "" }), el("div", {}, menuName(m)), m.sold_out && el("span", { class: "tag warn" }, t("sold_out")))))),
       el("tbody", {},
         row(t("cmp_price"), (m) => (m.prices.length ? m.prices.map((p) => `${p.size} ${money(p.price)}`).join(" / ") : t("price_ask"))),
-        row(t("cmp_flavor"), (m) => (m.flavors || []).join(", ") || "-"),
+        row(t("cmp_flavor"), (m) => words(m.flavors || []) || "-"),
         row(t("cmp_caffeine"), (m) => number(m.caffeine_mg, "mg")),
         row(t("cmp_kcal"), (m) => number(m.kcal, "kcal")),
         row(t("cmp_sugar_g"), (m) => number(m.sugar_g, "g")),
         row(t("cmp_hot"), (m) => t(m.hot_available ? "yes" : "no")),
         row(t("cmp_sugar_option"), sugar),
-        row(t("cmp_allergens"), (m) => m.allergens.join(", ") || t("none")))),
+        row(t("cmp_allergens"), (m) => words(m.allergens) || t("none")))),
     basis && el("p", { class: "muted" }, t("cmp_basis", { basis })));
 }
 
@@ -927,7 +936,14 @@ async function send(text) {
 
 // ------------------------------------------------------------ 언어·세션
 
+// 브랜드와 매장 이름을 화면 언어로. 예: 공차 시흥배곧점 / Gong Cha Siheung Baegot
+function storeName() {
+  const { store, store_names: names } = state.config;
+  return `${t("brand")} ${(state.lang !== "ko" && names[state.lang]) || store.name}`.replace("贡茶 ", "贡茶");
+}
+
 function relabel() {
+  $("#store-name").textContent = storeName();
   document.documentElement.lang = state.lang;
   for (const node of $$("[data-i18n]")) node.textContent = t(node.dataset.i18n);
   for (const node of $$("[data-i18n-placeholder]")) node.placeholder = t(node.dataset.i18nPlaceholder);
@@ -1037,7 +1053,6 @@ async function init() {
   idle.total = config.idle.idle_seconds ? config.idle.idle_seconds + config.idle.warning_seconds : 0;
   idle.warning = config.idle.warning_seconds;
   idle.left = idle.total;
-  $("#store-name").textContent = config.store.name;
   if (!config.ready) {
     $("#notice").textContent = config.error;
     $("#notice").hidden = false;

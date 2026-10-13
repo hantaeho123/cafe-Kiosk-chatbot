@@ -334,7 +334,7 @@ function receiptStep() {
 function receiptPaper(order) {
   const { receipt, totals } = order;
   return el("div", { class: "paper" },
-    el("strong", {}, t("receipt_paper_title")), el("small", {}, `${state.config.store.name} · ${receipt.paid_at}`),
+    el("strong", {}, t("receipt_paper_title")), el("small", {}, `${storeName()} · ${receipt.paid_at}`),
     el("div", { class: "paper-number" }, `${t("order_number")} ${receipt.order_number}`),
     order.lines.map((line) => el("div", { class: "paper-row" }, el("span", {}, `${menuName(line)} × ${line.quantity}`), el("span", {}, money(line.line_total)))),
     totals.voucher ? el("div", { class: "paper-row" }, el("span", {}, t("voucher_amount")), el("span", {}, `−${money(totals.voucher)}`)) : null,

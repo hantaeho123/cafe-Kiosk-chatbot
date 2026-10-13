@@ -450,3 +450,15 @@ def test_option_that_cannot_be_applied_is_spelled_out(talk):
     events, session, _ = talk("망고 스무디 당도 30%로 하나", tool_chunks(("add_to_cart", {"menu_name": "망고 스무디", "sugar": 30})),
                               text_chunks("**망고 스무디**는 당도가 고정이라 30%로는 못 바꿔요. 기본 당도로 올렸어요."))
     assert of(events, "verified")[0]["unapplied"] == "model"  # 모델이 밝혔으면 또 붙이지 않는다
+
+
+def test_foreign_reply_uses_the_screens_names_and_price_format(talk):
+    events, session, client = talk("Could you recommend something without caffeine?",
+                                   tool_chunks(("find_menus", {"caffeine": "none"})),
+                                   text_chunks("**Taro Milk Tea with Pearls** (타로 밀크티 + 펄) is L 5,500원."))
+    menus = tool_result(client)["menus"]
+    assert menus[0]["name"] == "타로 밀크티 + 펄" and menus[0]["name_local"] == "Taro Milk Tea with Pearls"  # 메뉴판과 같은 이름을 준다
+    assert of(events, "replace")[-1]["text"].endswith("is L ₩5,500.") and "원" not in session.history[-1]["content"]
+    assert '"이 언어의 이름 (공식 한글 이름)"' in client.requests[0]["messages"][-1]["content"]
+    _, _, client = talk("타로 밀크티 얼마예요?", text_chunks("**타로 밀크티**는 L 4,900원이에요."))
+    assert session.history[-1]["content"].endswith("4,900원이에요.")  # 한국어 답변은 그대로

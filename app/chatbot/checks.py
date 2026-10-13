@@ -119,3 +119,11 @@ def mentions_ice_amount(user_text):
 
 def mentions_sugar(user_text):
     return bool(_SUGAR.search(user_text))
+
+
+_WON = re.compile(rf"({_NUMBER})\s*원")
+
+
+def foreign_prices(reply):
+    """외국어 답변에 한국어 표기로 남은 금액("5,500원")을 화면과 같은 표기(₩5,500)로 바꾼다."""
+    return _WON.sub(lambda m: f"₩{m.group(1)}", reply)

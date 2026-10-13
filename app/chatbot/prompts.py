@@ -8,7 +8,9 @@ DOC_TYPES = {
 }
 
 # 다른 언어로 답할 때 모델이 메뉴명까지 번역해 버리면 다음 턴에 어떤 메뉴인지 알 수 없게 된다. 턴마다 다시 알려 준다.
-FOREIGN_NAME_RULE = (' — 메뉴명은 번역만 쓰지 말고 반드시 "공식 한글 이름 (번역)" 형식으로 쓴다. 예: **타로 밀크티** (Taro Milk Tea). '
+FOREIGN_NAME_RULE = (' — 메뉴명은 "이 언어의 이름 (공식 한글 이름)" 형식으로 쓴다. 예: **{example}** (타로 밀크티). 영어 이름으로 바꿔 쓰지 않는다. '
+                     '이 언어의 이름은 직접 번역하지 말고 메뉴 문서의 "외국어 이름"이나 도구 결과의 name_local 에 적힌 것을 그대로 쓴다'
+                     '(화면의 메뉴판과 같은 이름이다). 가격은 ₩4,200 처럼 쓴다. '
                      '화면 버튼은 이 언어의 화면에 보이는 이름으로 안내한다: ')
 
 SYSTEM_PROMPT = """\
@@ -86,10 +88,10 @@ SYSTEM_PROMPT = """\
 
 ## 말투와 형식
 - 기본은 <응답언어>로 답합니다. 다만 손님이 다른 언어(영어, 중국어, 일본어)로 말하면 손님의 언어가 우선입니다. 그때는 set_language 를 호출하고 손님의 언어로 답합니다.
-- 메뉴명은 어떤 언어로 답하든 공식 한글 이름을 반드시 그대로 씁니다(주문 처리와 화면의 메뉴 카드가 이 이름으로 동작합니다). 한국어가 아닐 때는 한글 이름 뒤에 괄호로 번역을 붙입니다. 예: **블랙 밀크티 + 펄** (Black Milk Tea with Pearls)
+- 메뉴명은 어떤 언어로 답하든 공식 한글 이름을 반드시 함께 씁니다(주문 처리와 화면의 메뉴 카드가 이 이름으로 동작합니다). 한국어가 아닐 때는 그 언어의 메뉴 이름을 먼저 쓰고 한글 이름을 괄호로 붙입니다. 예: **Black Milk Tea with Pearls** (블랙 밀크티 + 펄). 그 언어의 이름은 직접 번역하지 않고 메뉴 문서의 "외국어 이름"이나 도구 결과의 name_local 을 그대로 씁니다.
 - 키오스크 화면에 맞게 짧게 답합니다. 보통 2~4문장, 길어도 6줄 안쪽입니다. 여러 항목은 "- " 목록으로 씁니다.
 - 메뉴명은 **굵게** 표시하고, 화면 버튼은 [결제하기]처럼 대괄호로 적습니다. 표, 제목(#), 이모지는 쓰지 않습니다.
-- 가격은 "4,200원"처럼 씁니다.
+- 가격은 "4,200원"처럼 씁니다. 한국어가 아닐 때는 ₩4,200 처럼 씁니다.
 - 문서 번호, 파일 이름, 도구 이름, 태그 이름 같은 내부 용어는 손님에게 말하지 않습니다.
 - 답변 끝에는 다음에 할 일을 한 가지 제안하거나 묻습니다(사이즈 선택, 확인 버튼, 결제 버튼 등).
 
@@ -202,6 +204,13 @@ def realtime_state(session):
     return "\n".join(lines)
 
 
+def _example_name(session, language):
+    """그 언어의 메뉴 이름 예시(타로 밀크티). 예시가 영어면 중국어·일본어 답변에서도 영어 이름을 쓰는 일이 있었다."""
+    menu, _ = session.catalog.resolve("타로 밀크티")
+    names = session.catalog.names(menu) if menu else {}
+    return names.get(language) or names.get("en") or "Taro Milk Tea"
+
+
 def turn_message(session, hits, user_text, warnings=()):
     """이번 턴의 손님 메시지. 실시간 상태와 검색 문서를 붙여 모델에게 보낸다 (강의의 AUGMENT 단계)."""
     # 손님 글에 태그가 들어 있어도 구획이 깨지지 않게 꺾쇠를 바꿔 둔다.
@@ -213,5 +222,5 @@ def turn_message(session, hits, user_text, warnings=()):
         events += "<주의>\n" + "\n".join(f"- {w}" for w in warnings) + "\n</주의>\n\n"
     return (f"<실시간상태>\n{realtime_state(session)}\n</실시간상태>\n\n{events}"
             f"<참고문서>\n{format_documents(hits, sold_out)}\n</참고문서>\n\n"
-            f"<응답언어>{LANGUAGES[language]}{'' if language == 'ko' else FOREIGN_NAME_RULE + button_names(language)}</응답언어>\n\n"
+            f"<응답언어>{LANGUAGES[language]}{'' if language == 'ko' else FOREIGN_NAME_RULE.format(example=_example_name(session, language)) + button_names(language)}</응답언어>\n\n"
             f"<손님>\n{safe}\n</손님>")

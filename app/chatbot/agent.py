@@ -176,6 +176,9 @@ class KioskAgent:
                 reply += "\n\n" + notice
                 report["allergy_notice"] = "added"
                 yield {"type": "delta", "text": "\n\n" + notice}
+        if session.language != "ko" and checks.foreign_prices(reply) != reply:  # 외국어 답변의 "5,500원" → ₩5,500 (화면과 같은 표기)
+            reply = checks.foreign_prices(reply)
+            yield {"type": "replace", "text": reply}
         if unapplied and session.pending() and reply:  # 손님이 말한 옵션을 반영하지 못했는데 답변이 밝히지 않았을 때
             report["unapplied"] = "model"
             if not checks.mentions_fixed(reply, session.language):

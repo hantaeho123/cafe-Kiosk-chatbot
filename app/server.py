@@ -206,7 +206,7 @@ def create_app(client=None, index_dir=config.INDEX_DIR):
         """세션 상태와 함께 화면이 처음 그릴 것들(인사말, 빠른 답변 버튼, 지난 대화)."""
         chips = kiosk.agent.chips(session) if kiosk.agent else i18n.chips("start", session.language)
         return {**session.state(), "history": session.history, "chips": chips,
-                "greeting": i18n.text("greeting", session.language, store=catalog.store["name"]), **extra}
+                "greeting": i18n.text("greeting", session.language, store=i18n.store_name(catalog.store["name"], session.language)), **extra}
 
     def ordering(session_id):
         """화면 버튼으로 주문을 고칠 때: 결제 화면이 열려 있거나 결제가 끝난 주문은 건드리지 않는다."""
@@ -245,7 +245,7 @@ def create_app(client=None, index_dir=config.INDEX_DIR):
         return {
             "store": catalog.store, "ready": kiosk.agent is not None, "error": kiosk.error,
             "model": config.CHAT_MODEL, "embed_model": config.EMBED_MODEL,
-            "languages": i18n.LANGUAGES, "discounts": DISCOUNTS,
+            "languages": i18n.LANGUAGES, "store_names": i18n.STORE_NAMES.get(catalog.store["name"], {}), "discounts": DISCOUNTS,
             # 옵션 화면의 선택지와 그 뜻
             "sugar_levels": catalog.sugar_levels,
             "sugar_help": {"meaning": options["sugar"]["meaning"],
