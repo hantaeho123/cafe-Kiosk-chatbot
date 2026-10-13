@@ -28,6 +28,15 @@ python -m pytest                    # 테스트 (API 키 없이 돈다)
 python scripts/eval_retrieval.py    # HTI 과업별 질문에 기대한 문서가 검색되는지 확인 (API 키 필요)
 ```
 
+## 배포
+
+Render 에 올린다. 설정은 `render.yaml` 에 있다. 대시보드의 New → Blueprint 에서 이 저장소를 고르고 `OPENAI_API_KEY` 를 입력한다.
+다른 서버에 올릴 때도 같다: `pip install -r requirements.txt` 뒤 `HOST=0.0.0.0 python -m app` (포트는 `PORT`, 키는 `OPENAI_API_KEY` 환경 변수).
+
+- 대화·주문·품절 상태가 서버 메모리에 있어서 **인스턴스(워커)는 하나만** 띄운다. 요청마다 다른 인스턴스가 받을 수 있는 서버리스 환경에는 맞지 않는다.
+- Render 무료 플랜은 15분 동안 접속이 없으면 잠든다. 깨어날 때 RAG 인덱스를 다시 만들고(몇 초), 상태는 처음으로 돌아간다.
+- 주소를 아는 사람은 누구나 이 서버의 OpenAI 키로 대화하고 직원 화면(`/staff`)도 열 수 있다. OpenAI 대시보드에서 월 사용 한도를 걸어 둔다.
+
 ## 구조
 
 ```

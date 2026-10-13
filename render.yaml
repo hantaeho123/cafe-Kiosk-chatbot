@@ -1,0 +1,19 @@
+# Render 배포 설정(Blueprint). Render 대시보드 → New → Blueprint 에서 이 저장소를 고르면 아래대로 서비스가 만들어진다.
+services:
+  - type: web
+    name: cafe-kiosk-chatbot
+    runtime: python
+    # 15분 동안 접속이 없으면 잠들고, 깨어나면 주문·대화·품절 상태가 처음으로 돌아간다.
+    # 유료 플랜으로 바꾸더라도 인스턴스는 하나만 둔다(상태가 서버 메모리에 있다).
+    plan: free
+    region: singapore      # 한국에서 가장 가까운 리전
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m app
+    healthCheckPath: /api/config
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.9
+      - key: HOST
+        value: 0.0.0.0     # 기본값(127.0.0.1)으로는 밖에서 접속할 수 없다. 포트는 Render 가 PORT 로 넘겨준다
+      - key: OPENAI_API_KEY
+        sync: false        # 값은 저장소에 두지 않고, 서비스를 만들 때 대시보드에서 입력한다
