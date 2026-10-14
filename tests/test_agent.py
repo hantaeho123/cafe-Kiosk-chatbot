@@ -360,9 +360,9 @@ def test_menus_just_shown_are_numbered_for_the_next_turn(talk):
 def test_no_match_tells_which_condition_to_drop(talk):
     _, _, client = talk("카페인 적고 덜 단 시원한 거", tool_chunks(
         ("find_menus", {"caffeine": "low", "sugar_adjustable": True, "flavor": "시원한"})), text_chunks("조건을 하나 빼면 있어요."))
-    assert tool_result(client)["total"] == 17  # '시원한'은 맛이 아니라 '차갑게'로 읽는다
-    _, _, client = talk("카페인 적고 덜 단 스무디", tool_chunks(
-        ("find_menus", {"caffeine": "low", "sugar_adjustable": True, "flavor": "스무디류"})), text_chunks("조건을 하나 빼면 있어요."))
+    assert tool_result(client)["total"] == 19  # '시원한'은 맛이 아니라 '차갑게'로 읽는다
+    _, _, client = talk("카페인 없고 덜 단 스무디", tool_chunks(
+        ("find_menus", {"caffeine": "none", "sugar_adjustable": True, "flavor": "스무디류"})), text_chunks("조건을 하나 빼면 있어요."))
     result = tool_result(client)
     assert result["total"] == 0 and "맛 (시원한)" in [r["without"] for r in result["relaxed"]] and result["relaxed"][0]["menus"]
     _, _, client = talk("카페인 적고 덜 단 시원한 거", tool_chunks(
@@ -376,7 +376,7 @@ def test_budget_search_comes_with_a_priced_example(talk):
     _, _, client = talk("2만 원으로 셋이", tool_chunks(("find_menus", {"total_budget": 20000, "people": 3})), text_chunks("세 잔이에요."))
     example = tool_result(client)["example"]
     assert len(example["lines"]) == 3 and example["budget"]["within_budget"] is True
-    assert example["total"] == "15,900원" and example["budget"]["left"] == "4,100원"
+    assert example["total"] == "17,700원" and example["budget"]["left"] == "2,300원"
 
 
 def test_adding_a_menu_already_in_the_order_is_pointed_out(talk):
@@ -462,11 +462,12 @@ def test_option_that_cannot_be_applied_is_spelled_out(talk):
 def test_foreign_reply_uses_the_screens_names_and_price_format(talk):
     events, session, client = talk("Could you recommend something without caffeine?",
                                    tool_chunks(("find_menus", {"caffeine": "none"})),
-                                   text_chunks("**Taro Milk Tea with Pearls** (타로 밀크티 + 펄) is L 5,500원."))
+                                   text_chunks("**Taro Milk Tea with Pearls** (타로 밀크티 + 펄) is L 5,200원."))
     menus = tool_result(client)["menus"]
-    assert menus[0]["name"] == "타로 밀크티 + 펄" and menus[0]["name_local"] == "Taro Milk Tea with Pearls"  # 메뉴판과 같은 이름을 준다
+    row = next(m for m in menus if m["name"] == "타로 밀크티 + 펄")
+    assert row["name_local"] == "Taro Milk Tea with Pearls"  # 메뉴판과 같은 이름을 준다
     # 가격은 ₩ 로, 메뉴 이름 뒤의 한글 괄호는 뺀다. 그래도 어떤 메뉴를 말했는지는 기억한다
-    assert session.history[-1]["content"] == "**Taro Milk Tea with Pearls** is L ₩5,500."
+    assert session.history[-1]["content"] == "**Taro Milk Tea with Pearls** is L ₩5,200."
     assert session.shown == ["타로 밀크티 + 펄"] and of(events, "cards")[0]["items"][0]["name"] == "타로 밀크티 + 펄"
     assert "이 언어의 이름만 쓴다" in client.requests[0]["messages"][-1]["content"]
     _, _, client = talk("타로 밀크티 얼마예요?", text_chunks("**타로 밀크티**는 L 4,600원이에요."))

@@ -148,20 +148,23 @@ class Catalog:
 
     @staticmethod
     def rank(menu):
-        """매장 인기 순위(1~5위). 순위에 없는 메뉴는 99."""
-        return min((int(b[2]) for b in menu["badges"] if b.startswith("인기")), default=99)
+        """매장 메뉴판 BEST SELLER 에 놓인 순서(1~14). 없는 메뉴는 99."""
+        return menu.get("best_order") or 99
 
     def popularity(self, menu):
-        return (self.rank(menu), not menu["is_best_seller"], "사장님추천" not in menu["badges"], self.min_price(menu))
+        return (self.rank(menu), not menu["is_new"], not menu["is_season"], self.min_price(menu))
+
+    @staticmethod
+    def marks(menu):
+        """매장 메뉴판처럼 붙이는 표시: 카페인 없음, ICE 전용."""
+        if menu["kind"] != "drink":
+            return []
+        return (["caffeine_free"] if menu["tags"]["caffeine_level"] == "무카페인" else []) + \
+            (["iced_only"] if menu["temperatures"] == ["ICE"] else [])
 
     # ------------------------------------------------------------ 화면용 데이터
 
     def card(self, m, sold_out=False):
-        badges = [b for b in m["badges"] if b.startswith("인기")]
-        if m["is_best_seller"]:
-            badges.append("베스트")
-        if m["is_new_season"]:
-            badges.append("신메뉴")
         return {
             "id": m["id"],
             "name": m["name"],
@@ -174,7 +177,8 @@ class Catalog:
             "prices": [{"size": s["size"], "price": s["price"], "volume_ml": s.get("volume_ml")} for s in m["sizes"]],
             "price": m.get("price"),  # 푸드·MD 의 단품 가격 (확인된 것만). 음료는 prices 를 쓴다
             "temperatures": m.get("temperatures", []),
-            "badges": badges,
+            "badges": m["badges"],
+            "marks": self.marks(m),
         }
 
     @staticmethod
@@ -229,13 +233,12 @@ class Catalog:
         }
 
     def board(self, sold_out=()):
-        """메뉴판 탭: 추천(베스트·인기) · 신메뉴(시즌) · 음료 종류 6가지 · 디저트 · 기타."""
+        """메뉴판 탭: 매장 메뉴판과 같은 베스트(BEST SELLER) · 신메뉴·시즌 · 음료 종류 6가지 · 디저트 · 기타."""
         drinks = [m for m in self.items if m["kind"] == "drink" and self.orderable(m)]
 
-        picks = sorted((m for m in drinks if m["badges"] or m["is_best_seller"]), key=self.rank)
         tabs = [
-            {"id": "recommend", "label": "추천", "items": picks},
-            {"id": "new", "label": "신메뉴", "items": [m for m in drinks if m["is_new_season"]]},
+            {"id": "best", "label": "베스트", "items": sorted((m for m in drinks if m["is_best_seller"]), key=self.rank)},
+            {"id": "new", "label": "신메뉴·시즌", "items": sorted((m for m in drinks if m["is_new_season"]), key=lambda m: not m["is_new"])},
             *({"id": cat, "label": cat, "items": [m for m in drinks if m["category"] == cat]} for cat in DRINK_TABS),
             {"id": "dessert", "label": "디저트", "items": [m for m in self.items if m["kind"] == "food" and self.visible(m)]},
             {"id": "etc", "label": "기타", "items": [m for m in self.items if m["kind"] == "md" and self.visible(m)]},

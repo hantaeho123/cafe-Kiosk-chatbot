@@ -7,7 +7,7 @@ def test_documents_cover_what_the_kiosk_must_answer():
     types = {d["type"] for d in docs}
     assert {"menu", "recommendation", "option", "category", "policy", "guide", "store", "knowledge"} <= types
     ids = {d["id"] for d in docs}
-    assert {"recommend:season", "recommend:dessert", "recommend:popular", "option:toppings", "store:info"} <= ids
+    assert {"recommend:season", "recommend:dessert", "recommend:best", "option:toppings", "store:info"} <= ids
     # 이용 안내 문서: 사용법, 결제 방법과 기기 위치, 적립·할인, 교환권·금액권, 요청 사항 처리 방침, 직원 호출, 알레르기
     assert {f"guide:{name}" for name in ("kiosk", "payment", "benefits", "voucher", "requests", "staff", "allergy")} <= ids
     text = {d["id"]: d["text"] for d in docs}

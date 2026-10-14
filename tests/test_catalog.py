@@ -27,8 +27,11 @@ def test_find_mentions_prefers_longest_name(catalog):
 
 def test_board_has_best_season_and_category_tabs(catalog):
     tabs = {t["id"]: t["items"] for t in catalog.board()}
-    assert {"recommend", "new", "밀크티", "커피", "dessert"} <= set(tabs) and not {"etc", "1리터 배달 메뉴"} & set(tabs)  # MD·1리터 배달 메뉴는 숨긴다
-    assert [i["badges"][0] for i in tabs["recommend"][:5]] == ["인기1위", "인기2위", "인기3위", "인기4위", "인기5위"]
+    assert {"best", "new", "밀크티", "커피", "dessert"} <= set(tabs) and not {"etc", "1리터 배달 메뉴"} & set(tabs)  # MD·1리터 배달 메뉴는 숨긴다
+    # 매장 메뉴판과 같다: BEST SELLER 14개를 메뉴판 순서대로, 신메뉴(NEW) 다음에 시즌 메뉴
+    assert len(tabs["best"]) == 14 and tabs["best"][0]["name"] == "타로 쥬얼리 시그니처 밀크티" and tabs["best"][-1]["name"] == "우롱티 + 코코넛 + 밀크폼"
+    assert all(i["badges"] == ["BEST"] for i in tabs["best"]) and tabs["best"][0]["marks"] == ["caffeine_free", "iced_only"]
+    assert [i["badges"] for i in tabs["new"][:2]] == [["NEW"], ["NEW"]] and tabs["new"][2]["badges"] == ["SEASON"]
     assert all(item["orderable"] for item in tabs["커피"])
     assert not any(item["orderable"] for item in tabs["dessert"])  # 디저트는 가격 정보가 없다
 
@@ -38,10 +41,10 @@ def test_sold_out_shows_on_the_board_and_is_left_out_of_suggestions(catalog):
     stock = Stock(catalog)  # data/kiosk/stock.json 의 초깃값
     assert stock.names() == ["초코멜로 스무디"]
     best = catalog.suggest()[0]
-    assert best["name"] == "딸기 쥬얼리 밀크티"
+    assert best["name"] == "타로 쥬얼리 시그니처 밀크티"  # 메뉴판 BEST SELLER 첫째
     stock.set(best["id"], True)
     marked = [i["name"] for t in catalog.board(stock.ids()) for i in t["items"] if i["sold_out"]]
-    assert set(marked) == {"초코멜로 스무디", "딸기 쥬얼리 밀크티"}
+    assert set(marked) == {"초코멜로 스무디", "타로 쥬얼리 시그니처 밀크티"}
     assert best["id"] not in [m["id"] for m in catalog.suggest(stock.ids())]
     assert best["id"] not in [m["id"] for m in catalog.find_drinks(flavor="달콤한", exclude_ids=stock.ids())]
     stock.set(best["id"], False)
@@ -63,7 +66,7 @@ def test_find_drinks_applies_every_condition(catalog):
     hot_cheap = catalog.find_drinks(hot=True, max_price=4500, sort="price")
     assert [m["name"] for m in hot_cheap][0] == "아메리카노"
     assert all("HOT" in m["temperatures"] and catalog.min_price(m) <= 4500 for m in hot_cheap)
-    assert catalog.find_drinks(flavor="달콤한", sort="popular")[0]["name"] == "딸기 쥬얼리 밀크티"  # 인기 1위
+    assert catalog.find_drinks(flavor="달콤한", sort="popular")[0]["name"] == "브라운슈가 시그니처 밀크티 +펄"  # 메뉴판 BEST SELLER 순서
     assert catalog.find_drinks(category="커피", max_price=1000) == []
     adjustable = catalog.find_drinks(caffeine="low", sugar_adjustable=True)
     assert adjustable and all(m["options"]["sugar"]["adjustable"] is True for m in adjustable)

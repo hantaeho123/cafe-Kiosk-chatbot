@@ -233,10 +233,9 @@ function openStart() {
 
 // ------------------------------------------------------------ 메뉴판
 
+// 매장 메뉴판의 묶음(BEST SELLER, NEW, SEASON MENU)과 표시(CAFFEINE FREE, ICED ONLY)를 그대로 붙인다.
 function badgeLabel(badge) {
-  const rank = badge.match(/^인기(\d)위$/);
-  if (rank) return state.lang === "ko" ? badge : `No.${rank[1]}`;
-  return { 베스트: t("badge_best"), 신메뉴: t("badge_new") }[badge] || badge;
+  return { BEST: t("badge_best"), NEW: t("badge_new"), SEASON: t("badge_season") }[badge] || badge;
 }
 
 function menuCard(item, onPick) {
@@ -244,10 +243,12 @@ function menuCard(item, onPick) {
   const price = prices.length ? money(Math.min(...prices)) + (prices.length > 1 ? "~" : "") : item.price ? money(item.price) : t("price_ask");
   const cls = "card" + (item.orderable ? "" : " unavailable") + (item.sold_out ? " sold-out" : "");
   return el("button", { class: cls, type: "button", onclick: () => (onPick ? onPick(item) : openDetail(item.id)) },
-    el("div", { class: "badges" }, item.badges.map((b) => el("span", { class: "badge" + (b.startsWith("인기") ? "" : " soft") }, badgeLabel(b)))),
+    el("div", { class: "badges" }, item.badges.map((b) => el("span", { class: "badge " + b.toLowerCase() }, badgeLabel(b)))),
     el("div", { class: "photo" }, item.image && el("img", { src: item.image, alt: "", loading: "lazy" }),
       item.sold_out && el("span", { class: "sold-out-mark" }, t("sold_out"))),
-    el("div", { class: "info" }, el("div", { class: "name" }, menuName(item)), el("div", { class: "price" }, price)));
+    el("div", { class: "info" }, el("div", { class: "name" }, menuName(item)), el("div", { class: "price" }, price),
+      (item.marks || []).length > 0 && el("div", { class: "marks" },
+        item.marks.map((m) => el("span", { class: "mark " + m }, t("mark_" + m))))));
 }
 
 function renderBoard() {

@@ -132,7 +132,7 @@ def test_option_screen_adds_edits_and_suggests(kiosk):
     assert line["unit_price"] == 5700 + 800 + 1100 and line["line_total"] == 15200
     assert (line["sugar"], line["ice"], [t["id"] for t in line["toppings"]]) == (70, "less", ["pearl", "cheese_foam"])
     # 추가 제안 창: 아직 담지 않은 인기 메뉴 (품절 제외)
-    assert len(added["suggestions"]) == 3 and added["suggestions"][0]["name"] == "딸기 쥬얼리 밀크티"
+    assert len(added["suggestions"]) == 3 and added["suggestions"][0]["name"] == "타로 쥬얼리 시그니처 밀크티"
     assert black not in [s["id"] for s in added["suggestions"]]
 
     edited = post(client, "/api/order/item", line_id=line["line_id"], size="L", temperature="HOT", sugar=30, toppings=[],

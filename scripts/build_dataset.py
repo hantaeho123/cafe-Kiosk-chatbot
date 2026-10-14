@@ -103,14 +103,6 @@ def build_menu():
         for row in csv.DictReader(f):
             if row["official_no"] and row["source"] != "diningcode":
                 store_prices[int(row["official_no"])].append(row)
-    drink_nos = {p["no"] for p in products if p["kind"] == "drink"}
-    for no in drink_nos:
-        store = [r for r in store_prices.get(no, []) if r["kind"] == "drink"]
-        if not store:
-            prices.pop(no, None)
-            continue
-        base = prices.get(no) or [{"section": "매장 메뉴판", "app_name": store[0]["name"], "rec_sugar": "", "ice": "", "badge": ""}]
-        prices[no] = [{**base[0], "size": r["size"], "price": r["price"], "store": True} for r in store]
 
     # 공식 사이트에 같은 메뉴가 탭별로 따로 등록된 경우 하나로 합친다.
     by_name = {}
@@ -120,11 +112,25 @@ def build_menu():
         if twin:
             twin["categories"] += p["categories"]
             twin["merged_official_nos"].append(p["no"])
+            # 배민 행과 매장 가격이 서로 다른 번호에 붙어 있을 수 있다(허니 자몽 블랙티: 배민 584, 메뉴판 551). 둘 다 옮긴다.
             prices[twin["no"]] += prices.pop(p["no"], [])
+            store_prices[twin["no"]] += store_prices.pop(p["no"], [])
             continue
         p["merged_official_nos"] = [p["no"]]
         by_name[(p["kind"], p["name"])] = p
         merged.append(p)
+
+    drink_nos = {p["no"] for p in merged if p["kind"] == "drink"}
+    for no in drink_nos:
+        store = [r for r in store_prices.get(no, []) if r["kind"] == "drink"]
+        if not store:
+            prices.pop(no, None)
+            continue
+        base = prices.get(no) or [{"section": "매장 메뉴판", "app_name": store[0]["name"], "rec_sugar": "", "ice": "", "badge": ""}]
+        prices[no] = [{**base[0], "size": r["size"], "price": r["price"], "store": True} for r in store]
+
+    # 매장 메뉴판에 따로 묶인 메뉴(BEST SELLER, NEW, SEASON MENU). 배민의 인기 순위·사장님추천 배지는 쓰지 않는다.
+    board = load("curated/menu_board.json")
 
     menu = []
     for p in merged:
@@ -148,9 +154,13 @@ def build_menu():
             "official_tabs": tabs,
             "series": series,
             "app_section": app_section,
-            "is_new_season": "New 시즌 메뉴" in tabs,
-            "is_best_seller": "베스트셀러" in tabs,
-            "badges": sorted({b for r in rows for b in r["badge"].split("|") if b}),
+            "is_new": p["name"] in board["new"],
+            "is_season": p["name"] in board["season"],
+            "is_new_season": p["name"] in board["new"] + board["season"],
+            "is_best_seller": p["name"] in board["best_seller"],
+            "best_order": board["best_seller"].index(p["name"]) + 1 if p["name"] in board["best_seller"] else None,
+            "badges": [label for label, names in (("NEW", board["new"]), ("BEST", board["best_seller"]), ("SEASON", board["season"]))
+                       if p["name"] in names],
             "image": f"images/{p['no']}{Path(p['image_url']).suffix}" if p["image_url"] else None,
             "image_url": p["image_url"],
             "on_sale": bool(rows),
@@ -193,6 +203,12 @@ def build_menu():
             # 공식 영양정보 안내의 '스무디 당도 고정' + 배민의 다른 스무디가 모두 Sugar고정/Ice고정인 점으로 추정
             rec = ice = "fixed"
             option_source = "inferred"
+        elif rows and not rec and not ice:
+            # 조절 여부를 알려 주는 자료가 없다. 메뉴판 안내(당도 0~100%, 얼음 적게·보통·많이)대로 고를 수 있다고 보고, 추천 당도는 가장 흔한 50%로 둔다.
+            rec, ice = "50", "regular"
+            option_source = "assumed"
+        elif rows and rec and not ice and rec != "fixed":
+            ice = "regular"  # 추천 당도만 적혀 있고 얼음 표기가 없는 메뉴도 얼음을 고를 수 있다고 본다
         rep = pick_nutrition(nut, official_sizes[0] if official_sizes else None)
         included = [label for key, label in TOPPINGS_IN_NAME if key in p["name"]]
         if re.search(r"(?<!미니)(?<!화이트)펄", p["name"]):
@@ -295,9 +311,10 @@ def menu_doc(m, options):
             lines.append(f"영양정보 [{NUTRITION_BASIS}]")
             lines += [" - " + nutrition_sentence(n) for n in m["nutrition"]]
     lines.append("알레르기 유발물질: " + (", ".join(m["allergens"]) if m["allergens"] else "표기 없음"))
-    badges = m["badges"] + (["베스트셀러"] if m["is_best_seller"] else []) + (["시즌 메뉴"] if m["is_new_season"] else [])
+    badges = (["신메뉴(NEW)"] if m["is_new"] else []) + (["베스트셀러(BEST SELLER)"] if m["is_best_seller"] else []) \
+        + (["시즌 메뉴"] if m["is_season"] else [])
     if badges:
-        lines.append(f"특이사항: {', '.join(badges)}")
+        lines.append(f"매장 메뉴판 표시: {', '.join(badges)}")
     return {
         "id": f"menu:{m['id']}",
         "type": "menu",
@@ -346,12 +363,8 @@ def build_documents(menu, options, store, policies, flow, info):
             add(f"recommend:{doc_id}", "recommendation", title, intro + "\n" + "\n".join(fmt(m) for m in items),
                 ["build_dataset.py 파생 (공식 영양정보·메뉴 설명 기반)"])
 
-    ranked = sorted((m for m in drinks if any(b.startswith("인기") for b in m["badges"])),
-                    key=lambda m: min(b for b in m["badges"] if b.startswith("인기")))
-    rec("popular", "인기 메뉴 순위", "시흥배곧점에서 한 달간 주문이 많은 인기 메뉴 순위입니다. 요즘 가장 잘 나가는(많이 팔리는) 메뉴입니다.", ranked,
-        lambda m: f"- {next(b for b in m['badges'] if b.startswith('인기'))}: {m['name']} ({won(m['sizes'][0]['price'])})")
-    rec("best", "베스트셀러", "공차 고객들이 즐겨 찾는 티와 토핑 조합(베스트셀러)입니다.", [m for m in drinks if m["is_best_seller"]])
-    rec("owner", "사장님 추천 메뉴", "매장에서 추천하는 메뉴입니다.", [m for m in drinks if "사장님추천" in m["badges"]])
+    rec("best", "베스트셀러·인기 메뉴", "요즘 가장 잘 나가는(많이 팔리는) 인기 메뉴입니다. 매장 메뉴판의 BEST SELLER 에 놓인 순서이고, 판매 순위는 아닙니다.",
+        sorted((m for m in drinks if m["is_best_seller"]), key=lambda m: m["best_order"]))
     for flavor in FLAVORS:
         rec(f"flavor-{flavor}", f"{flavor} 음료 추천", f"'{flavor}' 맛 특징을 가진 음료입니다.",
             [m for m in drinks if flavor in m["tags"]["flavors"]])
@@ -372,8 +385,9 @@ def build_documents(menu, options, store, policies, flow, info):
         [m for m in drinks if not m["tags"]["contains_milk"]])
     rec("cheapest", "가격이 저렴한 음료", "가격이 낮은 순서입니다.",
         sorted(drinks, key=lambda m: m["sizes"][0]["price"])[:15])
-    rec("season", "신메뉴·시즌 메뉴", "지금 판매 중인 신메뉴(시즌 한정) 음료입니다.", [m for m in drinks if m["is_new_season"]],
-        lambda m: price_line(m) + (f" ({m['series']})" if m["series"] else ""))
+    rec("season", "신메뉴·시즌 메뉴", "지금 판매 중인 신메뉴와 시즌 한정 음료입니다(매장 메뉴판의 NEW, SEASON MENU).",
+        sorted((m for m in drinks if m["is_new_season"]), key=lambda m: not m["is_new"]),
+        lambda m: price_line(m) + (" (신메뉴)" if m["is_new"] else " (시즌 메뉴)"))
     add("recommend:dessert", "recommendation", "음료와 곁들이기 좋은 디저트·푸드",
         "음료와 함께 곁들일 수 있는 디저트(푸드) 메뉴입니다.\n"
         "괄호 안은 매장 키오스크 화면에서 확인한 가격이고, 가격이 없는 것은 매장에서 확인해야 합니다. 푸드는 카운터에서 주문합니다.\n" +
