@@ -97,7 +97,7 @@ async function scanBarcode(purpose, code) {
 }
 
 // onRead(code): 바코드를 리더에 비췄을 때. 실제로는 손님이 휴대폰을 리더에 갖다 대는 행동이다.
-function scannerPanel(purpose, onRead) {
+function scannerPanel(purpose, onRead, hint = null) {
   const all = state.config.demo.barcodes;
   const shown = (b) => b.kind === BARCODE_KIND[purpose] || b.kind === "unreadable";  // 인식 실패 시연용은 늘 보여 준다
   const fit = all.filter(shown);
@@ -107,6 +107,7 @@ function scannerPanel(purpose, onRead) {
   const input = el("input", { type: "text", maxlength: "64", placeholder: t("scan_manual"), "aria-label": t("scan_manual") });
   return el("div", { class: "scanner" },
     el("h4", {}, t(`scan_title_${purpose}`)),
+    hint && el("p", { class: "notice-line" }, hint),
     el("p", { class: "muted" }, t("scan_guide")),
     pay.error && el("div", { class: "alert" }, el("strong", {}, pay.error), el("span", {}, t("scan_help")),
       el("button", { class: "secondary small", type: "button", onclick: () => callStaff(t("staff_reason_barcode")) }, t("call_staff"))),
@@ -154,7 +155,7 @@ function terminalFigure(active, screenText) {
       el("div", { class: "keys" }, Array.from({ length: 9 }, () => el("i"))),
       el("div", { class: part("card_slot") }),
       el("div", { class: part("receipt") })),
-    el("ul", { class: "terminal-legend" }, ["nfc", "barcode", "card_slot", "receipt"].map(label)));
+    el("ul", { class: "terminal-legend" }, active ? [label(active)] : []));
 }
 
 // ------------------------------------------------------------ 단계별 화면
@@ -189,22 +190,24 @@ async function removeBenefit(kind) {
 
 function benefitsStep(order) {
   const { totals } = order;
-  const benefit = (kind, purpose, title, hint, applied) => el("div", { class: "benefit" + (applied ? " on" : "") },
-    el("div", {}, el("strong", {}, title), el("small", {}, applied || hint)),
-    applied
-      ? el("button", { class: "secondary small", type: "button", onclick: () => removeBenefit(kind) }, t("benefit_remove"))
-      : el("button", { class: "secondary small", type: "button", onclick: () => payStep("scan", { scanFor: purpose }) }, t("scan_button")));
-  const next = totals.due > 0
-    ? el("button", { class: "primary wide-button", type: "button", onclick: () => payStep("method") }, t("next_method"))
-    : el("button", { class: "primary wide-button", type: "button", onclick: () => tender("none") }, t("finish_free"));
+  const benefit = (kind, purpose, title, applied) => {
+    const content = [el("span", { class: "benefit-icon", "aria-hidden": "true" }, { stamp: "◎", discount: "%", coupon: "▤" }[kind]),
+      el("strong", {}, title), el("small", {}, applied || t("benefit_choose"))];
+    return applied
+      ? el("div", { class: "benefit-choice on" }, content,
+        el("button", { class: "link", type: "button", onclick: () => removeBenefit(kind) }, t("benefit_remove")))
+      : el("button", { class: "benefit-choice", type: "button", onclick: () => payStep("scan", { scanFor: purpose }) }, content);
+  };
   return [
-    el("h4", {}, t("pay_summary")), orderSummary(order),
-    el("h4", {}, t("pay_step_benefits")),
-    benefit("stamp", "stamp", t("benefit_stamp"), t("benefit_stamp_hint"), order.stamp && t("benefit_stamp_on", { n: totals.stamps })),
-    benefit("discount", "membership", t("benefit_discount"), t("benefit_discount_hint"),
+    el("h4", {}, t("benefits_question")),
+    el("p", { class: "pay-subtitle" }, t("benefits_optional")),
+    el("div", { class: "benefit-choices" },
+    benefit("stamp", "stamp", t("benefit_stamp"), order.stamp && t("benefit_stamp_on", { n: totals.stamps })),
+    benefit("discount", "membership", t("benefit_discount"),
       order.discount && `${t(`discount_${order.discount}`)} · −${money(totals.discount)}`),
-    benefit("coupon", "coupon", t("benefit_coupon"), t("benefit_coupon_hint"), order.coupon && `${order.coupon.label} · −${money(totals.coupon)}`),
-    next,
+    benefit("coupon", "coupon", t("benefit_coupon"), order.coupon && `${order.coupon.label} · −${money(totals.coupon)}`)),
+    el("section", { class: "pay-order-details" },
+      el("h5", {}, t("pay_order_detail", { n: order.lines.reduce((sum, line) => sum + line.quantity, 0) })), orderSummary(order)),
   ];
 }
 
@@ -216,7 +219,7 @@ function scanStep() {
     pay.step = "benefits";
     showToast(t("scan_ok", { label: demoLabel(session.scan) }));
     applyState(session);
-  });
+  }, t({ stamp: "benefit_stamp_hint", membership: "benefit_discount_hint", coupon: "benefit_coupon_hint" }[purpose]));
 }
 
 function dueLine(order) {
@@ -226,7 +229,7 @@ function dueLine(order) {
 function methodStep(order) {
   const tile = (title, desc, onclick) => el("button", { class: "tile", type: "button", onclick }, el("strong", {}, title), el("small", {}, desc));
   return [
-    el("h4", {}, t("method_title")), dueLine(order),
+    el("h4", {}, t("method_title")),
     pay.message && el("p", { class: "notice-line" }, pay.message),
     order.tenders.length ? el("ul", { class: "notes" }, order.tenders.map((x) =>
       el("li", { class: "note" }, t("gift_used", { label: x.label || x.name, amount: money(x.amount) })))) : null,
@@ -240,7 +243,7 @@ function methodStep(order) {
 function easyStep(order) {
   const tile = (title, desc, method) => el("button", { class: "tile", type: "button",
     onclick: () => payStep("terminal", { method, scenario: "ok" }) }, el("strong", {}, title), el("small", {}, desc));
-  return [el("h4", {}, t("easy_title")), dueLine(order),
+  return [el("h4", {}, t("easy_title")),
     el("div", { class: "tiles" }, tile(t("easy_tap"), t("easy_tap_desc"), "nfc"), tile(t("easy_barcode"), t("easy_barcode_desc"), "barcode"))];
 }
 
@@ -276,8 +279,8 @@ function failureBox(order) {
 
 // 시연용: 손님이 어떤 카드를 꽂는지 고른다. 승인 거절과 다시 시도를 보여 주기 위한 것이다.
 function scenarioPicker(kind, title) {
-  return el("div", { class: "demo" },
-    el("p", { class: "demo-title" }, title, el("small", {}, t("demo_label"))),
+  return el("details", { class: "demo" },
+    el("summary", { class: "demo-title" }, title, el("small", {}, t("demo_label"))),
     state.config.demo.scenarios[kind].map((s) => el("label", { class: "option" },
       el("input", { type: "radio", name: "scenario", checked: s.id === pay.scenario, onchange: () => { pay.scenario = s.id; } }),
       el("span", { class: "label" }, demoLabel(s)))));
@@ -290,17 +293,17 @@ function terminalStep(order) {
       return [el("h4", {}, t("card_approved")),
         el("button", { class: "primary wide-button", type: "button", onclick: () => payStep("receipt", { approved: false }) }, t("card_remove"))];
     }
-    return [el("h4", {}, t("method_card")), dueLine(order), el("p", {}, t("card_guide")), failureBox(order),
+    return [el("h4", {}, t("method_card")), el("p", {}, t("card_guide")), failureBox(order),
       scenarioPicker("card", t("demo_card")),
       el("button", { class: "primary wide-button", type: "button", onclick: () => tender("card") }, t(retry ? "retry" : "card_insert"))];
   }
   if (pay.method === "nfc") {
-    return [el("h4", {}, t("easy_tap")), dueLine(order), el("p", {}, t("nfc_guide")), failureBox(order),
+    return [el("h4", {}, t("easy_tap")), el("p", {}, t("nfc_guide")), failureBox(order),
       scenarioPicker("nfc", t("demo_phone")),
       el("button", { class: "primary wide-button", type: "button", onclick: () => tender("nfc") }, t(retry ? "retry" : "nfc_tap"))];
   }
   const purpose = pay.method === "gift_card" ? "gift_card" : "pay";
-  return [dueLine(order), scannerPanel(purpose, async (code) => {
+  return [scannerPanel(purpose, async (code) => {
     const session = await scanBarcode(purpose, code);
     if (!session) return;
     if (session.order.status === "paid") pay.step = "receipt";
@@ -379,14 +382,20 @@ function renderPay() {
   else if (pay.step === "done" && order.receipt.print_receipt && !pay.receiptTaken) device = "receipt";
   const screenText = order.status === "paid" ? money(order.totals.total) : pay.step === "terminal" || pay.step === "method" ? money(order.totals.due) : "";
   const paid = order.status === "paid";
+  const next = pay.step === "benefits" && el("button", {
+    class: "primary", type: "button", disabled: pay.working,
+    onclick: () => order.totals.due > 0 ? payStep("method") : tender("none"),
+  }, t(order.totals.due > 0 ? "next_method" : "finish_free"));
   return el("section", { class: "sheet wide pay", role: "dialog", "aria-modal": "true" },
     el("header", { class: "sheet-head" },
-      el("ol", { class: "steps" }, steps.map((s, i) => el("li", { class: i === at ? "now" : i < at ? "done" : "" }, `${i + 1} ${t(`pay_step_${s}`)}`)))),
-    el("div", { class: "sheet-body pay-body" }, el("div", { class: "pay-main" }, content), terminalFigure(device, screenText)),
-    !paid && el("footer", { class: "sheet-actions help-row" },
+      el("ol", { class: "steps" }, steps.map((s, i) => el("li", { class: i === at ? "now" : i < at ? "done" : "", "aria-current": i === at ? "step" : null }, `${i + 1} ${t(`pay_step_${s}`)}`))),
+      !paid && el("div", { class: "pay-help" },
+        el("button", { class: "link", type: "button", disabled: pay.approved, onclick: () => { closeScreen("pay"); $("#input").focus(); } }, t("ask_chat")),
+        el("button", { class: "link", type: "button", onclick: () => callStaff(t("staff_reason_payment")) }, t("call_staff")))),
+    el("div", { class: `sheet-body pay-body${device ? " with-device" : ""}` },
+      el("div", { class: "pay-main" }, content), device && terminalFigure(device, screenText)),
+    !paid && el("footer", { class: "sheet-actions pay-footer" },
       el("button", { class: "secondary", type: "button", disabled: pay.approved, onclick: goBack }, t("back")),
-      el("span", { class: "muted" }, t("need_help")),
-      // 결제 화면을 잠시 접고 대화로 물어본다(결제는 그대로 진행 중이고, 주문 내역의 안내로 돌아온다)
-      el("button", { class: "secondary", type: "button", disabled: pay.approved, onclick: () => { closeScreen("pay"); $("#input").focus(); } }, t("ask_chat")),
-      el("button", { class: "secondary", type: "button", onclick: () => callStaff(t("staff_reason_payment")) }, t("call_staff"))));
+      el("div", { class: "pay-footer-amount", "aria-live": "polite" },
+        el("span", {}, t(order.totals.paid ? "due" : "total")), el("strong", {}, money(order.totals.due))), next));
 }
