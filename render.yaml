@@ -17,5 +17,7 @@ services:
         value: 0.0.0.0     # 기본값(127.0.0.1)으로는 밖에서 접속할 수 없다. 포트는 Render 가 PORT 로 넘겨준다
       - key: OPENAI_CHAT_MODEL
         value: gpt-6-luna  # 대화 모델. 바꿀 때는 .env 와 app/config.py 기본값도 같은 값으로 맞춘다
+      - key: OPENAI_REASONING_EFFORT
+        value: none        # gpt-6 계열은 도구를 쓰려면 none 이어야 한다. 일반 모델로 바꾸면 이 항목을 지운다
       - key: OPENAI_API_KEY
         sync: false        # 값은 저장소에 두지 않고, 서비스를 만들 때 대시보드에서 입력한다
