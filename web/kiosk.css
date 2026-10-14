@@ -63,19 +63,18 @@ button:active:not(:disabled) { filter: brightness(.95); }
 .messages { padding: 1.2rem 1.1rem; gap: 1.25rem; scroll-padding-bottom: 1rem; }
 .message { max-width: 94%; flex-shrink: 0; min-width: 0; }
 .message.bot { width: 100%; }
-.bubble { font-size: 1.25rem; font-weight: 400; line-height: 1.6; padding: 1rem 1.1rem; }
+.bubble { font-size: 1rem; font-weight: 400; line-height: 1.6; padding: 1rem 1.1rem; }
 .bot .bubble { background: #f5f6f3; border: 0; border-radius: 4px 16px 16px 16px; }
-.user .bubble { background: #f5e9ec; color: #692031; border-radius: 16px 4px 16px 16px; font-size: 1rem; }
+.user .bubble { background: #f5e9ec; color: #692031; border-radius: 16px 4px 16px 16px; }
 .bubble strong, .message-price { font-weight: 650; color: var(--ink); }
 .message-price { font-variant-numeric: tabular-nums; }
 .bubble p + p, .bubble p + ul, .bubble ul + p { margin-top: 1rem; }
-.bubble ul { font-size: 1.125rem; line-height: 1.65; padding-left: 1.15rem; }
+.bubble ul { line-height: 1.65; padding-left: 1.15rem; }
 .bubble li + li { margin-top: .4rem; }
 .bubble li::marker { color: #959d91; }
-.bot .bubble .message-question { font-size: 1.25rem; font-weight: 600; }
+.bot .bubble .message-question { font-weight: 600; }
 .bot .bubble .message-question:not(:first-child) { padding-top: .85rem; border-top: 1px solid var(--line); }
-.greeting .bubble p + p { font-size: 1.125rem; color: var(--muted); }
-.greeting .bubble p:first-child { font-size: 1.25rem; }
+.greeting .bubble p + p { color: var(--muted); }
 .user .bubble { white-space: pre-wrap; }
 .bubble .status { font-size: .875rem; font-weight: 400; }
 .message-cards { display: grid; grid-template-columns: minmax(0, 1fr); gap: .5rem; width: 100%; overflow: visible; }
@@ -136,7 +135,7 @@ button:active:not(:disabled) { filter: brightness(.95); }
   .languages button { flex: 1; }
   .topbar-actions { gap: .1rem; }
   .messages { padding: .8rem; }
-  .bubble { padding: .85rem; font-size: 1.125rem; }
+  .bubble { padding: .85rem; }
   .message { max-width: 100%; }
   .panel-title { padding: .8rem; }
 }
