@@ -227,7 +227,8 @@ class KioskAgent:
         mentioned = self.catalog.find_mentions(spoken, limit=5)
         if mentioned:
             session.shown = [m["name"] for m in mentioned]
-        cards = [self.catalog.card(m, bool(session.stock and session.stock.is_sold_out(m["id"]))) for m in mentioned[:4]]
+        cards = [self.catalog.card(m, bool(session.stock and session.stock.is_sold_out(m["id"])))
+                 for m in mentioned if self.catalog.visible(m)][:4]  # 가격을 모르는 메뉴는 화면에 띄우지 않는다
         if cards:
             yield {"type": "cards", "items": cards}
         pending = session.pending()

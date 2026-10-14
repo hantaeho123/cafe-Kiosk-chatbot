@@ -133,6 +133,15 @@ class Catalog:
                  and (m["badges"] or m["is_best_seller"])]
         return sorted(picks, key=self.popularity)[:limit]
 
+    def visible(self, menu):
+        """화면에 보여 줄 메뉴. 가격을 찾지 못한 메뉴는 숨긴다(2026-10-14 팀 결정)."""
+        return self.orderable(menu) or bool(menu.get("price"))
+
+    def topping_price(self, topping_id, size):
+        """토핑 추가 요금. 매장 메뉴판처럼 사이즈마다 다르다(예: 펄 L +600원 / J +800원)."""
+        topping = self.toppings[topping_id]
+        return topping.get("price_by_size", {}).get(size, topping["price"])
+
     @staticmethod
     def min_price(menu):
         return min(s["price"] for s in menu["sizes"])
@@ -228,7 +237,7 @@ class Catalog:
             {"id": "recommend", "label": "추천", "items": picks},
             {"id": "new", "label": "신메뉴", "items": [m for m in drinks if m["is_new_season"]]},
             *({"id": cat, "label": cat, "items": [m for m in drinks if m["category"] == cat]} for cat in DRINK_TABS),
-            {"id": "dessert", "label": "디저트", "items": [m for m in self.items if m["kind"] == "food"]},
-            {"id": "etc", "label": "기타", "items": [m for m in self.items if m["kind"] == "md"]},
+            {"id": "dessert", "label": "디저트", "items": [m for m in self.items if m["kind"] == "food" and self.visible(m)]},
+            {"id": "etc", "label": "기타", "items": [m for m in self.items if m["kind"] == "md" and self.visible(m)]},
         ]
         return [{**t, "items": [self.card(m, m["id"] in sold_out) for m in t["items"]]} for t in tabs if t["items"]]

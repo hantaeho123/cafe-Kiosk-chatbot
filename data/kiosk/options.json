@@ -81,7 +81,11 @@
         "name_en": "Pearl",
         "price": 600,
         "description": "카사바 뿌리의 녹말로 만든 쫀득쫀득한 식감의 토핑 (타피오카)",
-        "basic": true
+        "basic": true,
+        "price_by_size": {
+          "L": 600,
+          "J": 800
+        }
       },
       {
         "id": "mini_pearl",
@@ -89,7 +93,11 @@
         "name_en": "Mini Pearl",
         "price": 700,
         "description": "타피오카 전분으로 만든 작은 알모양 형태의 쫀득한 식감의 토핑",
-        "basic": true
+        "basic": true,
+        "price_by_size": {
+          "L": 700,
+          "J": 900
+        }
       },
       {
         "id": "white_pearl",
@@ -97,7 +105,11 @@
         "name_en": "White Pearl",
         "price": 700,
         "description": "해초추출물로 만들어 꼬들꼬들한 토핑",
-        "basic": true
+        "basic": true,
+        "price_by_size": {
+          "L": 700,
+          "J": 900
+        }
       },
       {
         "id": "aloe",
@@ -105,7 +117,11 @@
         "name_en": "Aloe",
         "price": 700,
         "description": "신선하고 사각사각한 토핑",
-        "basic": true
+        "basic": true,
+        "price_by_size": {
+          "L": 700,
+          "J": 900
+        }
       },
       {
         "id": "coconut",
@@ -113,7 +129,11 @@
         "name_en": "Coconut",
         "price": 700,
         "description": "달콤한 코코넛으로 만들어진 쫄깃쫄깃한 젤리",
-        "basic": true
+        "basic": true,
+        "price_by_size": {
+          "L": 700,
+          "J": 900
+        }
       },
       {
         "id": "milk_foam",
@@ -124,7 +144,11 @@
         "basic": true,
         "allergens_assumed": [
           "우유"
-        ]
+        ],
+        "price_by_size": {
+          "L": 700,
+          "J": 900
+        }
       },
       {
         "id": "cheese_foam",
@@ -135,7 +159,11 @@
         "basic": true,
         "allergens_assumed": [
           "우유"
-        ]
+        ],
+        "price_by_size": {
+          "L": 900,
+          "J": 1100
+        }
       },
       {
         "id": "extra_shot",
@@ -143,17 +171,21 @@
         "name_en": "Extra Shot",
         "price": 500,
         "description": "에스프레소 샷 추가",
-        "basic": false
+        "basic": false,
+        "price_by_size": {
+          "L": 500,
+          "J": 500
+        }
       }
     ],
     "verified": true,
-    "source": "가격: 배민 공차 시흥배곧점 '공차슈페너' 옵션 화면(2026-10-12 캡처, 배달가). 설명·영문명: 공식 주문방법 페이지",
+    "source": "가격: 매장 메뉴판 사진(TOPPINGS: 펄 L +0.6 / J +0.8, 미니펄·코코넛·화이트펄·알로에·밀크폼 L +0.7 / J +0.9, 치즈폼 L +0.9 / J +1.1, 에스프레소 샷 +0.5). L 가격은 배민 공차슈페너 옵션 화면과 같다. 설명·영문명: 공식 주문방법 페이지",
     "caveats": [
-      "토핑 가격은 공차슈페너 1개 메뉴의 옵션 화면에서 확인한 값이다. 다른 메뉴도 같은 가격표를 쓴다고 가정했다.",
       "공차슈페너는 배민에서 토핑 '최대 1개 선택' 이었다. 메뉴별 최대 개수는 다를 수 있다(공식 안내는 최대 3가지).",
       "샷추가가 커피 외 메뉴에도 되는지는 미확인.",
       "샷추가는 공식 안내의 '7가지 토핑'에 들지 않으므로 최대 3가지 제한에 세지 않는다(가정).",
-      "allergens_assumed 는 공식 표기가 아니라 재료로 추정한 값이다."
+      "allergens_assumed 는 공식 표기가 아니라 재료로 추정한 값이다.",
+      "사이즈별 토핑 가격(price_by_size)은 매장 메뉴판 사진 기준이다. price 는 L 가격과 같다(예전 코드와 맞추려고 남김)."
     ]
   },
   "sizes": {

@@ -39,8 +39,8 @@ TARO = ("add_to_cart", {"menu_name": "타로 밀크티", "size": "L", "temperatu
 
 def test_answer_is_grounded_in_retrieved_documents_and_realtime_state(talk):
     events, session, client = talk("아메리카노 중 사이즈 얼마인가요?",
-                                   text_chunks("**아메리카노**는 L 4,200원, J 4,700원이에요."))
-    assert "".join(e["text"] for e in of(events, "delta")) == "**아메리카노**는 L 4,200원, J 4,700원이에요."
+                                   text_chunks("**아메리카노**는 L 3,900원, J 4,400원이에요."))
+    assert "".join(e["text"] for e in of(events, "delta")) == "**아메리카노**는 L 3,900원, J 4,400원이에요."
     assert of(events, "sources")[0]["items"][0]["title"] == "아메리카노"
     assert [c["name"] for c in of(events, "cards")[0]["items"]] == ["아메리카노"]
     assert events[-1] == {"type": "done"}
@@ -52,7 +52,7 @@ def test_answer_is_grounded_in_retrieved_documents_and_realtime_state(talk):
     assert "<실시간상태>\n품절 메뉴: 초코멜로 스무디\n장바구니: 비어 있음" in turn and "확인을 기다리는 변경안: 없음" in turn
     # 대화 기록에는 문서를 붙이지 않은 원래 발화만 남긴다
     assert session.history == [{"role": "user", "content": "아메리카노 중 사이즈 얼마인가요?"},
-                               {"role": "assistant", "content": "**아메리카노**는 L 4,200원, J 4,700원이에요."}]
+                               {"role": "assistant", "content": "**아메리카노**는 L 3,900원, J 4,400원이에요."}]
 
 
 def test_order_missing_options_offers_choices(talk):
@@ -63,7 +63,7 @@ def test_order_missing_options_offers_choices(talk):
     assert tool["name"] == "add_to_cart" and not tool["ok"] and tool["args"] == {"menu_name": "아메리카노"}
     assert not session.order.lines and session.draft is None and of(events, "proposal") == []
     chips = of(events, "chips")[0]["items"]
-    assert len(chips) == 4 and chips[0] == {"label": "ICE · L 4,200원", "text": "아메리카노 ICE L 사이즈로 주세요"}
+    assert len(chips) == 4 and chips[0] == {"label": "ICE · L 3,900원", "text": "아메리카노 ICE L 사이즈로 주세요"}
     # 두 번째 호출에는 도구 결과가 모델에게 전달된다
     sent = client.requests[1]["messages"]
     assert sent[-2]["tool_calls"][0]["function"]["name"] == "add_to_cart"
@@ -79,11 +79,11 @@ def test_chat_orders_wait_for_the_customer_to_confirm(talk):
         text_chunks("두 가지를 변경 확인 화면에 올렸어요. 맞으면 [확인]을 눌러 주세요."))
     assert [t["ok"] for t in of(events, "tool")] == [True, True]
     result = tool_result(client)
-    assert result["applied"] is False and "[확인]" in result["next"] and "15,000원" in result["waiting_for_confirmation"]
+    assert result["applied"] is False and "[확인]" in result["next"] and "14,300원" in result["waiting_for_confirmation"]
     assert session.order.lines == []  # 아직 담기지 않았다
     proposal = of(events, "proposal")[0]
     assert [c["type"] for c in proposal["changes"]] == ["add", "add"] and proposal["changed"] is True
-    assert (proposal["before"]["total"], proposal["after"]["total"]) == (0, 15000)
+    assert (proposal["before"]["total"], proposal["after"]["total"]) == (0, 14300)
     # 변경안을 그대로 둔 채 다른 것을 물으면 확인 화면을 다시 띄우지 않는다(답변을 가리지 않게). 버튼은 그대로 남는다.
     events, session, client = talk("펄은 뭐예요?", text_chunks("타피오카로 만든 쫀득한 토핑이에요. 올려 둔 변경은 [변경 확인하기]에서 확인해 주세요."))
     assert of(events, "proposal")[0]["changed"] is False and len(of(events, "proposal")[0]["changes"]) == 2
@@ -95,10 +95,10 @@ def test_chat_orders_wait_for_the_customer_to_confirm(talk):
 
     session.confirm()  # 손님이 화면에서 [확인]을 눌렀다
     assert [l["quantity"] for l in session.order.lines] == [2, 1] and session.draft is None
-    events, session, client = talk("결제할게요", text_chunks("총 15,000원이에요. [결제하기]를 눌러 주세요."))
+    events, session, client = talk("결제할게요", text_chunks("총 14,300원이에요. [결제하기]를 눌러 주세요."))
     turn = client.requests[0]["messages"][-1]["content"]
     assert "<화면조작>" in turn and "[확인]을 눌러 주문에 반영되었다" in turn  # 버튼으로 한 일도 모델에게 알려 준다
-    assert "금액(POS 계산): 주문 15,000원 = 결제 금액 15,000원" in turn
+    assert "금액(POS 계산): 주문 14,300원 = 결제 금액 14,300원" in turn
     chips = of(events, "chips")[0]["items"]
     assert chips[0] == {"label": "결제하기", "action": "pay"} and chips[-1]["action"] == "undo"
     assert session.events == []  # 한 번 전한 화면 조작은 다시 보내지 않는다
@@ -147,7 +147,7 @@ def test_pending_line_can_be_adjusted_before_confirming(talk):
                               text_chunks("옵션을 바꿔 올렸어요."))
     change = of(events, "proposal")[0]["changes"][0]
     assert change["type"] == "add" and (change["after"]["sugar"], change["after"]["ice"]) == (30, "less")
-    assert change["after"]["line_total"] == 5500 and session.order.lines == []
+    assert change["after"]["line_total"] == 5200 and session.order.lines == []
 
 
 def test_request_note_is_passed_on_but_not_promised(talk):
@@ -172,7 +172,7 @@ def test_comparison_puts_a_table_on_the_screen(talk):
     table = of(events, "compare")[0]["items"]
     assert [m["name"] for m in table] == ["블랙 밀크티", "타로 밀크티"] and table[0]["image"]
     result = tool_result(client)
-    assert "view" not in result and result["menus"][0]["price"] == "L 4,900원, J 6,000원"
+    assert "view" not in result and result["menus"][0]["price"] == "L 4,600원, J 5,700원"
     assert result["menus"][0]["caffeine_mg"] == 128 and result["menus"][1]["flavors"]
 
 
@@ -192,12 +192,12 @@ def test_budget_is_divided_and_totalled_by_the_pos(talk):
                              tool_chunks(("find_menus", {"total_budget": 20000, "people": 3, "limit": 30})),
                              tool_chunks(("calculate_price", {"budget": 20000, "items": [
                                  {"menu_name": "아메리카노", "quantity": 2}, {"menu_name": "타로 밀크티", "size": "J", "toppings": ["pearl"]}]})),
-                             text_chunks("세 잔에 15,000원이에요."))
+                             text_chunks("세 잔에 14,300원이에요."))
     found = tool_result(client)
     assert found["budget"]["per_person"] == "6,666원" and found["menus"]
     assert all(int(m["price"].split()[1].replace(",", "").rstrip("원,")) <= 6666 for m in found["menus"])
     priced = tool_result(client, request=2)
-    assert priced["total"] == "15,000원" and priced["budget"] == {"budget": "20,000원", "within_budget": True, "left": "5,000원"}
+    assert priced["total"] == "14,300원" and priced["budget"] == {"budget": "20,000원", "within_budget": True, "left": "5,700원"}
     assert priced["assumed"] == ["아메리카노: 사이즈를 말하지 않아 가장 작은 L 로 계산"]
 
 
@@ -376,7 +376,7 @@ def test_budget_search_comes_with_a_priced_example(talk):
     _, _, client = talk("2만 원으로 셋이", tool_chunks(("find_menus", {"total_budget": 20000, "people": 3})), text_chunks("세 잔이에요."))
     example = tool_result(client)["example"]
     assert len(example["lines"]) == 3 and example["budget"]["within_budget"] is True
-    assert example["total"] == "16,800원" and example["budget"]["left"] == "3,200원"
+    assert example["total"] == "15,900원" and example["budget"]["left"] == "4,100원"
 
 
 def test_adding_a_menu_already_in_the_order_is_pointed_out(talk):

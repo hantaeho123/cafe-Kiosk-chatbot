@@ -292,7 +292,8 @@ class ToolBox:
             "ice": {"status": adjustable[ice["adjustable"]], "levels": list(cat.ice_levels.values()) if ice["adjustable"] is not False else [],
                     "not_selectable": "얼음 없이 (요청 메모로만 전달 가능, 약속할 수 없음)", "hot": "HOT 에는 얼음 옵션이 없음"},
             "toppings": {"max": f"샷추가를 빼고 {cat.max_toppings}가지", "included": menu["included_toppings"],
-                         "choices": [{"name": t["name"], "price": won(t["price"])} for t in cat.toppings.values()]},
+                         "choices": [{"name": t["name"], "price": " / ".join(f"{s} +{won(cat.topping_price(tid, s))}" for s in [x["size"] for x in menu["sizes"]])}
+                                     for tid, t in cat.toppings.items()]},
             "cups": [c["name"] for c in cat.cups.values()],
             "note": "여기에 없는 옵션(시럽 추가, 샷 빼기 등)은 고를 수 없습니다. 가까운 대안을 제시하고, 원하면 요청 메모로 남길 수 있다고 안내하세요.",
         }

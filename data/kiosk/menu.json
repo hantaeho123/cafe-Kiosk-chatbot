@@ -1,9 +1,9 @@
 {
-  "price_source": "배달의민족 공차 시흥배곧점 (2026-10-12 캡처, 배달앱 판매가)",
+  "price_source": "공차 시흥배곧점 매장 판매가 (매장 메뉴판·키오스크 사진, 다이닝코드 매장 메뉴정보 — 갱신일 미상, 2026-10-14 확인)",
   "nutrition_basis": "기본 레시피(당도 0%, 스무디는 당도 고정) 및 컵 사이즈 기준",
   "counts": {
     "total": 175,
-    "on_sale": 100
+    "on_sale": 112
   },
   "items": [
     {
@@ -41,7 +41,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/9Ih8WbajNp5EPCeR_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유"
       ],
@@ -49,7 +49,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5000,
+          "price": 4700,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -58,7 +58,7 @@
         },
         {
           "size": "J",
-          "price": 6100,
+          "price": 5800,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -196,7 +196,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/WwyYAVsMzFxeN8J6_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "이산화황"
@@ -205,7 +205,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5500,
+          "price": 5200,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -214,7 +214,7 @@
         },
         {
           "size": "J",
-          "price": 6800,
+          "price": 6500,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -354,7 +354,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/CgONprGDWfzRIvqo_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "이산화황"
@@ -363,7 +363,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5500,
+          "price": 5200,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -372,7 +372,7 @@
         },
         {
           "size": "J",
-          "price": 6800,
+          "price": 6500,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -509,7 +509,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/nL6pMQjkGerPOCZA_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두"
@@ -518,7 +518,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 6200,
+          "price": 5900,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -527,7 +527,7 @@
         },
         {
           "size": "J",
-          "price": 7500,
+          "price": 7200,
           "volume_ml": {
             "ICE": 651,
             "HOT": null
@@ -640,7 +640,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/kzOZMBvCSWdginFr_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유"
       ],
@@ -648,7 +648,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 4700,
+          "price": 4400,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -657,7 +657,7 @@
         },
         {
           "size": "J",
-          "price": 5800,
+          "price": 5500,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -790,13 +790,13 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/dOHWQXytqpmFL2Ju_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001010&no=17",
       "sizes": [
         {
           "size": "L",
-          "price": 5600,
+          "price": 5300,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -895,7 +895,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/W9mOb8cKR5EhZVPF_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두"
@@ -904,7 +904,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 6200,
+          "price": 5900,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -1001,7 +1001,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/lz3mIo0QRxDaZMr7_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두"
@@ -1010,7 +1010,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5500,
+          "price": 5200,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -1019,7 +1019,7 @@
         },
         {
           "size": "J",
-          "price": 6600,
+          "price": 6300,
           "volume_ml": {
             "ICE": 651,
             "HOT": null
@@ -1133,13 +1133,13 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/qB9jP6UMAY2fyzS4_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001015&no=29",
       "sizes": [
         {
           "size": "L",
-          "price": 5100,
+          "price": 4800,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -1148,7 +1148,7 @@
         },
         {
           "size": "J",
-          "price": 6200,
+          "price": 5900,
           "volume_ml": {
             "ICE": 651,
             "HOT": null
@@ -1257,13 +1257,13 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/fB2rbSOHGv6lN4Vx_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001015&no=35",
       "sizes": [
         {
           "size": "L",
-          "price": 5100,
+          "price": 4800,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -1272,7 +1272,7 @@
         },
         {
           "size": "J",
-          "price": 6200,
+          "price": 5900,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -1412,13 +1412,13 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/wmUc1eCfDrlnNquy_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001015&no=36",
       "sizes": [
         {
           "size": "L",
-          "price": 5100,
+          "price": 4800,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -1427,7 +1427,7 @@
         },
         {
           "size": "J",
-          "price": 6200,
+          "price": 5900,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -1566,13 +1566,13 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/W6G8L1JZUv7xqydc_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001003&no=41",
       "sizes": [
         {
           "size": "L",
-          "price": 4300,
+          "price": 4000,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -1581,7 +1581,7 @@
         },
         {
           "size": "J",
-          "price": 5400,
+          "price": 5100,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -1715,7 +1715,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/6zdDsPYeGCLI5X0l_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유"
       ],
@@ -1723,7 +1723,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 4900,
+          "price": 4600,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -1732,7 +1732,7 @@
         },
         {
           "size": "J",
-          "price": 6000,
+          "price": 5700,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -1864,13 +1864,13 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/28QPiyXS6LblsxNZ_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001003&no=43",
       "sizes": [
         {
           "size": "L",
-          "price": 4300,
+          "price": 4000,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -1879,7 +1879,7 @@
         },
         {
           "size": "J",
-          "price": 5400,
+          "price": 5100,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -2013,13 +2013,13 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/YWuQ6gHmNry1iLj3_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001003&no=44",
       "sizes": [
         {
           "size": "L",
-          "price": 4300,
+          "price": 4000,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -2028,7 +2028,7 @@
         },
         {
           "size": "J",
-          "price": 5400,
+          "price": 5100,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -2163,13 +2163,13 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20240502/oi0TeUWa14CDEpxt_20240502.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001003&no=46",
       "sizes": [
         {
           "size": "L",
-          "price": 4300,
+          "price": 4000,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -2178,7 +2178,7 @@
         },
         {
           "size": "J",
-          "price": 5400,
+          "price": 5100,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -2312,7 +2312,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/zfxjLRHbr3UspClq_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유"
       ],
@@ -2320,7 +2320,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 4900,
+          "price": 4600,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -2329,7 +2329,7 @@
         },
         {
           "size": "J",
-          "price": 6000,
+          "price": 5700,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -2463,7 +2463,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/KckP6LqYSrsg2oO3_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유"
       ],
@@ -2471,7 +2471,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 4900,
+          "price": 4600,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -2480,7 +2480,7 @@
         },
         {
           "size": "J",
-          "price": 6000,
+          "price": 5700,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -2615,7 +2615,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20240502/pj8EhMdRBctLfoqS_20240502.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유"
       ],
@@ -2623,7 +2623,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 4900,
+          "price": 4600,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -2632,7 +2632,7 @@
         },
         {
           "size": "J",
-          "price": 6000,
+          "price": 5700,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -2825,7 +2825,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/9xwznivJydT0DYVE_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유"
       ],
@@ -2833,7 +2833,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 4900,
+          "price": 4600,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -2842,7 +2842,7 @@
         },
         {
           "size": "J",
-          "price": 6000,
+          "price": 5700,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -2977,7 +2977,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/UQK9Fp1lSXd5C6Wc_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두"
@@ -2986,7 +2986,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 6000,
+          "price": 5700,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -3083,7 +3083,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/c72h5MUY0uD1xTQZ_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두"
@@ -3092,7 +3092,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5000,
+          "price": 4700,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -3101,7 +3101,7 @@
         },
         {
           "size": "J",
-          "price": 6100,
+          "price": 5800,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -3285,7 +3285,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/LGKUs2ajSpTBhzYk_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두",
@@ -3295,7 +3295,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5800,
+          "price": 5500,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -3398,7 +3398,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/lLXORwPnSU3yrta5_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두",
@@ -3408,7 +3408,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 6000,
+          "price": 5700,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -3514,7 +3514,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/aoY1bcB9TKfsO7GZ_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두"
@@ -3523,7 +3523,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5800,
+          "price": 5500,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -3633,7 +3633,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/7txl5jVWhbuIcvEM_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두",
@@ -3644,7 +3644,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 6000,
+          "price": 5700,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -4098,13 +4098,13 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/1xHFr7AYEX4esjtl_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001015&no=322",
       "sizes": [
         {
           "size": "L",
-          "price": 5100,
+          "price": 4800,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -4113,7 +4113,7 @@
         },
         {
           "size": "J",
-          "price": 6200,
+          "price": 5900,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -4252,7 +4252,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/dKwfQu1R8oV32Sma_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유"
       ],
@@ -4260,7 +4260,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5200,
+          "price": 4900,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -4269,7 +4269,7 @@
         },
         {
           "size": "J",
-          "price": 6300,
+          "price": 6000,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -4404,7 +4404,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20250121/FKcPN5ejrz8qld7m_20250121.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두"
@@ -4413,7 +4413,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5200,
+          "price": 4900,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -4422,7 +4422,7 @@
         },
         {
           "size": "J",
-          "price": 6300,
+          "price": 6000,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -4557,7 +4557,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/jS4qkFwE2bAnafXY_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두",
@@ -4567,7 +4567,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5800,
+          "price": 5500,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -4663,7 +4663,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20240429/TYiWhJHNz0w3BrXa_20240429.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두"
@@ -4672,7 +4672,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5300,
+          "price": 5000,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -4681,7 +4681,7 @@
         },
         {
           "size": "J",
-          "price": 6400,
+          "price": 6100,
           "volume_ml": {
             "ICE": 651,
             "HOT": null
@@ -4792,7 +4792,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/I0PFrdfi3hbADJlK_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두"
@@ -4801,7 +4801,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 4800,
+          "price": 4500,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -4909,8 +4909,8 @@
       "image": "images/372.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/92f7cc4a7e6f4102151afdd67f04a997.png",
       "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [
         "밀",
         "우유",
@@ -4933,7 +4933,7 @@
         }
       ],
       "sizes": [],
-      "price": null
+      "price": 4500
     },
     {
       "id": "food-382",
@@ -4969,8 +4969,8 @@
       "image": "images/382.jpg",
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20221207/rJHU9KRBfhmEPycw_20221207.jpg",
       "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [
         "밀",
         "우유",
@@ -4992,7 +4992,7 @@
         }
       ],
       "sizes": [],
-      "price": null
+      "price": 5300
     },
     {
       "id": "food-383",
@@ -5028,8 +5028,8 @@
       "image": "images/383.jpg",
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20221207/3r7jFqsSyDRIAeK0_20221207.jpg",
       "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [
         "밀",
         "우유",
@@ -5051,7 +5051,7 @@
         }
       ],
       "sizes": [],
-      "price": null
+      "price": 5300
     },
     {
       "id": "drink-416",
@@ -5088,7 +5088,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/0N6oXEz3k8M9FS2Z_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두",
@@ -5098,7 +5098,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 6000,
+          "price": 5700,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -5196,7 +5196,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20231115/VDRPhvZwEBzUJIfg_20231115.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두"
@@ -5205,7 +5205,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5700,
+          "price": 5400,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -5214,7 +5214,7 @@
         },
         {
           "size": "J",
-          "price": 7200,
+          "price": 6900,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -5564,7 +5564,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20240327/9DwQIZjShcRu6MfN_20240327.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두",
@@ -5574,7 +5574,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 6000,
+          "price": 5700,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -5674,7 +5674,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20240327/cupJntTH04YDqo1a_20240327.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유"
       ],
@@ -5682,7 +5682,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 6000,
+          "price": 5700,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -5783,7 +5783,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20240327/Uvi81CDRg0yEcGa7_20240327.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두",
@@ -5793,7 +5793,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5600,
+          "price": 5300,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -5802,7 +5802,7 @@
         },
         {
           "size": "J",
-          "price": 6700,
+          "price": 6400,
           "volume_ml": {
             "ICE": 651,
             "HOT": null
@@ -5917,7 +5917,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20240327/29brAgmf1ieZPcJB_20240327.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유"
       ],
@@ -5925,7 +5925,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5800,
+          "price": 5500,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -5934,7 +5934,7 @@
         },
         {
           "size": "J",
-          "price": 6900,
+          "price": 6600,
           "volume_ml": {
             "ICE": 651,
             "HOT": null
@@ -6046,8 +6046,8 @@
       "image": "images/475.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/a826235cb928dee89d2fd9002f01a1e7.png",
       "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [
         "밀",
         "우유",
@@ -6076,7 +6076,7 @@
         }
       ],
       "sizes": [],
-      "price": null
+      "price": 2300
     },
     {
       "id": "drink-477",
@@ -6113,7 +6113,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20240429/DV43P0nxuhldAXUp_20240429.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두"
@@ -6122,7 +6122,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5300,
+          "price": 5000,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -6131,7 +6131,7 @@
         },
         {
           "size": "J",
-          "price": 6400,
+          "price": 6100,
           "volume_ml": {
             "ICE": 651,
             "HOT": null
@@ -6241,13 +6241,13 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20240429/j6BWsSTyMkewF9gN_20240429.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001015&no=479",
       "sizes": [
         {
           "size": "L",
-          "price": 5100,
+          "price": 4800,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -6256,7 +6256,7 @@
         },
         {
           "size": "J",
-          "price": 6200,
+          "price": 5900,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -6393,7 +6393,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20240429/UGqlQg5sk7E6HjLb_20240429.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두"
@@ -6402,7 +6402,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 6200,
+          "price": 5900,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -6501,7 +6501,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20240429/q2tpZrCNbjQTGHon_20240429.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "밀",
@@ -6511,7 +6511,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5600,
+          "price": 5300,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -6606,7 +6606,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20240429/3zc84oViAZRpWSyC_20240429.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두"
@@ -6615,7 +6615,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5000,
+          "price": 4700,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -6624,7 +6624,7 @@
         },
         {
           "size": "J",
-          "price": 6100,
+          "price": 5800,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -6805,13 +6805,13 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20240429/MNcfsD3xdKzXV9Pv_20240429.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001011&no=485",
       "sizes": [
         {
           "size": "L",
-          "price": 4700,
+          "price": 4400,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -6820,7 +6820,7 @@
         },
         {
           "size": "J",
-          "price": 5200,
+          "price": 4900,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -7355,7 +7355,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20240429/JWpEolv9TRC1iIQP_20240429.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두",
@@ -7366,7 +7366,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 6600,
+          "price": 6300,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -7471,13 +7471,13 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20250117/w4tFdISjs9eD1pLB_20250117.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001002&no=512",
       "sizes": [
         {
           "size": "L",
-          "price": 4200,
+          "price": 3900,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -7486,7 +7486,7 @@
         },
         {
           "size": "J",
-          "price": 4700,
+          "price": 4400,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -7668,7 +7668,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20240619/t6qHjdRfurkyGp3D_20240619.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유"
       ],
@@ -7676,7 +7676,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5700,
+          "price": 5400,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -7785,7 +7785,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/2f9a831df83c1cbe97144b951913469f.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두",
@@ -7795,7 +7795,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 6200,
+          "price": 5900,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -7894,7 +7894,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/80ccf4416554146202bd2a1e98d2c43c.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두",
@@ -7904,7 +7904,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 6200,
+          "price": 5900,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -8002,7 +8002,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/ddeae35c82ab7d4a0a980ca2b7ec8121.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두",
@@ -8012,7 +8012,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 6200,
+          "price": 5900,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -8106,8 +8106,8 @@
       "image": "images/548.png",
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20240910/pezb2nv1FHxcltPO_20240910.png",
       "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [
         "밀",
         "우유",
@@ -8130,7 +8130,7 @@
         }
       ],
       "sizes": [],
-      "price": null
+      "price": 2800
     },
     {
       "id": "food-549",
@@ -8166,8 +8166,8 @@
       "image": "images/549.png",
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20240910/FydoBXJg9h8OcZTm_20240910.png",
       "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [
         "밀",
         "우유",
@@ -8191,7 +8191,7 @@
         }
       ],
       "sizes": [],
-      "price": null
+      "price": 2800
     },
     {
       "id": "drink-551",
@@ -8221,7 +8221,7 @@
         "베스트셀러"
       ],
       "series": null,
-      "app_section": "베스트 셀러",
+      "app_section": "매장 메뉴판",
       "is_new_season": false,
       "is_best_seller": true,
       "badges": [],
@@ -8229,13 +8229,13 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20240923/5idab4SMXhrRHqyP_20240923.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001015&no=551",
       "sizes": [
         {
           "size": "L",
-          "price": 5100,
+          "price": 4800,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -8244,7 +8244,7 @@
         },
         {
           "size": "J",
-          "price": 6200,
+          "price": 5900,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -8262,14 +8262,14 @@
       ],
       "options": {
         "sugar": {
-          "adjustable": true,
-          "recommended": 50
+          "adjustable": null,
+          "recommended": null
         },
         "ice": {
-          "adjustable": false,
+          "adjustable": null,
           "default": null
         },
-        "source": "baemin"
+        "source": null
       },
       "included_toppings": [],
       "nutrition_basis": "기본 레시피(당도 0%, 스무디는 당도 고정) 및 컵 사이즈 기준",
@@ -8385,7 +8385,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20250121/sNgOmcFCZzvYXVHb_20250121.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "이산화황"
@@ -8394,7 +8394,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5800,
+          "price": 5500,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -8403,7 +8403,7 @@
         },
         {
           "size": "J",
-          "price": 7100,
+          "price": 6800,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -8542,7 +8542,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20250121/y2OrnDJ10946wZWm_20250121.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두"
@@ -8551,7 +8551,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5900,
+          "price": 5600,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -8560,7 +8560,7 @@
         },
         {
           "size": "J",
-          "price": 7200,
+          "price": 6900,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -8697,7 +8697,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20250117/FP8klLs4uyixj2EN_20250117.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유"
       ],
@@ -8705,7 +8705,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 6500,
+          "price": 6200,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -8714,7 +8714,7 @@
         },
         {
           "size": "J",
-          "price": 7600,
+          "price": 7300,
           "volume_ml": {
             "ICE": 651,
             "HOT": null
@@ -9072,8 +9072,8 @@
       "image": "images/601.png",
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20250319/8ENKPwfLdpDYj2l6_20250319.png",
       "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [
         "밀",
         "우유",
@@ -9113,7 +9113,7 @@
         }
       ],
       "sizes": [],
-      "price": null
+      "price": 3000
     },
     {
       "id": "food-603",
@@ -9290,7 +9290,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20250416/LbxWr5HMy3IFqf2c_20250416.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "이산화황"
@@ -9299,7 +9299,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 6100,
+          "price": 5800,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -9308,7 +9308,7 @@
         },
         {
           "size": "J",
-          "price": 7200,
+          "price": 6900,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -9448,7 +9448,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20250416/5ghMsfD3PN8HEvx1_20250416.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유"
       ],
@@ -9456,7 +9456,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 6100,
+          "price": 5800,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -9465,7 +9465,7 @@
         },
         {
           "size": "J",
-          "price": 7200,
+          "price": 6900,
           "volume_ml": {
             "ICE": 651,
             "HOT": null
@@ -9577,8 +9577,8 @@
       "image": "images/614.png",
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20250623/oNIWAOXBxgH8Mc2z_20250623.png",
       "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [
         "밀",
         "우유",
@@ -9606,7 +9606,7 @@
         }
       ],
       "sizes": [],
-      "price": null
+      "price": 4900
     },
     {
       "id": "food-615",
@@ -9709,7 +9709,7 @@
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20250625/WMY5JgvGR7Pmluwx_20250625.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두"
@@ -9718,7 +9718,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 6800,
+          "price": 6500,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -10115,8 +10115,8 @@
       "image": "images/1035.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/a3be9c6370fd80091b5013a29a96561c.png",
       "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [
         "밀",
         "우유",
@@ -10137,7 +10137,7 @@
         }
       ],
       "sizes": [],
-      "price": null
+      "price": 5400
     },
     {
       "id": "food-1038",
@@ -10172,8 +10172,8 @@
       "image": "images/1038.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/5dc3afcc3ff06381888c583734555e08.png",
       "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [
         "밀",
         "우유",
@@ -10197,7 +10197,7 @@
         }
       ],
       "sizes": [],
-      "price": null
+      "price": 4600
     },
     {
       "id": "food-1039",
@@ -10232,8 +10232,8 @@
       "image": "images/1039.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/3510cf5cb45efbbc2914987a9b4a68d5.png",
       "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [
         "밀",
         "우유",
@@ -10257,7 +10257,7 @@
         }
       ],
       "sizes": [],
-      "price": null
+      "price": 4600
     },
     {
       "id": "food-1040",
@@ -10384,8 +10384,8 @@
       "image": "images/1047.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/b44cf5b642227598b7f17efab859d539.png",
       "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [
         "밀",
         "우유",
@@ -10412,7 +10412,7 @@
         }
       ],
       "sizes": [],
-      "price": null
+      "price": 2800
     },
     {
       "id": "food-1048",
@@ -10448,8 +10448,8 @@
       "image": "images/1048.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/12bcccd115cb1dec04925fa47c4e505c.png",
       "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [
         "밀",
         "우유",
@@ -10473,7 +10473,7 @@
         }
       ],
       "sizes": [],
-      "price": null
+      "price": 5400
     },
     {
       "id": "food-1052",
@@ -10578,7 +10578,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/0a0702c4c34cd6b90c8665dad1a82fa7.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두",
@@ -10588,7 +10588,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 6100,
+          "price": 5800,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -10873,8 +10873,8 @@
       "image": "images/1068.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/e1ddee205fb2a0eee278439159f9aaff.png",
       "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [
         "밀",
         "우유",
@@ -10898,7 +10898,7 @@
         }
       ],
       "sizes": [],
-      "price": null
+      "price": 3900
     },
     {
       "id": "food-1072",
@@ -10934,8 +10934,8 @@
       "image": "images/1072.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/5aa3c3c0b07d3e424ec6204584afd3f7.png",
       "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [
         "밀",
         "우유",
@@ -10959,7 +10959,7 @@
         }
       ],
       "sizes": [],
-      "price": null
+      "price": 4900
     },
     {
       "id": "drink-1073",
@@ -10988,21 +10988,31 @@
         "New 시즌 메뉴"
       ],
       "series": "더블 Matcha 시리즈",
-      "app_section": null,
+      "app_section": "매장 메뉴판",
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1073.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/42d376aa52110bc8d89e7faba13d4e47.png",
-      "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "on_sale": true,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1073",
-      "sizes": [],
+      "sizes": [
+        {
+          "size": "L",
+          "price": 5300,
+          "volume_ml": {
+            "ICE": 473,
+            "HOT": null
+          },
+          "size_in_official_table": true
+        }
+      ],
       "official_sizes": [
         "L"
       ],
@@ -11086,22 +11096,32 @@
         "New 시즌 메뉴"
       ],
       "series": "더블 Matcha 시리즈",
-      "app_section": null,
+      "app_section": "매장 메뉴판",
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1074.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/58b6f5aba0b51aef2bf28767b8b723f4.png",
-      "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "on_sale": true,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두",
         "이산화황"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1074",
-      "sizes": [],
+      "sizes": [
+        {
+          "size": "L",
+          "price": 5800,
+          "volume_ml": {
+            "ICE": 473,
+            "HOT": null
+          },
+          "size_in_official_table": true
+        }
+      ],
       "official_sizes": [
         "L"
       ],
@@ -11189,21 +11209,31 @@
         "New 시즌 메뉴"
       ],
       "series": "더블 Matcha 시리즈",
-      "app_section": null,
+      "app_section": "매장 메뉴판",
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1075.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/b1594a7e4b85cd05fde59a3e20e9769b.png",
-      "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "on_sale": true,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1075",
-      "sizes": [],
+      "sizes": [
+        {
+          "size": "L",
+          "price": 5600,
+          "volume_ml": {
+            "ICE": 473,
+            "HOT": 414
+          },
+          "size_in_official_table": true
+        }
+      ],
       "official_sizes": [
         "L"
       ],
@@ -11308,7 +11338,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/df655c4f8c5eed5634142813e3a81f70.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두",
@@ -11318,7 +11348,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 7000,
+          "price": 6700,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -11418,7 +11448,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/fb2f18fda7680a9e208e1dc1515d0e5d.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두"
@@ -11427,7 +11457,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 7000,
+          "price": 6700,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -11528,7 +11558,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/59bc2e54e53f30a4424007d35e3e8d58.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두"
@@ -11537,7 +11567,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 6800,
+          "price": 6500,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -11638,7 +11668,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/eed6ace2a7d26b498777c5c74366d330.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두",
@@ -11648,7 +11678,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 7000,
+          "price": 6700,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -11749,8 +11779,8 @@
       "image": "images/1080.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/76b09a4cd01978a297ede23c8f05ddd3.png",
       "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [
         "밀",
         "우유",
@@ -11774,7 +11804,7 @@
         }
       ],
       "sizes": [],
-      "price": null
+      "price": 4500
     },
     {
       "id": "drink-1081",
@@ -11811,7 +11841,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/1ab0037f31c4c39db6030961ad7cb428.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두"
@@ -11820,7 +11850,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 6400,
+          "price": 6100,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -11829,7 +11859,7 @@
         },
         {
           "size": "J",
-          "price": 7500,
+          "price": 7200,
           "volume_ml": {
             "ICE": 651,
             "HOT": null
@@ -11932,21 +11962,31 @@
         "New 시즌 메뉴"
       ],
       "series": "말차&타로 시리즈",
-      "app_section": null,
+      "app_section": "매장 메뉴판",
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1082.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/feff9fa317063065f48265088dc8f568.png",
-      "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "on_sale": true,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1082",
-      "sizes": [],
+      "sizes": [
+        {
+          "size": "L",
+          "price": 5900,
+          "volume_ml": {
+            "ICE": 473,
+            "HOT": null
+          },
+          "size_in_official_table": true
+        }
+      ],
       "official_sizes": [
         "L"
       ],
@@ -12136,7 +12176,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/b305ca6321ba99329b87e8cf80b0f918.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "복숭아"
       ],
@@ -12144,7 +12184,7 @@
       "sizes": [
         {
           "size": "J",
-          "price": 4800,
+          "price": 4500,
           "volume_ml": {
             "ICE": 651,
             "HOT": null
@@ -12261,7 +12301,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/6ee89aeeb4ecb842fafa00a0be6b5e4a.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "복숭아"
       ],
@@ -12269,7 +12309,7 @@
       "sizes": [
         {
           "size": "J",
-          "price": 5000,
+          "price": 4700,
           "volume_ml": {
             "ICE": 651,
             "HOT": null
@@ -12374,7 +12414,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/28897ad1d8419420a45c0d951bd6531f.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "복숭아"
       ],
@@ -12382,7 +12422,7 @@
       "sizes": [
         {
           "size": "J",
-          "price": 5000,
+          "price": 4700,
           "volume_ml": {
             "ICE": 651,
             "HOT": null
@@ -12487,7 +12527,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/f2c2baab874eade6dd4a5fd36a9c1a8a.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "이산화황"
@@ -12496,7 +12536,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 6100,
+          "price": 5800,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -12505,7 +12545,7 @@
         },
         {
           "size": "J",
-          "price": 7200,
+          "price": 6900,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -12645,7 +12685,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/7f5c76fa6d81f3044a080c5ebb5441bd.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "이산화황"
@@ -12654,7 +12694,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 6100,
+          "price": 5800,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -12663,7 +12703,7 @@
         },
         {
           "size": "J",
-          "price": 7200,
+          "price": 6900,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -12802,7 +12842,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/84dea45bcd5a061548470be44d61c83f.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두"
@@ -12811,7 +12851,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 6400,
+          "price": 6100,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -12911,7 +12951,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/c586939434ee0454fe7f32bb223f6e4f.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두"
@@ -12920,7 +12960,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 6400,
+          "price": 6100,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -13604,8 +13644,8 @@
       "image": "images/1099.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/45ee04caa11539e0b199240aa2d4635b.png",
       "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=002004&no=1099",
       "nutrition": [
@@ -13623,7 +13663,7 @@
         }
       ],
       "sizes": [],
-      "price": null
+      "price": 3200
     },
     {
       "id": "food-1100",
@@ -13721,7 +13761,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/8dfc64eaec89d06520e2cf0aa6d1b01f.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두"
@@ -13730,7 +13770,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 6200,
+          "price": 5900,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -13826,7 +13866,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/4e34d9597d79f62715f2560142afc6ea.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유"
       ],
@@ -13834,7 +13874,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5300,
+          "price": 5000,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -13843,7 +13883,7 @@
         },
         {
           "size": "J",
-          "price": 6400,
+          "price": 6100,
           "volume_ml": {
             "ICE": 651,
             "HOT": null
@@ -13952,13 +13992,13 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/e5327ef79e9d2885c99c94d9b3aaaf46.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1105",
       "sizes": [
         {
           "size": "L",
-          "price": 4600,
+          "price": 4300,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -13967,7 +14007,7 @@
         },
         {
           "size": "J",
-          "price": 5700,
+          "price": 5400,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -14103,13 +14143,13 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/92576816e1713200973b6d5875a28918.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1106",
       "sizes": [
         {
           "size": "L",
-          "price": 4600,
+          "price": 4300,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -14118,7 +14158,7 @@
         },
         {
           "size": "J",
-          "price": 5700,
+          "price": 5400,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -14254,13 +14294,13 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/bf1dff394999f375d6f06611769adb7d.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1107",
       "sizes": [
         {
           "size": "L",
-          "price": 4600,
+          "price": 4300,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -14269,7 +14309,7 @@
         },
         {
           "size": "J",
-          "price": 5700,
+          "price": 5400,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -14405,13 +14445,13 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/8a045987ab0fceaf09376bfe89f87285.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1108",
       "sizes": [
         {
           "size": "L",
-          "price": 4600,
+          "price": 4300,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -14420,7 +14460,7 @@
         },
         {
           "size": "J",
-          "price": 5700,
+          "price": 5400,
           "volume_ml": {
             "ICE": 651,
             "HOT": 473
@@ -14554,7 +14594,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/57427bbd626dded97bba9e50adddef54.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "이산화황"
@@ -14563,7 +14603,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5800,
+          "price": 5500,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -14858,7 +14898,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/e41c020f27ba65a8e0fed065d449d144.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "이산화황"
@@ -14867,7 +14907,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5800,
+          "price": 5500,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -14965,7 +15005,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/bdaeb81ae8b81def4e33ceacd61f3588.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유"
       ],
@@ -14973,7 +15013,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5200,
+          "price": 4900,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -14982,7 +15022,7 @@
         },
         {
           "size": "J",
-          "price": 6300,
+          "price": 6000,
           "volume_ml": {
             "ICE": 651,
             "HOT": null
@@ -15091,7 +15131,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/df704e4e20156aa8ed39d7dd9a69e31b.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유"
       ],
@@ -15099,7 +15139,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5200,
+          "price": 4900,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -15108,7 +15148,7 @@
         },
         {
           "size": "J",
-          "price": 6300,
+          "price": 6000,
           "volume_ml": {
             "ICE": 651,
             "HOT": null
@@ -15217,7 +15257,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/e21e9721baf49c8c7f35461c3853a910.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유"
       ],
@@ -15225,7 +15265,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5200,
+          "price": 4900,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -15234,7 +15274,7 @@
         },
         {
           "size": "J",
-          "price": 6300,
+          "price": 6000,
           "volume_ml": {
             "ICE": 651,
             "HOT": null
@@ -15343,7 +15383,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/957124454c11fa1a5e85e747673fa98a.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유"
       ],
@@ -15351,7 +15391,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5200,
+          "price": 4900,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -15360,7 +15400,7 @@
         },
         {
           "size": "J",
-          "price": 6300,
+          "price": 6000,
           "volume_ml": {
             "ICE": 651,
             "HOT": null
@@ -15480,7 +15520,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/0818be7933e6f30ead4a1c5b80cbceab.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "복숭아"
       ],
@@ -15488,7 +15528,7 @@
       "sizes": [
         {
           "size": "J",
-          "price": 5000,
+          "price": 4700,
           "volume_ml": {
             "ICE": null,
             "HOT": null
@@ -15592,21 +15632,31 @@
         "New 시즌 메뉴"
       ],
       "series": "저당 밀크티 시리즈",
-      "app_section": null,
+      "app_section": "매장 메뉴판",
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1118.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/affdc4c9b7e82a92a5c639461ad77e8a.png",
-      "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "on_sale": true,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [
         "우유",
         "이산화황"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1118",
-      "sizes": [],
+      "sizes": [
+        {
+          "size": "L",
+          "price": 5600,
+          "volume_ml": {
+            "ICE": 473,
+            "HOT": null
+          },
+          "size_in_official_table": true
+        }
+      ],
       "official_sizes": [
         "L"
       ],
@@ -15688,21 +15738,31 @@
         "New 시즌 메뉴"
       ],
       "series": "26' 써머 시리즈",
-      "app_section": null,
+      "app_section": "매장 메뉴판",
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1119.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/4e856a3d6ba2ef44aa9c70b1f51a99d8.png",
-      "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "on_sale": true,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [
         "우유",
         "이산화황"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1119",
-      "sizes": [],
+      "sizes": [
+        {
+          "size": "L",
+          "price": 6100,
+          "volume_ml": {
+            "ICE": 473,
+            "HOT": null
+          },
+          "size_in_official_table": true
+        }
+      ],
       "official_sizes": [
         "L"
       ],
@@ -15785,18 +15845,28 @@
         "New 시즌 메뉴"
       ],
       "series": "26' 써머 시리즈",
-      "app_section": null,
+      "app_section": "매장 메뉴판",
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1120.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/0a44c9e8125844b05b7d483c3a91a1ae.png",
-      "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "on_sale": true,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1120",
-      "sizes": [],
+      "sizes": [
+        {
+          "size": "J",
+          "price": 5900,
+          "volume_ml": {
+            "ICE": 651,
+            "HOT": null
+          },
+          "size_in_official_table": true
+        }
+      ],
       "official_sizes": [
         "J"
       ],
@@ -15879,21 +15949,40 @@
         "New 시즌 메뉴"
       ],
       "series": "26' 써머 시리즈",
-      "app_section": null,
+      "app_section": "매장 메뉴판",
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1121.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/fa4ded96242801f21ee245cbf1f382d9.png",
-      "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "on_sale": true,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [
         "우유",
         "이산화황"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1121",
-      "sizes": [],
+      "sizes": [
+        {
+          "size": "L",
+          "price": 5600,
+          "volume_ml": {
+            "ICE": 473,
+            "HOT": null
+          },
+          "size_in_official_table": true
+        },
+        {
+          "size": "J",
+          "price": 6700,
+          "volume_ml": {
+            "ICE": 651,
+            "HOT": null
+          },
+          "size_in_official_table": true
+        }
+      ],
       "official_sizes": [
         "L",
         "J"
@@ -16138,18 +16227,28 @@
         "New 시즌 메뉴"
       ],
       "series": "26' 써머 시리즈",
-      "app_section": null,
+      "app_section": "매장 메뉴판",
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1125.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/aaaeb9b97bb30a11eb038e04bdc45b65.png",
-      "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "on_sale": true,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1125",
-      "sizes": [],
+      "sizes": [
+        {
+          "size": "L",
+          "price": 5900,
+          "volume_ml": {
+            "ICE": 473,
+            "HOT": null
+          },
+          "size_in_official_table": true
+        }
+      ],
       "official_sizes": [
         "L"
       ],
@@ -16234,20 +16333,30 @@
         "New 시즌 메뉴"
       ],
       "series": "26' 써머 시리즈",
-      "app_section": null,
+      "app_section": "매장 메뉴판",
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1126.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/272ba94695b5cdc692448740f83d3cd2.png",
-      "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "on_sale": true,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [
         "우유"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1126",
-      "sizes": [],
+      "sizes": [
+        {
+          "size": "L",
+          "price": 5600,
+          "volume_ml": {
+            "ICE": 473,
+            "HOT": null
+          },
+          "size_in_official_table": true
+        }
+      ],
       "official_sizes": [
         "L"
       ],
@@ -16567,13 +16676,13 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/280e76925e84ecc91a08944a077ae865.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1134",
       "sizes": [
         {
           "size": "L",
-          "price": 6400,
+          "price": 6100,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -16673,7 +16782,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/7cfd67fc193398152f13f9505e171f3e.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유"
       ],
@@ -16681,7 +16790,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 6100,
+          "price": 5800,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -17118,18 +17227,28 @@
         "New 시즌 메뉴"
       ],
       "series": "26' 써머 시리즈",
-      "app_section": null,
+      "app_section": "매장 메뉴판",
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1141.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/a8a4672e0fd0d17478ba8541549ad0ce.png",
-      "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "on_sale": true,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1141",
-      "sizes": [],
+      "sizes": [
+        {
+          "size": "J",
+          "price": 5900,
+          "volume_ml": {
+            "ICE": 651,
+            "HOT": null
+          },
+          "size_in_official_table": true
+        }
+      ],
       "official_sizes": [
         "J"
       ],
@@ -17208,18 +17327,28 @@
         "New 시즌 메뉴"
       ],
       "series": "26' 써머 시리즈",
-      "app_section": null,
+      "app_section": "매장 메뉴판",
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1142.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/0d436f75f85f8922a67180a406426937.png",
-      "on_sale": false,
-      "price_status": "가격 미확인",
-      "price_source": null,
+      "on_sale": true,
+      "price_status": "확인됨",
+      "price_source": "store",
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1142",
-      "sizes": [],
+      "sizes": [
+        {
+          "size": "L",
+          "price": 5300,
+          "volume_ml": {
+            "ICE": 473,
+            "HOT": null
+          },
+          "size_in_official_table": true
+        }
+      ],
       "official_sizes": [
         "L"
       ],
@@ -17311,7 +17440,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/44d18db540a52ca19f4a726c1b585d6d.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두",
@@ -17321,7 +17450,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 6400,
+          "price": 6100,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -17422,7 +17551,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/994546af9f54a52018140c52819c59dc.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두",
@@ -17432,7 +17561,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 6100,
+          "price": 5800,
           "volume_ml": {
             "ICE": 473,
             "HOT": null
@@ -17536,7 +17665,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/8c78b356e4f93b25b58f638b06538aac.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두",
@@ -17546,7 +17675,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5900,
+          "price": 5600,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -17661,7 +17790,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/20f56b6fcad3b9c8075ad1bb25b55eda.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유",
         "대두",
@@ -17671,7 +17800,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5900,
+          "price": 5600,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -17843,13 +17972,13 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/9308201cc3293801ecfb9ca7a3a67ffd.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1148",
       "sizes": [
         {
           "size": "L",
-          "price": 5600,
+          "price": 5300,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414
@@ -17963,7 +18092,7 @@
       "image_url": "https://www.gong-cha.co.kr/upload/product/d0bc432bb05f4b37d55288b50f4c1865.png",
       "on_sale": true,
       "price_status": "확인됨",
-      "price_source": "baemin",
+      "price_source": "store",
       "allergens": [
         "우유"
       ],
@@ -17971,7 +18100,7 @@
       "sizes": [
         {
           "size": "L",
-          "price": 5900,
+          "price": 5600,
           "volume_ml": {
             "ICE": 473,
             "HOT": 414

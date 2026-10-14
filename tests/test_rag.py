@@ -21,7 +21,7 @@ def test_documents_cover_what_the_kiosk_must_answer():
 def test_embedding_text_drops_nutrition_rows_only():
     doc = next(d for d in load_documents() if d["title"] == "초콜렛 밀크티")
     text = embedding_text(doc)
-    assert "가격: L 사이즈 5,000원" in text and "kcal" not in text
+    assert "가격: L 사이즈 4,700원" in text and "kcal" not in text
     assert "kcal" in doc["text"]  # 모델에게 주는 본문에는 영양정보가 남아 있다
 
 

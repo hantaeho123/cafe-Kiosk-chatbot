@@ -353,8 +353,8 @@ class Order:
         """(한 잔 가격, 그중 제휴 할인 대상 금액). 샷추가는 기본 토핑이 아니라 할인 대상에서 빠진다."""
         cat = self.catalog
         base = self._base(line)
-        extra = sum(cat.toppings[t]["price"] for t in line["toppings"])
-        basic = sum(cat.toppings[t]["price"] for t in line["toppings"] if cat.toppings[t]["basic"])
+        extra = sum(cat.topping_price(t, line["size"]) for t in line["toppings"])
+        basic = sum(cat.topping_price(t, line["size"]) for t in line["toppings"] if cat.toppings[t]["basic"])
         return base + extra, base + basic
 
     def _coupon_amount(self, remaining):
@@ -393,7 +393,7 @@ class Order:
             "name": menu["name"],
             "names": self.catalog.names(menu),
             "image": f"/{menu['image']}" if menu["image"] else None,
-            "toppings": [{"id": t, "name": cat.toppings[t]["name"], "price": cat.toppings[t]["price"]} for t in line["toppings"]],
+            "toppings": [{"id": t, "name": cat.toppings[t]["name"], "price": cat.topping_price(t, line["size"])} for t in line["toppings"]],
             "sugar_note": sugar_note,
             "ice_note": ice_note,
             "cup_name": cat.cups[line["cup"]]["name"],

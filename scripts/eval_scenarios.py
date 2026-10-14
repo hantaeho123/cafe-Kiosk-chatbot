@@ -224,7 +224,7 @@ SCENARIOS = [
         ]),
     ]),
     ("중국어 주문", "내 언어로 입력하기 (L9) · 화면과 같은 메뉴 이름", [
-        ("推荐一款不含咖啡因的饮料", [
+        ("推荐几款不含咖啡因的饮料", [
             ("화면 언어가 중국어로 바뀐다", lambda t, c: t.session.language == "zh"),
             ("메뉴판과 같은 중국어 이름으로 추천한다", lambda t, c: remember_menus(t, c) and all(
                 t.catalog.names(t.catalog.resolve(m)[0])["zh"] in t.reply for m in t.menus)),

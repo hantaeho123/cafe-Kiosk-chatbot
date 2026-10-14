@@ -269,6 +269,7 @@ async function reloadMenu() {
 
 // ------------------------------------------------------------ 메뉴 상세 · 옵션 화면
 
+const toppingPrice = (x, size) => (x.price_by_size && x.price_by_size[size]) || x.price;
 const toppingName = (x) => (I18N[state.lang] || {})[`topping_${x.id}`] || x.name;
 const toppingDescription = (x) => (I18N[state.lang] || {})[`topping_desc_${x.id}`] || x.description;
 const sizeName = (size) => {
@@ -330,18 +331,20 @@ function optionForm(item, line, onChange) {
         toppings: new Set(), quantity: 1, cup: order.dine_option === "dine_in" ? "store" : "disposable" };
   choice.price = () => {
     const base = item.prices.find((p) => p.size === choice.size).price;
-    const extra = config.toppings.filter((x) => choice.toppings.has(x.id)).reduce((sum, x) => sum + x.price, 0);
+    const extra = config.toppings.filter((x) => choice.toppings.has(x.id)).reduce((sum, x) => sum + toppingPrice(x, choice.size), 0);
     return (base + extra) * choice.quantity - (locked ? base : 0);
   };
 
   const quantity = el("span", {}, String(choice.quantity));
   const boxes = [];
+  const toppingPrices = [];  // 사이즈를 바꾸면 토핑 요금도 바뀐다 (펄 L +600원 / J +800원)
   let iceSection = null;
   const basicCount = () => config.toppings.filter((x) => x.basic && choice.toppings.has(x.id)).length;
   const refresh = () => {
     quantity.textContent = String(choice.quantity);
     if (iceSection) iceSection.hidden = choice.temperature !== "ICE";
     for (const box of boxes) box.disabled = !box.checked && basicCount() >= config.max_toppings;
+    for (const [x, span] of toppingPrices) span.textContent = `+${money(toppingPrice(x, choice.size))}`;
     onChange(choice);
   };
   const pick = (key) => (value) => { choice[key] = value; refresh(); };
@@ -374,8 +377,9 @@ function optionForm(item, line, onChange) {
     if (x.basic) boxes.push(box);  // 샷추가는 최대 개수에 세지 않는다
     return el("label", { class: "option" }, box,
       el("span", { class: "label" }, toppingName(x), el("small", { class: "desc" }, toppingDescription(x))),
-      el("span", { class: "extra" }, `+${money(x.price)}`));
+      remember(x, el("span", { class: "extra" }, `+${money(toppingPrice(x, choice.size))}`)));
   };
+  const remember = (x, span) => { toppingPrices.push([x, span]); return span; };
   const sizes = item.prices.map((p) => {
     const ml = p.volume_ml && (p.volume_ml.ICE || p.volume_ml.HOT);
     return { value: p.size, label: p.size, desc: ml ? t("size_volume", { name: sizeName(p.size), ml }) : sizeName(p.size),

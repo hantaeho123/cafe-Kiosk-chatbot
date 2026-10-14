@@ -3,11 +3,31 @@
   "sugar": {
     "label": "당도",
     "levels": [
-      {"value": 0, "label": "0%", "description": "시럽을 넣지 않습니다. 차·우유·과일·토핑이 가진 단맛만 납니다."},
-      {"value": 30, "label": "30%", "description": "기본의 3분의 1 정도입니다. 단맛이 살짝 납니다."},
-      {"value": 50, "label": "50%", "description": "기본의 절반입니다. 은은하게 답니다."},
-      {"value": 70, "label": "70%", "description": "기본보다 조금 덜 답니다."},
-      {"value": 100, "label": "100%", "description": "기본 레시피 그대로입니다. 가장 답니다."}
+      {
+        "value": 0,
+        "label": "0%",
+        "description": "시럽을 넣지 않습니다. 차·우유·과일·토핑이 가진 단맛만 납니다."
+      },
+      {
+        "value": 30,
+        "label": "30%",
+        "description": "기본의 3분의 1 정도입니다. 단맛이 살짝 납니다."
+      },
+      {
+        "value": 50,
+        "label": "50%",
+        "description": "기본의 절반입니다. 은은하게 답니다."
+      },
+      {
+        "value": 70,
+        "label": "70%",
+        "description": "기본보다 조금 덜 답니다."
+      },
+      {
+        "value": 100,
+        "label": "100%",
+        "description": "기본 레시피 그대로입니다. 가장 답니다."
+      }
     ],
     "extra_price": 0,
     "meaning": "당도 %는 기본 레시피(100%)에 넣는 시럽 양에 대한 비율입니다.",
@@ -20,9 +40,25 @@
   "ice": {
     "label": "얼음량",
     "levels": [
-      {"value": "less", "label": "얼음 적게", "label_en": "Less Ice", "verified": true},
-      {"value": "regular", "label": "얼음 보통", "label_en": "Regular Ice", "verified": true, "default": true},
-      {"value": "full", "label": "얼음 많이", "label_en": "Full Ice", "verified": false}
+      {
+        "value": "less",
+        "label": "얼음 적게",
+        "label_en": "Less Ice",
+        "verified": true
+      },
+      {
+        "value": "regular",
+        "label": "얼음 보통",
+        "label_en": "Regular Ice",
+        "verified": true,
+        "default": true
+      },
+      {
+        "value": "full",
+        "label": "얼음 많이",
+        "label_en": "Full Ice",
+        "verified": false
+      }
     ],
     "not_selectable": {
       "label": "얼음 없이",
@@ -39,31 +75,137 @@
     "max_count": 3,
     "max_count_source": "공식 주문방법 페이지: 7가지 토핑 중 최대 3가지 선택 가능",
     "items": [
-      {"id": "pearl", "name": "펄", "name_en": "Pearl", "price": 600, "description": "카사바 뿌리의 녹말로 만든 쫀득쫀득한 식감의 토핑 (타피오카)", "basic": true},
-      {"id": "mini_pearl", "name": "미니펄", "name_en": "Mini Pearl", "price": 700, "description": "타피오카 전분으로 만든 작은 알모양 형태의 쫀득한 식감의 토핑", "basic": true},
-      {"id": "white_pearl", "name": "화이트펄", "name_en": "White Pearl", "price": 700, "description": "해초추출물로 만들어 꼬들꼬들한 토핑", "basic": true},
-      {"id": "aloe", "name": "알로에", "name_en": "Aloe", "price": 700, "description": "신선하고 사각사각한 토핑", "basic": true},
-      {"id": "coconut", "name": "코코넛", "name_en": "Coconut", "price": 700, "description": "달콤한 코코넛으로 만들어진 쫄깃쫄깃한 젤리", "basic": true},
-      {"id": "milk_foam", "name": "밀크폼", "name_en": "Milk Foam", "price": 700, "description": "깊고 부드러운 맛을 내는 달콤 짭쪼름한 토핑", "basic": true, "allergens_assumed": ["우유"]},
-      {"id": "cheese_foam", "name": "치즈폼", "name_en": "Cheese Foam", "price": 900, "description": "진한 치즈 풍미를 더해 감칠맛이 나는 달콤 짭쪼름한 토핑", "basic": true, "allergens_assumed": ["우유"]},
-      {"id": "extra_shot", "name": "샷추가", "name_en": "Extra Shot", "price": 500, "description": "에스프레소 샷 추가", "basic": false}
+      {
+        "id": "pearl",
+        "name": "펄",
+        "name_en": "Pearl",
+        "price": 600,
+        "description": "카사바 뿌리의 녹말로 만든 쫀득쫀득한 식감의 토핑 (타피오카)",
+        "basic": true,
+        "price_by_size": {
+          "L": 600,
+          "J": 800
+        }
+      },
+      {
+        "id": "mini_pearl",
+        "name": "미니펄",
+        "name_en": "Mini Pearl",
+        "price": 700,
+        "description": "타피오카 전분으로 만든 작은 알모양 형태의 쫀득한 식감의 토핑",
+        "basic": true,
+        "price_by_size": {
+          "L": 700,
+          "J": 900
+        }
+      },
+      {
+        "id": "white_pearl",
+        "name": "화이트펄",
+        "name_en": "White Pearl",
+        "price": 700,
+        "description": "해초추출물로 만들어 꼬들꼬들한 토핑",
+        "basic": true,
+        "price_by_size": {
+          "L": 700,
+          "J": 900
+        }
+      },
+      {
+        "id": "aloe",
+        "name": "알로에",
+        "name_en": "Aloe",
+        "price": 700,
+        "description": "신선하고 사각사각한 토핑",
+        "basic": true,
+        "price_by_size": {
+          "L": 700,
+          "J": 900
+        }
+      },
+      {
+        "id": "coconut",
+        "name": "코코넛",
+        "name_en": "Coconut",
+        "price": 700,
+        "description": "달콤한 코코넛으로 만들어진 쫄깃쫄깃한 젤리",
+        "basic": true,
+        "price_by_size": {
+          "L": 700,
+          "J": 900
+        }
+      },
+      {
+        "id": "milk_foam",
+        "name": "밀크폼",
+        "name_en": "Milk Foam",
+        "price": 700,
+        "description": "깊고 부드러운 맛을 내는 달콤 짭쪼름한 토핑",
+        "basic": true,
+        "allergens_assumed": [
+          "우유"
+        ],
+        "price_by_size": {
+          "L": 700,
+          "J": 900
+        }
+      },
+      {
+        "id": "cheese_foam",
+        "name": "치즈폼",
+        "name_en": "Cheese Foam",
+        "price": 900,
+        "description": "진한 치즈 풍미를 더해 감칠맛이 나는 달콤 짭쪼름한 토핑",
+        "basic": true,
+        "allergens_assumed": [
+          "우유"
+        ],
+        "price_by_size": {
+          "L": 900,
+          "J": 1100
+        }
+      },
+      {
+        "id": "extra_shot",
+        "name": "샷추가",
+        "name_en": "Extra Shot",
+        "price": 500,
+        "description": "에스프레소 샷 추가",
+        "basic": false,
+        "price_by_size": {
+          "L": 500,
+          "J": 500
+        }
+      }
     ],
     "verified": true,
-    "source": "가격: 배민 공차 시흥배곧점 '공차슈페너' 옵션 화면(2026-10-12 캡처, 배달가). 설명·영문명: 공식 주문방법 페이지",
+    "source": "가격: 매장 메뉴판 사진(TOPPINGS: 펄 L +0.6 / J +0.8, 미니펄·코코넛·화이트펄·알로에·밀크폼 L +0.7 / J +0.9, 치즈폼 L +0.9 / J +1.1, 에스프레소 샷 +0.5). L 가격은 배민 공차슈페너 옵션 화면과 같다. 설명·영문명: 공식 주문방법 페이지",
     "caveats": [
-      "토핑 가격은 공차슈페너 1개 메뉴의 옵션 화면에서 확인한 값이다. 다른 메뉴도 같은 가격표를 쓴다고 가정했다.",
       "공차슈페너는 배민에서 토핑 '최대 1개 선택' 이었다. 메뉴별 최대 개수는 다를 수 있다(공식 안내는 최대 3가지).",
       "샷추가가 커피 외 메뉴에도 되는지는 미확인.",
       "샷추가는 공식 안내의 '7가지 토핑'에 들지 않으므로 최대 3가지 제한에 세지 않는다(가정).",
-      "allergens_assumed 는 공식 표기가 아니라 재료로 추정한 값이다."
+      "allergens_assumed 는 공식 표기가 아니라 재료로 추정한 값이다.",
+      "사이즈별 토핑 가격(price_by_size)은 매장 메뉴판 사진 기준이다. price 는 L 가격과 같다(예전 코드와 맞추려고 남김)."
     ]
   },
   "sizes": {
     "label": "사이즈",
     "items": [
-      {"id": "L", "name": "라지", "name_en": "Large"},
-      {"id": "J", "name": "점보", "name_en": "Jumbo"},
-      {"id": "G", "name": "기가", "name_en": "Giga"}
+      {
+        "id": "L",
+        "name": "라지",
+        "name_en": "Large"
+      },
+      {
+        "id": "J",
+        "name": "점보",
+        "name_en": "Jumbo"
+      },
+      {
+        "id": "G",
+        "name": "기가",
+        "name_en": "Giga"
+      }
     ],
     "rule": "메뉴마다 가능한 사이즈가 다르다. 용량(ml)은 build_dataset.py 가 공식 영양정보 표에서 채운다.",
     "source": "공식 메뉴 상세 영양정보 표. 사이즈 한글 명칭(라지/점보/기가)은 공식 페이지에 없어 관용 표기를 썼다(미확인)"
@@ -77,9 +219,25 @@
   "cups": {
     "label": "컵",
     "items": [
-      {"id": "store", "name": "매장컵", "name_en": "Store cup", "description": "매장에서 마실 때 쓰는 컵입니다.", "dine_in_only": true},
-      {"id": "disposable", "name": "일회용컵", "name_en": "Disposable cup", "description": "들고 나갈 수 있는 일회용 컵입니다."},
-      {"id": "personal", "name": "개인컵", "name_en": "My own cup", "description": "가져온 텀블러나 개인 컵에 담습니다. 주문한 뒤 컵을 카운터 직원에게 건네 주세요."}
+      {
+        "id": "store",
+        "name": "매장컵",
+        "name_en": "Store cup",
+        "description": "매장에서 마실 때 쓰는 컵입니다.",
+        "dine_in_only": true
+      },
+      {
+        "id": "disposable",
+        "name": "일회용컵",
+        "name_en": "Disposable cup",
+        "description": "들고 나갈 수 있는 일회용 컵입니다."
+      },
+      {
+        "id": "personal",
+        "name": "개인컵",
+        "name_en": "My own cup",
+        "description": "가져온 텀블러나 개인 컵에 담습니다. 주문한 뒤 컵을 카운터 직원에게 건네 주세요."
+      }
     ],
     "rule": "매장에서 마시면 기본은 매장컵, 포장이면 일회용컵입니다. 포장 주문은 매장컵을 고를 수 없습니다. 컵에 따른 추가 요금은 없습니다.",
     "personal_cup_discount": null,
