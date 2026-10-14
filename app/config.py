@@ -19,10 +19,12 @@ def _flag(name, default):
     return os.getenv(name, default).strip().lower() in ("1", "true", "yes", "on")
 
 
-CHAT_MODEL = os.getenv("OPENAI_CHAT_MODEL", "gpt-4.1-mini")
+# 대화 모델을 바꿀 때는 이 기본값, .env, render.yaml 의 OPENAI_CHAT_MODEL 을 함께 바꾼다.
+CHAT_MODEL = os.getenv("OPENAI_CHAT_MODEL", "gpt-6-luna")
 EMBED_MODEL = os.getenv("OPENAI_EMBED_MODEL", "text-embedding-3-small")
-# 추론 모델(gpt-5 계열 등)은 temperature 를 받지 않는다. 그럴 때는 .env 에 OPENAI_TEMPERATURE= 로 비워 둔다.
-_temperature = os.getenv("OPENAI_TEMPERATURE", "0.3").strip()
+# 기본은 비워 두어 temperature 를 보내지 않는다(추론 모델은 기본값 1 외에는 거절한다).
+# gpt-4.1 같은 일반 모델로 돌아가 답을 더 일정하게 하고 싶으면 OPENAI_TEMPERATURE=0.3 처럼 넣는다.
+_temperature = os.getenv("OPENAI_TEMPERATURE", "").strip()
 TEMPERATURE = float(_temperature) if _temperature else None
 
 RAG_TOP_K = int(os.getenv("RAG_TOP_K", "6"))
