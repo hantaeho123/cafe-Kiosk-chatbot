@@ -787,7 +787,7 @@ function renderChips(chips) {
       onclick: () => (chip.action ? ACTIONS[chip.action]() : send(chip.text)) }, chip.label)));
 }
 
-// "근거 보기"를 켜면 답변마다 어떤 문서를 찾았고 어떤 도구를 불렀는지 보여 준다.
+// "근거 보기"를 켜면 답변마다 참고 문서와 나머지 검색 결과를 보여 준다.
 // 답변을 코드로 다시 확인한 결과(금액·알레르기 안내·요청 메모 안내)를 한 줄로.
 function verifiedRow(v) {
   if (!v) return null;
@@ -799,7 +799,7 @@ function verifiedRow(v) {
 }
 
 function evidence(message) {
-  if (!message.sources.length && !message.tools.length && !message.verified) return null;
+  if (!message.sources.length && !message.verified) return null;
   const sources = [...new Map(message.sources.map(s => [s.id || s.title, s])).values()];
   const byId = new Map(sources.map(s => [s.id, s]));
   const used = (message.attribution?.ids || []).map(id => byId.get(id)).filter(Boolean);
@@ -810,9 +810,8 @@ function evidence(message) {
     ` — ${t("evidence_similarity")} ${s.score.toFixed(2)}`,
     s.match !== "vector" && el("span", { class: "tag" }, t(`match_${s.match}`)),
     s.query && el("span", { class: "source-query" }, ` ← "${s.query}"`));
-  const toolRow = (c) => el("li", {}, el("code", {}, `${c.ok ? "✓" : "✗"} ${c.name}(${JSON.stringify(c.args)})`));
   return el("details", { class: "evidence", open: true },
-    el("summary", {}, t("evidence_summary", { docs: sources.length, tools: message.tools.length })),
+    el("summary", {}, t("evidence_summary", { docs: sources.length })),
     el("section", { class: "evidence-used" },
       el("h4", {}, t("evidence_used")),
       used.length ? el("ul", {}, used.map(sourceRow)) : el("p", {}, t("evidence_no_used")),
@@ -820,8 +819,7 @@ function evidence(message) {
       message.attribution?.status !== "reported" && el("p", { class: "evidence-note" }, t("evidence_unavailable"))),
     other.length > 0 && el("details", { class: "evidence-other" },
       el("summary", {}, t("evidence_other", { n: other.length })), el("ul", {}, other.map(sourceRow))),
-    (message.tools.length > 0 || !!message.verified) && el("ul", { class: "evidence-checks" },
-      message.tools.map(toolRow), verifiedRow(message.verified)));
+    !!message.verified && el("ul", { class: "evidence-checks" }, verifiedRow(message.verified)));
 }
 
 // 메뉴끼리 비교해 물으면 답변 아래에 나란히 놓은 표가 붙는다.
