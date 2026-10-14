@@ -234,8 +234,8 @@ def turn_message(session, hits, user_text, warnings=()):
         events += "<주의>\n" + "\n".join(f"- {w}" for w in warnings) + "\n</주의>\n\n"
     return (f"<실시간상태>\n{realtime_state(session)}\n</실시간상태>\n\n{events}"
             f"<참고문서>\n{format_documents(hits, sold_out)}\n</참고문서>\n\n"
+            "<출력형식>기존 주문 처리·되묻기·주의사항 안내 지침을 먼저 따릅니다. 답변 끝에는 "
+            "<answer_sources>[참고한 문서 ID의 JSON 문자열 목록]</answer_sources>를 붙입니다. "
+            "참고한 검색 문서가 없으면 <answer_sources>[]</answer_sources>입니다.</출력형식>\n\n"
             f"<응답언어>{LANGUAGES[language]}{'' if language == 'ko' else FOREIGN_NAME_RULE.format(example=_example_name(session, language)) + button_names(language)}</응답언어>\n\n"
-            f"<손님>\n{safe}\n</손님>\n\n"
-            "<출력형식>손님에게 답한 뒤 반드시 마지막에 <answer_sources>[참고한 문서 ID의 JSON 문자열 목록]"
-            "</answer_sources>를 붙이세요. 참고 문서가 없으면 <answer_sources>[]</answer_sources>를 붙이세요."
-            "</출력형식>")
+            f"<손님>\n{safe}\n</손님>")
