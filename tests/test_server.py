@@ -219,7 +219,7 @@ def test_staff_screen_calls_and_sold_out(kiosk):
     called = post(client, "/api/staff", reason="바코드가 읽히지 않아요").json()
     assert called["staff_call"]["status"] == "waiting"
     board = client.get("/api/staff/board").json()
-    assert board["calls"][0]["reason"] == "바코드가 읽히지 않아요" and len(board["menus"]) == 112
+    assert board["calls"][0]["reason"] == "바코드가 읽히지 않아요" and len(board["menus"]) == 76
     client.post("/api/staff/call", json={"id": board["calls"][0]["id"]})
     live = client.get("/api/live", params=SESSION).json()
     assert live["staff_call"]["status"] == "coming"  # 직원이 확인하면 키오스크에도 보인다

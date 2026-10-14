@@ -79,6 +79,10 @@ class KioskAgent:
 
         waiting = session.pending_text()  # 이번 턴에 변경안이 달라졌는지 보려고 처음 모습을 남겨 둔다
         conflict, warnings = checks.request_warnings(user_text)  # 서로 부딪치는 말, 없는 사이즈
+        # 음료를 둘 이상 말했으면("아이스 아메리카노랑 따뜻한 블랙 밀크티") 온도가 음료마다 다른 것이지 부딪치는 말이 아니다.
+        # 모델이 두 잔을 한 라운드에 묶지 않고 하나씩 올려도 막히지 않고, 모델이 망설이지 않게 <주의>에도 넣지 않는다.
+        if sum(m["kind"] == "drink" for m in self.catalog.find_mentions(user_text)) >= 2:
+            conflict = None
         warnings += self._fixed_options(user_text)
         flagged = self._pool.submit(self._flagged, user_text) if self.moderation else None
         hits = self.retriever.search(user_text, context=self._context(session.history, user_text))

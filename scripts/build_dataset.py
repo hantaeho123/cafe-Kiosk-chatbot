@@ -19,7 +19,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 # 가격은 매장 판매가로 통일한다(2026-10-14 팀 결정). 배민 가격은 추천 당도·얼음 고정·인기 순위를 읽는 데만 쓴다.
-PRICE_SOURCE = "공차 시흥배곧점 매장 판매가 (매장 메뉴판·키오스크 사진, 다이닝코드 매장 메뉴정보 — 갱신일 미상, 2026-10-14 확인)"
+PRICE_SOURCE = "공차 시흥배곧점 매장 판매가 (매장 메뉴판·키오스크 화면 사진)"
 DELIVERY_SOURCE = "배달의민족 공차 시흥배곧점 (2026-10-12 캡처, 배달앱 판매가)"
 NUTRITION_BASIS = "기본 레시피(당도 0%, 스무디는 당도 고정) 및 컵 사이즈 기준"
 
@@ -95,18 +95,17 @@ def build_menu():
         for row in csv.DictReader(f):
             prices[int(row["official_no"])].append(row)
 
-    # 매장 판매가(raw/store/prices.csv: 메뉴판·키오스크 사진, 다이닝코드). 음료 가격은 모두 이것으로 쓴다.
-    # 배민에도 있는 음료는 배민 행의 추천 당도·얼음·배지는 그대로 두고 가격만 매장가로 바꾼다. 매장가가 없는 음료는 판매하지 않는 것으로 본다.
+    # 매장 판매가(raw/store/prices.csv). 가격은 모두 이것으로 쓴다.
+    # 매장 메뉴판·키오스크 화면 사진에 있는 메뉴만 판다. 다이닝코드 행은 갱신일을 알 수 없어(지난 시즌 메뉴, 1리터 배달 메뉴가 섞여 있다) 기록만 하고 쓰지 않는다.
+    # 배민에도 있는 음료는 배민 행의 추천 당도·얼음·배지는 그대로 두고 가격만 매장가로 바꾼다. 매장가가 없는 메뉴는 판매하지 않는 것으로 본다.
     store_prices = defaultdict(list)
     with open(DATA / "raw/store/prices.csv", encoding="utf-8") as f:
         for row in csv.DictReader(f):
-            if row["official_no"]:
+            if row["official_no"] and row["source"] != "diningcode":
                 store_prices[int(row["official_no"])].append(row)
-    # 1리터 배달 메뉴는 다이닝코드에만 가격이 있고 매장 메뉴판에는 없다. 배달 전용으로 보고 키오스크에서는 팔지 않는다.
-    delivery_only = {p["no"] for p in products if any(c["name"] == "1리터 배달 메뉴" for c in p["categories"])}
     drink_nos = {p["no"] for p in products if p["kind"] == "drink"}
     for no in drink_nos:
-        store = [r for r in store_prices.get(no, []) if r["kind"] == "drink" and no not in delivery_only]
+        store = [r for r in store_prices.get(no, []) if r["kind"] == "drink"]
         if not store:
             prices.pop(no, None)
             continue

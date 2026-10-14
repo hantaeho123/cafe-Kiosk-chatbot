@@ -360,7 +360,7 @@ def test_menus_just_shown_are_numbered_for_the_next_turn(talk):
 def test_no_match_tells_which_condition_to_drop(talk):
     _, _, client = talk("카페인 적고 덜 단 시원한 거", tool_chunks(
         ("find_menus", {"caffeine": "low", "sugar_adjustable": True, "flavor": "시원한"})), text_chunks("조건을 하나 빼면 있어요."))
-    assert tool_result(client)["total"] == 18  # '시원한'은 맛이 아니라 '차갑게'로 읽는다
+    assert tool_result(client)["total"] == 17  # '시원한'은 맛이 아니라 '차갑게'로 읽는다
     _, _, client = talk("카페인 적고 덜 단 스무디", tool_chunks(
         ("find_menus", {"caffeine": "low", "sugar_adjustable": True, "flavor": "스무디류"})), text_chunks("조건을 하나 빼면 있어요."))
     result = tool_result(client)
@@ -436,8 +436,15 @@ def test_two_drinks_with_different_temperatures_are_not_blocked(talk):
     events, _, client = talk("아이스 아메리카노 L 하나랑 따뜻한 블랙 밀크티 L 하나",
                              tool_chunks(("add_to_cart", {"menu_name": "아메리카노", "size": "L", "temperature": "ICE"}),
                                          ("add_to_cart", {**BLACK[1], "temperature": "HOT"})), text_chunks("두 잔을 올렸어요."))
-    assert "<주의>" in client.requests[0]["messages"][-1]["content"]  # 알려는 주되
+    assert "따뜻하게" not in client.requests[0]["messages"][-1]["content"].split("<손님>")[0]  # 음료가 둘이면 부딪치는 말로 보지 않는다
     assert [c["type"] for c in of(events, "proposal")[0]["changes"]] == ["add", "add"]  # 여러 잔이면 막지 않는다
+
+
+def test_two_drinks_added_one_round_at_a_time_are_not_blocked(talk):
+    events, _, _ = talk("아이스 아메리카노 L 하나랑 따뜻한 블랙 밀크티 L 하나",
+                        tool_chunks(("add_to_cart", {"menu_name": "아메리카노", "size": "L", "temperature": "ICE"})),
+                        tool_chunks(("add_to_cart", {**BLACK[1], "temperature": "HOT"})), text_chunks("두 잔을 올렸어요."))
+    assert [t["ok"] for t in of(events, "tool")] == [True, True]  # 모델이 한 잔씩 따로 올려도 손님이 두 음료를 말했으면 막지 않는다
 
 
 def test_option_that_cannot_be_applied_is_spelled_out(talk):
@@ -462,5 +469,5 @@ def test_foreign_reply_uses_the_screens_names_and_price_format(talk):
     assert session.history[-1]["content"] == "**Taro Milk Tea with Pearls** is L ₩5,500."
     assert session.shown == ["타로 밀크티 + 펄"] and of(events, "cards")[0]["items"][0]["name"] == "타로 밀크티 + 펄"
     assert "이 언어의 이름만 쓴다" in client.requests[0]["messages"][-1]["content"]
-    _, _, client = talk("타로 밀크티 얼마예요?", text_chunks("**타로 밀크티**는 L 4,900원이에요."))
-    assert session.history[-1]["content"].endswith("4,900원이에요.")  # 한국어 답변은 그대로
+    _, _, client = talk("타로 밀크티 얼마예요?", text_chunks("**타로 밀크티**는 L 4,600원이에요."))
+    assert session.history[-1]["content"].endswith("4,600원이에요.")  # 한국어 답변은 그대로

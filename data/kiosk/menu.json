@@ -1,9 +1,9 @@
 {
-  "price_source": "공차 시흥배곧점 매장 판매가 (매장 메뉴판·키오스크 사진, 다이닝코드 매장 메뉴정보 — 갱신일 미상, 2026-10-14 확인)",
+  "price_source": "공차 시흥배곧점 매장 판매가 (매장 메뉴판·키오스크 화면 사진)",
   "nutrition_basis": "기본 레시피(당도 0%, 스무디는 당도 고정) 및 컵 사이즈 기준",
   "counts": {
     "total": 175,
-    "on_sale": 112
+    "on_sale": 76
   },
   "items": [
     {
@@ -4909,8 +4909,8 @@
       "image": "images/372.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/92f7cc4a7e6f4102151afdd67f04a997.png",
       "on_sale": false,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "밀",
         "우유",
@@ -4933,7 +4933,7 @@
         }
       ],
       "sizes": [],
-      "price": 4500
+      "price": null
     },
     {
       "id": "food-382",
@@ -4969,8 +4969,8 @@
       "image": "images/382.jpg",
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20221207/rJHU9KRBfhmEPycw_20221207.jpg",
       "on_sale": false,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "밀",
         "우유",
@@ -4992,7 +4992,7 @@
         }
       ],
       "sizes": [],
-      "price": 5300
+      "price": null
     },
     {
       "id": "food-383",
@@ -5028,8 +5028,8 @@
       "image": "images/383.jpg",
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20221207/3r7jFqsSyDRIAeK0_20221207.jpg",
       "on_sale": false,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "밀",
         "우유",
@@ -5051,7 +5051,7 @@
         }
       ],
       "sizes": [],
-      "price": 5300
+      "price": null
     },
     {
       "id": "drink-416",
@@ -6046,8 +6046,8 @@
       "image": "images/475.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/a826235cb928dee89d2fd9002f01a1e7.png",
       "on_sale": false,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "밀",
         "우유",
@@ -6076,7 +6076,7 @@
         }
       ],
       "sizes": [],
-      "price": 2300
+      "price": null
     },
     {
       "id": "drink-477",
@@ -8106,8 +8106,8 @@
       "image": "images/548.png",
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20240910/pezb2nv1FHxcltPO_20240910.png",
       "on_sale": false,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "밀",
         "우유",
@@ -8130,7 +8130,7 @@
         }
       ],
       "sizes": [],
-      "price": 2800
+      "price": null
     },
     {
       "id": "food-549",
@@ -8166,8 +8166,8 @@
       "image": "images/549.png",
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20240910/FydoBXJg9h8OcZTm_20240910.png",
       "on_sale": false,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "밀",
         "우유",
@@ -8191,7 +8191,7 @@
         }
       ],
       "sizes": [],
-      "price": 2800
+      "price": null
     },
     {
       "id": "drink-551",
@@ -9072,8 +9072,8 @@
       "image": "images/601.png",
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20250319/8ENKPwfLdpDYj2l6_20250319.png",
       "on_sale": false,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "밀",
         "우유",
@@ -9113,7 +9113,7 @@
         }
       ],
       "sizes": [],
-      "price": 3000
+      "price": null
     },
     {
       "id": "food-603",
@@ -9577,8 +9577,8 @@
       "image": "images/614.png",
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20250623/oNIWAOXBxgH8Mc2z_20250623.png",
       "on_sale": false,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "밀",
         "우유",
@@ -9606,7 +9606,7 @@
         }
       ],
       "sizes": [],
-      "price": 4900
+      "price": null
     },
     {
       "id": "food-615",
@@ -10115,8 +10115,8 @@
       "image": "images/1035.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/a3be9c6370fd80091b5013a29a96561c.png",
       "on_sale": false,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "밀",
         "우유",
@@ -10137,7 +10137,7 @@
         }
       ],
       "sizes": [],
-      "price": 5400
+      "price": null
     },
     {
       "id": "food-1038",
@@ -10172,8 +10172,8 @@
       "image": "images/1038.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/5dc3afcc3ff06381888c583734555e08.png",
       "on_sale": false,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "밀",
         "우유",
@@ -10197,7 +10197,7 @@
         }
       ],
       "sizes": [],
-      "price": 4600
+      "price": null
     },
     {
       "id": "food-1039",
@@ -10232,8 +10232,8 @@
       "image": "images/1039.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/3510cf5cb45efbbc2914987a9b4a68d5.png",
       "on_sale": false,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "밀",
         "우유",
@@ -10257,7 +10257,7 @@
         }
       ],
       "sizes": [],
-      "price": 4600
+      "price": null
     },
     {
       "id": "food-1040",
@@ -10384,8 +10384,8 @@
       "image": "images/1047.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/b44cf5b642227598b7f17efab859d539.png",
       "on_sale": false,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "밀",
         "우유",
@@ -10412,7 +10412,7 @@
         }
       ],
       "sizes": [],
-      "price": 2800
+      "price": null
     },
     {
       "id": "food-1048",
@@ -10448,8 +10448,8 @@
       "image": "images/1048.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/12bcccd115cb1dec04925fa47c4e505c.png",
       "on_sale": false,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "밀",
         "우유",
@@ -10473,7 +10473,7 @@
         }
       ],
       "sizes": [],
-      "price": 5400
+      "price": null
     },
     {
       "id": "food-1052",
@@ -10873,8 +10873,8 @@
       "image": "images/1068.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/e1ddee205fb2a0eee278439159f9aaff.png",
       "on_sale": false,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "밀",
         "우유",
@@ -10898,7 +10898,7 @@
         }
       ],
       "sizes": [],
-      "price": 3900
+      "price": null
     },
     {
       "id": "food-1072",
@@ -10934,8 +10934,8 @@
       "image": "images/1072.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/5aa3c3c0b07d3e424ec6204584afd3f7.png",
       "on_sale": false,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "밀",
         "우유",
@@ -10959,7 +10959,7 @@
         }
       ],
       "sizes": [],
-      "price": 4900
+      "price": null
     },
     {
       "id": "drink-1073",
@@ -10988,31 +10988,21 @@
         "New 시즌 메뉴"
       ],
       "series": "더블 Matcha 시리즈",
-      "app_section": "매장 메뉴판",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1073.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/42d376aa52110bc8d89e7faba13d4e47.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "우유",
         "대두"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1073",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 5300,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L"
       ],
@@ -11096,32 +11086,22 @@
         "New 시즌 메뉴"
       ],
       "series": "더블 Matcha 시리즈",
-      "app_section": "매장 메뉴판",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1074.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/58b6f5aba0b51aef2bf28767b8b723f4.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "우유",
         "대두",
         "이산화황"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1074",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 5800,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L"
       ],
@@ -11209,31 +11189,21 @@
         "New 시즌 메뉴"
       ],
       "series": "더블 Matcha 시리즈",
-      "app_section": "매장 메뉴판",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1075.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/b1594a7e4b85cd05fde59a3e20e9769b.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "우유",
         "대두"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1075",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 5600,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": 414
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L"
       ],
@@ -11779,8 +11749,8 @@
       "image": "images/1080.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/76b09a4cd01978a297ede23c8f05ddd3.png",
       "on_sale": false,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "밀",
         "우유",
@@ -11804,7 +11774,7 @@
         }
       ],
       "sizes": [],
-      "price": 4500
+      "price": null
     },
     {
       "id": "drink-1081",
@@ -11962,31 +11932,21 @@
         "New 시즌 메뉴"
       ],
       "series": "말차&타로 시리즈",
-      "app_section": "매장 메뉴판",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1082.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/feff9fa317063065f48265088dc8f568.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "우유",
         "대두"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1082",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 5900,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L"
       ],
@@ -12159,39 +12119,27 @@
           "description": "自家淹れの香り高いゴンチャ アールグレイティーと甘い蟠桃を加え、エスプレッソショットと一緒に甘くほろ苦く爽やかに楽しむゴンチャのアイスティーです。"
         }
       },
-      "aliases": [
-        "납작복숭아 아이스티 얼그레이+샷"
-      ],
+      "aliases": [],
       "description": "직접 우린 향긋한 공차 얼그레이 티와 달콤한 납작복숭아를 더해 에스프레소 샷과 함께 달콤 쌉싸름 시원하게 즐기는 공차 아이스티",
       "category": "프룻티&모어",
       "official_tabs": [
         "New 시즌 메뉴"
       ],
       "series": "납작복숭아 아이스티",
-      "app_section": "프룻티 &모어",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1084.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/b305ca6321ba99329b87e8cf80b0f918.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "복숭아"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1084",
-      "sizes": [
-        {
-          "size": "J",
-          "price": 4500,
-          "volume_ml": {
-            "ICE": 651,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "J"
       ],
@@ -12284,39 +12232,27 @@
           "description": "自家製の香り高いゴンチャブラックティーと甘い平たい桃を加え、柔らかくもちもちしたミニパールと一緒に爽やかに楽しむゴンチャアイスティー"
         }
       },
-      "aliases": [
-        "납작복숭아 아이스티 블랙+미니펄"
-      ],
+      "aliases": [],
       "description": "직접 우린 향긋한 공차 블랙 티와 달콤한 납작복숭아를 더해 말랑쫀득 미니펄과 함께 시원하게 즐기는 공차 아이스티",
       "category": "프룻티&모어",
       "official_tabs": [
         "New 시즌 메뉴"
       ],
       "series": "납작복숭아 아이스티",
-      "app_section": "프룻티 &모어",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1085.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/6ee89aeeb4ecb842fafa00a0be6b5e4a.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "복숭아"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1085",
-      "sizes": [
-        {
-          "size": "J",
-          "price": 4700,
-          "volume_ml": {
-            "ICE": 651,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "J"
       ],
@@ -12325,14 +12261,14 @@
       ],
       "options": {
         "sugar": {
-          "adjustable": true,
-          "recommended": 30
+          "adjustable": null,
+          "recommended": null
         },
         "ice": {
           "adjustable": null,
           "default": null
         },
-        "source": "baemin"
+        "source": null
       },
       "included_toppings": [
         "미니펄"
@@ -12397,39 +12333,27 @@
           "description": "自家製の香り高いゴンチャアールグレーティーと甘い平たい桃を加え、柔らかくもちもちしたミニパールと一緒に爽やかに楽しむゴンチャアイスティー"
         }
       },
-      "aliases": [
-        "납작복숭아 아이스티 얼그레이+미니펄"
-      ],
+      "aliases": [],
       "description": "직접 우린 향긋한 공차 얼그레이 티와 달콤한 납작복숭아를 더해 말랑쫀득 미니펄과 함께 시원하게 즐기는 공차 아이스티",
       "category": "프룻티&모어",
       "official_tabs": [
         "New 시즌 메뉴"
       ],
       "series": "납작복숭아 아이스티",
-      "app_section": "프룻티 &모어",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1086.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/28897ad1d8419420a45c0d951bd6531f.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "복숭아"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1086",
-      "sizes": [
-        {
-          "size": "J",
-          "price": 4700,
-          "volume_ml": {
-            "ICE": 651,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "J"
       ],
@@ -12438,14 +12362,14 @@
       ],
       "options": {
         "sugar": {
-          "adjustable": true,
-          "recommended": 30
+          "adjustable": null,
+          "recommended": null
         },
         "ice": {
           "adjustable": null,
           "default": null
         },
-        "source": "baemin"
+        "source": null
       },
       "included_toppings": [
         "미니펄"
@@ -12510,49 +12434,28 @@
           "description": "ベルガモットの香り豊かなアールグレイミルクティーに甘い黒糖ともちもちのパールを加えたゴンチャのシグネチャーメニュー"
         }
       },
-      "aliases": [
-        "브라운슈가 시그니처 얼그레이 밀크티+펄"
-      ],
+      "aliases": [],
       "description": "베르가못 향의 얼그레이 밀크티에 달콤한 브라운슈가와 쫀득쫀득한 펄을 더한 공차 시그니처 메뉴",
       "category": "밀크티",
       "official_tabs": [
         "New 시즌 메뉴"
       ],
       "series": "브라운슈가 시그니처",
-      "app_section": "밀크티",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1087.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/f2c2baab874eade6dd4a5fd36a9c1a8a.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "우유",
         "이산화황"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1087",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 5800,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": 414
-          },
-          "size_in_official_table": true
-        },
-        {
-          "size": "J",
-          "price": 6900,
-          "volume_ml": {
-            "ICE": 651,
-            "HOT": 473
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L",
         "J"
@@ -12668,49 +12571,28 @@
           "description": "重厚で深い香りのウーロンミルクティーに甘い黒糖ともちもちのパールを加えたゴンチャのシグネチャーメニュー"
         }
       },
-      "aliases": [
-        "브라운슈가 시그니처 우롱 밀크티+펄"
-      ],
+      "aliases": [],
       "description": "묵직하고 깊은 향의 우롱 밀크티에 달콤한 브라운슈가와 쫀득쫀득한 펄을 더한 공차 시그니처 메뉴",
       "category": "밀크티",
       "official_tabs": [
         "New 시즌 메뉴"
       ],
       "series": "브라운슈가 시그니처",
-      "app_section": "밀크티",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1088.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/7f5c76fa6d81f3044a080c5ebb5441bd.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "우유",
         "이산화황"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1088",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 5800,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": 414
-          },
-          "size_in_official_table": true
-        },
-        {
-          "size": "J",
-          "price": 6900,
-          "volume_ml": {
-            "ICE": 651,
-            "HOT": 473
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L",
         "J"
@@ -12834,31 +12716,21 @@
         "New 시즌 메뉴"
       ],
       "series": "시그니처 시리즈",
-      "app_section": "쥬얼리 시리즈",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1089.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/84dea45bcd5a061548470be44d61c83f.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "우유",
         "대두"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1089",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 6100,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L"
       ],
@@ -12867,14 +12739,14 @@
       ],
       "options": {
         "sugar": {
-          "adjustable": true,
-          "recommended": 50
+          "adjustable": null,
+          "recommended": null
         },
         "ice": {
           "adjustable": null,
           "default": null
         },
-        "source": "baemin"
+        "source": null
       },
       "included_toppings": [
         "쥬얼리"
@@ -12943,31 +12815,21 @@
         "New 시즌 메뉴"
       ],
       "series": "시그니처 시리즈",
-      "app_section": "쥬얼리 시리즈",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1090.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/c586939434ee0454fe7f32bb223f6e4f.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "우유",
         "대두"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1090",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 6100,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L"
       ],
@@ -12976,14 +12838,14 @@
       ],
       "options": {
         "sugar": {
-          "adjustable": true,
-          "recommended": 50
+          "adjustable": null,
+          "recommended": null
         },
         "ice": {
           "adjustable": null,
           "default": null
         },
-        "source": "baemin"
+        "source": null
       },
       "included_toppings": [
         "쥬얼리"
@@ -13644,8 +13506,8 @@
       "image": "images/1099.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/45ee04caa11539e0b199240aa2d4635b.png",
       "on_sale": false,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=002004&no=1099",
       "nutrition": [
@@ -13663,7 +13525,7 @@
         }
       ],
       "sizes": [],
-      "price": 3200
+      "price": null
     },
     {
       "id": "food-1100",
@@ -13744,40 +13606,28 @@
           "description": "従来のチョコレートミルクティー＋チーズフォーム推奨糖度に比べ糖類が77%減少した低糖チョコレートミルクティー＋チーズフォームです。"
         }
       },
-      "aliases": [
-        "저당 초콜렛 밀크티+치즈폼"
-      ],
+      "aliases": [],
       "description": "기존 초콜렛 밀크티+치즈폼 추천 당도 대비 당류가 77% 감소한 저당 초콜렛 밀크티+치즈폼입니다.",
       "category": "밀크티",
       "official_tabs": [
         "New 시즌 메뉴"
       ],
       "series": "저당 밀크티 시리즈",
-      "app_section": "저당 시리즈",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1103.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/8dfc64eaec89d06520e2cf0aa6d1b01f.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "우유",
         "대두"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1103",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 5900,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L"
       ],
@@ -13858,39 +13708,20 @@
         "New 시즌 메뉴"
       ],
       "series": "저당 밀크티 시리즈",
-      "app_section": "저당 시리즈",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1104.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/4e34d9597d79f62715f2560142afc6ea.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "우유"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1104",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 5000,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        },
-        {
-          "size": "J",
-          "price": 6100,
-          "volume_ml": {
-            "ICE": 651,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L",
         "J"
@@ -13975,46 +13806,25 @@
           "description": "糖分ゼロで楽しめる低糖ジャスミンオリジナルティーです。"
         }
       },
-      "aliases": [
-        "저당 자스민티"
-      ],
+      "aliases": [],
       "description": "당을 제로로 즐길 수 있는 저당 자스민 오리지널 티입니다.",
       "category": "오리지널 티",
       "official_tabs": [
         "New 시즌 메뉴"
       ],
       "series": "저당 밀크티 시리즈",
-      "app_section": "저당 시리즈",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1105.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/e5327ef79e9d2885c99c94d9b3aaaf46.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1105",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 4300,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": 414
-          },
-          "size_in_official_table": true
-        },
-        {
-          "size": "J",
-          "price": 5400,
-          "volume_ml": {
-            "ICE": 651,
-            "HOT": 473
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L",
         "J"
@@ -14126,46 +13936,25 @@
           "description": "糖分ゼロで楽しめる低糖ウーロンオリジナルティーです。"
         }
       },
-      "aliases": [
-        "저당 우롱티"
-      ],
+      "aliases": [],
       "description": "당을 제로로 즐길 수 있는 저당 우롱 오리지널 티입니다.",
       "category": "오리지널 티",
       "official_tabs": [
         "New 시즌 메뉴"
       ],
       "series": "저당 밀크티 시리즈",
-      "app_section": "저당 시리즈",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1106.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/92576816e1713200973b6d5875a28918.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1106",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 4300,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": 414
-          },
-          "size_in_official_table": true
-        },
-        {
-          "size": "J",
-          "price": 5400,
-          "volume_ml": {
-            "ICE": 651,
-            "HOT": 473
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L",
         "J"
@@ -14277,46 +14066,25 @@
           "description": "糖分ゼロで楽しめる低糖アールグレイオリジナルティーです。"
         }
       },
-      "aliases": [
-        "저당 얼그레이티"
-      ],
+      "aliases": [],
       "description": "당을 제로로 즐길 수 있는 저당 얼그레이 오리지널 티입니다.",
       "category": "오리지널 티",
       "official_tabs": [
         "New 시즌 메뉴"
       ],
       "series": "저당 밀크티 시리즈",
-      "app_section": "저당 시리즈",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1107.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/bf1dff394999f375d6f06611769adb7d.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1107",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 4300,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": 414
-          },
-          "size_in_official_table": true
-        },
-        {
-          "size": "J",
-          "price": 5400,
-          "volume_ml": {
-            "ICE": 651,
-            "HOT": 473
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L",
         "J"
@@ -14428,46 +14196,25 @@
           "description": "糖分ゼロで楽しめる低糖ブラックオリジナルティーです。"
         }
       },
-      "aliases": [
-        "저당 블랙티"
-      ],
+      "aliases": [],
       "description": "당을 제로로 즐길 수 있는 저당 블랙 오리지널 티입니다.",
       "category": "오리지널 티",
       "official_tabs": [
         "New 시즌 메뉴"
       ],
       "series": "저당 밀크티 시리즈",
-      "app_section": "저당 시리즈",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1108.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/8a045987ab0fceaf09376bfe89f87285.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1108",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 4300,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": 414
-          },
-          "size_in_official_table": true
-        },
-        {
-          "size": "J",
-          "price": 5400,
-          "volume_ml": {
-            "ICE": 651,
-            "HOT": 473
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L",
         "J"
@@ -14584,33 +14331,21 @@
         "New 시즌 메뉴"
       ],
       "series": "저당 밀크티 시리즈",
-      "app_section": "저당 시리즈",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
-      "badges": [
-        "사장님추천"
-      ],
+      "badges": [],
       "image": "images/1109.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/57427bbd626dded97bba9e50adddef54.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "우유",
         "이산화황"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1109",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 5500,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L"
       ],
@@ -14890,31 +14625,21 @@
         "New 시즌 메뉴"
       ],
       "series": "저당 밀크티 시리즈",
-      "app_section": "저당 시리즈",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1112.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/e41c020f27ba65a8e0fed065d449d144.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "우유",
         "이산화황"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1112",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 5500,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L"
       ],
@@ -14997,39 +14722,20 @@
         "New 시즌 메뉴"
       ],
       "series": "저당 밀크티 시리즈",
-      "app_section": "저당 시리즈",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1113.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/bdaeb81ae8b81def4e33ceacd61f3588.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "우유"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1113",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 4900,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        },
-        {
-          "size": "J",
-          "price": 6000,
-          "volume_ml": {
-            "ICE": 651,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L",
         "J"
@@ -15123,39 +14829,20 @@
         "New 시즌 메뉴"
       ],
       "series": "저당 밀크티 시리즈",
-      "app_section": "저당 시리즈",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1114.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/df704e4e20156aa8ed39d7dd9a69e31b.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "우유"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1114",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 4900,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        },
-        {
-          "size": "J",
-          "price": 6000,
-          "volume_ml": {
-            "ICE": 651,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L",
         "J"
@@ -15249,39 +14936,20 @@
         "New 시즌 메뉴"
       ],
       "series": "저당 밀크티 시리즈",
-      "app_section": "저당 시리즈",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1115.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/e21e9721baf49c8c7f35461c3853a910.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "우유"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1115",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 4900,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        },
-        {
-          "size": "J",
-          "price": 6000,
-          "volume_ml": {
-            "ICE": 651,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L",
         "J"
@@ -15375,39 +15043,20 @@
         "New 시즌 메뉴"
       ],
       "series": "저당 밀크티 시리즈",
-      "app_section": "저당 시리즈",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1116.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/957124454c11fa1a5e85e747673fa98a.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "우유"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1116",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 4900,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        },
-        {
-          "size": "J",
-          "price": 6000,
-          "volume_ml": {
-            "ICE": 651,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L",
         "J",
@@ -15512,30 +15161,20 @@
         "New 시즌 메뉴"
       ],
       "series": "저당 밀크티 시리즈",
-      "app_section": "저당 시리즈",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1117.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/0818be7933e6f30ead4a1c5b80cbceab.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "복숭아"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1117",
-      "sizes": [
-        {
-          "size": "J",
-          "price": 4700,
-          "volume_ml": {
-            "ICE": null,
-            "HOT": null
-          },
-          "size_in_official_table": false
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L",
         "G"
@@ -15632,31 +15271,21 @@
         "New 시즌 메뉴"
       ],
       "series": "저당 밀크티 시리즈",
-      "app_section": "매장 메뉴판",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1118.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/affdc4c9b7e82a92a5c639461ad77e8a.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "우유",
         "이산화황"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1118",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 5600,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L"
       ],
@@ -15738,31 +15367,21 @@
         "New 시즌 메뉴"
       ],
       "series": "26' 써머 시리즈",
-      "app_section": "매장 메뉴판",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1119.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/4e856a3d6ba2ef44aa9c70b1f51a99d8.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "우유",
         "이산화황"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1119",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 6100,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L"
       ],
@@ -15845,28 +15464,18 @@
         "New 시즌 메뉴"
       ],
       "series": "26' 써머 시리즈",
-      "app_section": "매장 메뉴판",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1120.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/0a44c9e8125844b05b7d483c3a91a1ae.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1120",
-      "sizes": [
-        {
-          "size": "J",
-          "price": 5900,
-          "volume_ml": {
-            "ICE": 651,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "J"
       ],
@@ -15949,40 +15558,21 @@
         "New 시즌 메뉴"
       ],
       "series": "26' 써머 시리즈",
-      "app_section": "매장 메뉴판",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1121.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/fa4ded96242801f21ee245cbf1f382d9.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "우유",
         "이산화황"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1121",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 5600,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        },
-        {
-          "size": "J",
-          "price": 6700,
-          "volume_ml": {
-            "ICE": 651,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L",
         "J"
@@ -16227,28 +15817,18 @@
         "New 시즌 메뉴"
       ],
       "series": "26' 써머 시리즈",
-      "app_section": "매장 메뉴판",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1125.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/aaaeb9b97bb30a11eb038e04bdc45b65.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1125",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 5900,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L"
       ],
@@ -16333,30 +15913,20 @@
         "New 시즌 메뉴"
       ],
       "series": "26' 써머 시리즈",
-      "app_section": "매장 메뉴판",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1126.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/272ba94695b5cdc692448740f83d3cd2.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "우유"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1126",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 5600,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L"
       ],
@@ -17227,28 +16797,18 @@
         "New 시즌 메뉴"
       ],
       "series": "26' 써머 시리즈",
-      "app_section": "매장 메뉴판",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1141.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/a8a4672e0fd0d17478ba8541549ad0ce.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1141",
-      "sizes": [
-        {
-          "size": "J",
-          "price": 5900,
-          "volume_ml": {
-            "ICE": 651,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "J"
       ],
@@ -17327,28 +16887,18 @@
         "New 시즌 메뉴"
       ],
       "series": "26' 써머 시리즈",
-      "app_section": "매장 메뉴판",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1142.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/0d436f75f85f8922a67180a406426937.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1142",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 5300,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": null
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L"
       ],
@@ -17648,41 +17198,29 @@
           "description": "甘い栗にウーロンティーを加え、もちもちのパールと一緒に楽しむミルクティーです。"
         }
       },
-      "aliases": [
-        "밤 크림 밀크티 + 펄"
-      ],
+      "aliases": [],
       "description": "달콤한 밤에 우롱티를 더해 쫀득한 펄과 함께 즐기는 밀크티입니다.",
       "category": "밀크티",
       "official_tabs": [
         "New 시즌 메뉴"
       ],
       "series": "가을 시리즈",
-      "app_section": "어텀 시리즈",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1145.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/8c78b356e4f93b25b58f638b06538aac.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "우유",
         "대두",
         "이산화황"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1145",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 5600,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": 414
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L"
       ],
@@ -17692,14 +17230,14 @@
       ],
       "options": {
         "sugar": {
-          "adjustable": true,
-          "recommended": 50
+          "adjustable": null,
+          "recommended": null
         },
         "ice": {
           "adjustable": null,
           "default": null
         },
-        "source": "baemin"
+        "source": null
       },
       "included_toppings": [
         "펄"
@@ -17773,41 +17311,29 @@
           "description": "香り高いアールグレイとよもぎをもちもちのパールと一緒に楽しむミルクティーです。"
         }
       },
-      "aliases": [
-        "쑥 크림 밀크티 + 펄"
-      ],
+      "aliases": [],
       "description": "향긋한 얼그레이와 쑥을 쫀득한 펄과 함께 즐기는 밀크티입니다.",
       "category": "밀크티",
       "official_tabs": [
         "New 시즌 메뉴"
       ],
       "series": "가을 시리즈",
-      "app_section": "어텀 시리즈",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1146.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/20f56b6fcad3b9c8075ad1bb25b55eda.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "우유",
         "대두",
         "이산화황"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1146",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 5600,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": 414
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L"
       ],
@@ -17817,14 +17343,14 @@
       ],
       "options": {
         "sugar": {
-          "adjustable": true,
-          "recommended": 50
+          "adjustable": null,
+          "recommended": null
         },
         "ice": {
           "adjustable": null,
           "default": null
         },
-        "source": "baemin"
+        "source": null
       },
       "included_toppings": [
         "펄"
@@ -17964,28 +17490,18 @@
         "New 시즌 메뉴"
       ],
       "series": "리얼 애플 시리즈",
-      "app_section": "어텀 시리즈",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1148.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/9308201cc3293801ecfb9ca7a3a67ffd.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1148",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 5300,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": 414
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L"
       ],
@@ -17995,14 +17511,14 @@
       ],
       "options": {
         "sugar": {
-          "adjustable": true,
-          "recommended": 30
+          "adjustable": null,
+          "recommended": null
         },
         "ice": {
           "adjustable": null,
           "default": null
         },
-        "source": "baemin"
+        "source": null
       },
       "included_toppings": [],
       "nutrition_basis": "기본 레시피(당도 0%, 스무디는 당도 고정) 및 컵 사이즈 기준",
@@ -18084,30 +17600,20 @@
         "New 시즌 메뉴"
       ],
       "series": "리얼 애플 시리즈",
-      "app_section": "어텀 시리즈",
+      "app_section": null,
       "is_new_season": true,
       "is_best_seller": false,
       "badges": [],
       "image": "images/1149.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/d0bc432bb05f4b37d55288b50f4c1865.png",
-      "on_sale": true,
-      "price_status": "확인됨",
-      "price_source": "store",
+      "on_sale": false,
+      "price_status": "가격 미확인",
+      "price_source": null,
       "allergens": [
         "우유"
       ],
       "source_url": "https://www.gong-cha.co.kr/brand/menu/product_detail?category=001001&no=1149",
-      "sizes": [
-        {
-          "size": "L",
-          "price": 5600,
-          "volume_ml": {
-            "ICE": 473,
-            "HOT": 414
-          },
-          "size_in_official_table": true
-        }
-      ],
+      "sizes": [],
       "official_sizes": [
         "L"
       ],
