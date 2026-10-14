@@ -175,7 +175,18 @@ def kiosk_settings(catalog):
 
 
 def system_prompt(catalog):
-    return SYSTEM_PROMPT.format(store=catalog.store["name"], settings=kiosk_settings(catalog))
+    return SYSTEM_PROMPT.format(store=catalog.store["name"], settings=kiosk_settings(catalog)) + """
+
+[답변 참고 문서 표시]
+손님에게 보여 줄 최종 답변을 다 쓴 뒤, 마지막에 아래 형식의 메타데이터를 정확히 한 번 붙입니다.
+<answer_sources>["문서 ID", "문서 ID"]</answer_sources>
+이번 턴의 <참고문서> 또는 search_knowledge 결과에서 답변의 구체적인 사실을 뒷받침하는 데
+참고한 문서 ID만, 답변에서 해당 내용이 처음 등장한 순서로 적습니다. 문서 제목이나 번호가 아닌 ID입니다.
+검색되었다는 이유만으로 모두 적지 않습니다. 답변에 없는 메뉴나 관련 없는 문서는 제외합니다.
+이전 대화, 실시간 상태, 키오스크 설정, 다른 도구 결과만 참고했다면 빈 배열 []을 씁니다.
+목록에 없는 ID를 만들지 않습니다. 답변을 다시 쓸 때도 수정된 답변에 맞춰 새로 표시합니다.
+이 메타데이터는 시스템이 분리하므로 본문에서 설명하거나 코드 블록으로 감싸지 않습니다.
+"""
 
 
 def format_documents(hits, sold_out=()):
@@ -183,7 +194,8 @@ def format_documents(hits, sold_out=()):
         return "(검색된 문서 없음)"
     return "\n\n".join(
         f"[문서 {i}] {h.doc['title']} ({DOC_TYPES.get(h.doc['type'], h.doc['type'])})"
-        + (" — 지금 품절" if h.doc["metadata"].get("menu_id") in sold_out else "") + f"\n{h.doc['text']}"
+        + (" — 지금 품절" if h.doc["metadata"].get("menu_id") in sold_out else "")
+        + f"\n문서 ID: {h.doc['id']}\n{h.doc['text']}"
         for i, h in enumerate(hits, 1))
 
 
@@ -223,4 +235,7 @@ def turn_message(session, hits, user_text, warnings=()):
     return (f"<실시간상태>\n{realtime_state(session)}\n</실시간상태>\n\n{events}"
             f"<참고문서>\n{format_documents(hits, sold_out)}\n</참고문서>\n\n"
             f"<응답언어>{LANGUAGES[language]}{'' if language == 'ko' else FOREIGN_NAME_RULE.format(example=_example_name(session, language)) + button_names(language)}</응답언어>\n\n"
-            f"<손님>\n{safe}\n</손님>")
+            f"<손님>\n{safe}\n</손님>\n\n"
+            "<출력형식>손님에게 답한 뒤 반드시 마지막에 <answer_sources>[참고한 문서 ID의 JSON 문자열 목록]"
+            "</answer_sources>를 붙이세요. 참고 문서가 없으면 <answer_sources>[]</answer_sources>를 붙이세요."
+            "</출력형식>")

@@ -140,6 +140,38 @@ def catalog_id(session, name):
     return session.catalog.resolve(name)[0]["id"]
 
 
+def test_context_document_references_are_separate_from_search_scores(talk, catalog):
+    talk("인기 메뉴 추천해줘", text_chunks("타로 밀크티 + 펄과 블랙 밀크티 + 펄이 인기예요."))
+    ids = [f"menu:{catalog.resolve(name)[0]['id']}" for name in ("타로 밀크티 + 펄", "블랙 밀크티 + 펄")]
+    answer = "두 밀크티 모두 HOT L 5,500원으로 드실 수 있어요."
+    footer = f"<answer_sources>{json.dumps(ids)}</answer_sources>"
+    events, session, client = talk("추워졌는데 뭘 마실까요?", text_chunks(answer + footer))
+    assert of(events, "attribution") == [{"type": "attribution", "ids": ids, "status": "reported"}]
+    assert "".join(e["text"] for e in of(events, "delta")) == answer
+    assert session.history[-1]["content"] == answer
+    assert len(client.requests) == 1  # 문서 표시를 위한 추가 모델 호출이 없다
+    assert all(any(s["id"] == id for s in of(events, "sources")[0]["items"]) for id in ids)
+
+
+def test_additional_search_documents_can_be_referenced(talk, retriever):
+    hit = retriever.search("교환권 사용법", doc_types=["guide"])[0]
+    id = hit.doc["id"]
+    events, _, client = talk("사용법 좀 알려줘",
+        tool_chunks(("search_knowledge", {"query": "교환권 사용법", "doc_type": "guide"})),
+        text_chunks(f'교환권 사용 버튼을 눌러 주세요.<answer_sources>["{id}"]</answer_sources>'))
+    assert of(events, "attribution")[0]["ids"] == [id]
+    assert tool_result(client)["results"][0]["id"] == id
+
+
+def test_rewrite_replaces_old_source_references(talk, catalog):
+    id = f"menu:{catalog.resolve('블랙 밀크티')[0]['id']}"
+    events, _, _ = talk("블랙 밀크티 세 잔이면 얼마예요?",
+        text_chunks(f'14,777원이에요.<answer_sources>["{id}"]</answer_sources>'),
+        text_chunks('정확한 합계는 주문 내역에서 확인해 주세요.<answer_sources>[]</answer_sources>'))
+    assert of(events, "verified")[0]["rewritten"]
+    assert of(events, "attribution") == [{"type": "attribution", "ids": [], "status": "reported"}]
+
+
 def test_pending_line_can_be_adjusted_before_confirming(talk):
     talk("블랙 밀크티 L 아이스 하나", tool_chunks(BLACK), text_chunks("확인 화면에 올렸어요."))
     events, session, _ = talk("당도 30으로, 얼음 적게, 펄 추가",

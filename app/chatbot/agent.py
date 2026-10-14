@@ -11,13 +11,14 @@ from concurrent.futures import ThreadPoolExecutor
 from app import config, i18n
 from app.chatbot import checks
 from app.chatbot.prompts import system_prompt, turn_message
+from app.chatbot.sources import SourceFooter, source_report
 from app.chatbot.tools import SEARCH_TOOL, ToolBox
 
 log = logging.getLogger("kiosk")
 
 
 def _sources(hits):
-    return [{"title": h.doc["title"], "type": h.doc["type"], "score": round(h.score, 3), "match": h.match} for h in hits]
+    return [{"id": h.doc["id"], "title": h.doc["title"], "type": h.doc["type"], "score": round(h.score, 3), "match": h.match} for h in hits]
 
 
 class KioskAgent:
@@ -49,7 +50,7 @@ class KioskAgent:
         """손님의 한마디에 대한 답을 이벤트(dict)로 하나씩 내보낸다.
 
         delta: 답변 글 조각 / replace: 검증에 걸려 다시 쓴 답변 전체 / verified: 검증 결과
-        status: 실행할 도구 / tool: 도구 실행 결과 / sources: 검색된 문서
+        status: 실행할 도구 / tool: 도구 실행 결과 / sources: 검색된 문서 / attribution: 모델이 표시한 참고 문서
         state: 주문 상태 / cards: 답변에 나온 메뉴 / compare: 메뉴 비교표 / proposal: 확인을 기다리는 변경안
         chips: 빠른 답변 버튼 / error / done
         """
@@ -94,11 +95,13 @@ class KioskAgent:
             {"role": "user", "content": turn_message(session, hits, user_text, [conflict, *warnings] if conflict else warnings)},
         ]
         unapplied = []
+        attribution, all_hits = {}, list(hits)
         parts, need = [], None
         notes_before = self._note_ids(session)
         for round_no in range(config.MAX_TOOL_ROUNDS + 1):
             # 마지막 라운드에서는 도구를 막아 반드시 글로 답하게 한다.
-            text, calls = yield from self._stream(messages, allow_tools=round_no < config.MAX_TOOL_ROUNDS)
+            text, calls = yield from self._stream(messages, allow_tools=round_no < config.MAX_TOOL_ROUNDS,
+                                                  attribution=attribution)
             if text.strip():
                 parts.append(text.strip())
             if not calls:
@@ -121,6 +124,7 @@ class KioskAgent:
                                  "content": json.dumps(result, ensure_ascii=False)})
                 event = {"type": "tool", "name": call["name"], "args": args, "ok": bool(result.get("ok"))}
                 if call["name"] == SEARCH_TOOL:
+                    all_hits.extend(found or [])
                     event["sources"] = _sources(found or [])
                 else:
                     event["result"] = result
@@ -134,7 +138,8 @@ class KioskAgent:
         session.ask_first = None
         new_note = bool(self._note_ids(session) - notes_before)
         written = "\n\n".join(parts)
-        reply = yield from self._verify(session, user_text, written, messages, new_note, unapplied)
+        reply = yield from self._verify(session, user_text, written, messages, new_note, unapplied, attribution)
+        yield source_report(attribution, all_hits)
         yield from self._finish(session, user_text, reply, need, waiting, written)
 
     def _fixed_options(self, user_text):
@@ -153,7 +158,7 @@ class KioskAgent:
     def _note_ids(session):
         return {n["note_id"] for n in (session.draft or session.order).notes}
 
-    def _verify(self, session, user_text, reply, messages, new_note=False, unapplied=()):
+    def _verify(self, session, user_text, reply, messages, new_note=False, unapplied=(), attribution=None):
         """답변을 코드로 다시 확인한다(checks.py). 근거 없는 금액이 있으면 한 번 다시 쓰게 하고,
         알레르기 안내나 요청 메모 안내가 빠졌으면 정해 둔 문구를 붙인다."""
         report = {"type": "verified", "amounts": "ok", "rewritten": False, "allergy_notice": None, "note_notice": None, "unapplied": None}
@@ -161,9 +166,13 @@ class KioskAgent:
         unknown = checks.ungrounded_amounts(reply, context)
         if unknown:
             log.warning("답변에 근거 없는 금액 %s", unknown)
-            fixed = self._rewrite(messages, reply, unknown)
+            revised_sources = {}
+            fixed = self._rewrite(messages, reply, unknown, revised_sources)
             if fixed and not checks.ungrounded_amounts(fixed, context):
                 reply, report["rewritten"] = fixed, True
+                if attribution is not None:
+                    attribution.clear()
+                    attribution.update(revised_sources)
                 yield {"type": "replace", "text": reply}
             else:
                 caution = i18n.text("amount_caution", session.language)
@@ -200,13 +209,14 @@ class KioskAgent:
         yield report
         return reply
 
-    def _rewrite(self, messages, reply, unknown):
+    def _rewrite(self, messages, reply, unknown, attribution=None):
         """근거 없는 금액이 든 답변을 모델에게 한 번 다시 쓰게 한다. 실패하면 None."""
         note = ("방금 답변에 근거 없는 금액이 있습니다: " + ", ".join(f"{n:,}원" for n in unknown) + ". 이 금액은 실시간 상태, 참고문서, "
                 "도구 결과 어디에도 없습니다. 직접 계산하거나 어림하지 말고 근거에 적힌 금액만 그대로 써서 같은 내용의 답변을 다시 쓰세요. "
                 "필요한 합계가 근거에 없으면 그 금액은 빼고, 정확한 금액은 화면의 주문 내역이나 결제 화면에서 확인해 달라고 안내하세요. "
                 "사과나 설명 없이 고친 답변만 씁니다.")
-        stream = self._stream([*messages, {"role": "assistant", "content": reply}, {"role": "system", "content": note}], allow_tools=False)
+        stream = self._stream([*messages, {"role": "assistant", "content": reply}, {"role": "system", "content": note}],
+                              allow_tools=False, attribution=attribution)
         try:
             while True:
                 next(stream)  # 글 조각은 화면에 흘리지 않고 다 쓴 뒤에 한 번에 바꾼다
@@ -257,7 +267,7 @@ class KioskAgent:
 
     # ------------------------------------------------------------ 모델 호출·도구
 
-    def _stream(self, messages, allow_tools):
+    def _stream(self, messages, allow_tools, attribution=None):
         """모델을 스트리밍으로 호출한다. 글 조각은 바로 내보내고, (전체 글, 도구 호출 목록) 을 돌려준다."""
         params = {"model": self.model, "messages": messages, "tools": self.specs, "stream": True}
         if not allow_tools:
@@ -265,20 +275,30 @@ class KioskAgent:
         if self.temperature is not None:
             params["temperature"] = self.temperature
         text, calls = "", {}
+        footer = SourceFooter()
         for chunk in self.client.chat.completions.create(**params):
             if not chunk.choices:
                 continue
             delta = chunk.choices[0].delta
             if delta.content:
-                text += delta.content
-                yield {"type": "delta", "text": delta.content}
+                visible = footer.feed(delta.content)
+                text += visible
+                if visible:
+                    yield {"type": "delta", "text": visible}
             for piece in delta.tool_calls or []:  # 도구 호출은 이름·인자가 조각나서 온다
                 call = calls.setdefault(piece.index, {"id": "", "name": "", "arguments": ""})
                 call["id"] = piece.id or call["id"]
                 if piece.function:
                     call["name"] += piece.function.name or ""
                     call["arguments"] += piece.function.arguments or ""
-        return text, [calls[i] for i in sorted(calls)]
+        tail, report = footer.finish()
+        if tail:
+            text += tail
+            yield {"type": "delta", "text": tail}
+        if attribution is not None:
+            attribution.clear()
+            attribution.update(report)
+        return text.rstrip(), [calls[i] for i in sorted(calls)]
 
     def _run_tool(self, call, session):
         try:

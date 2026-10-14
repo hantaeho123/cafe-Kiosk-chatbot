@@ -800,13 +800,28 @@ function verifiedRow(v) {
 
 function evidence(message) {
   if (!message.sources.length && !message.tools.length && !message.verified) return null;
+  const sources = [...new Map(message.sources.map(s => [s.id || s.title, s])).values()];
+  const byId = new Map(sources.map(s => [s.id, s]));
+  const used = (message.attribution?.ids || []).map(id => byId.get(id)).filter(Boolean);
+  const usedIds = new Set(used.map(s => s.id));
+  const other = sources.filter(s => !usedIds.has(s.id));
   const sourceRow = (s) => el("li", {},
-    el("span", { class: "tag" }, (s.match === "vector" ? "" : `${t(`match_${s.match}`)} `) + s.score.toFixed(2)),
-    ` ${s.title} (${s.type})${s.query ? ` ← "${s.query}"` : ""}`);
+    el("span", { class: "source-title" }, s.title),
+    ` — ${t("evidence_similarity")} ${s.score.toFixed(2)}`,
+    s.match !== "vector" && el("span", { class: "tag" }, t(`match_${s.match}`)),
+    s.query && el("span", { class: "source-query" }, ` ← "${s.query}"`));
   const toolRow = (c) => el("li", {}, el("code", {}, `${c.ok ? "✓" : "✗"} ${c.name}(${JSON.stringify(c.args)})`));
-  return el("details", { class: "evidence" },
-    el("summary", {}, t("evidence_summary", { docs: message.sources.length, tools: message.tools.length })),
-    el("ul", {}, message.sources.map(sourceRow), message.tools.map(toolRow), verifiedRow(message.verified)));
+  return el("details", { class: "evidence", open: true },
+    el("summary", {}, t("evidence_summary", { docs: sources.length, tools: message.tools.length })),
+    el("section", { class: "evidence-used" },
+      el("h4", {}, t("evidence_used")),
+      used.length ? el("ul", {}, used.map(sourceRow)) : el("p", {}, t("evidence_no_used")),
+      el("p", { class: "evidence-note" }, t("evidence_attribution_note")),
+      message.attribution?.status !== "reported" && el("p", { class: "evidence-note" }, t("evidence_unavailable"))),
+    other.length > 0 && el("details", { class: "evidence-other" },
+      el("summary", {}, t("evidence_other", { n: other.length })), el("ul", {}, other.map(sourceRow))),
+    (message.tools.length > 0 || !!message.verified) && el("ul", { class: "evidence-checks" },
+      message.tools.map(toolRow), verifiedRow(message.verified)));
 }
 
 // 메뉴끼리 비교해 물으면 답변 아래에 나란히 놓은 표가 붙는다.
@@ -855,6 +870,9 @@ function handleEvent(event, message) {
     case "sources":
       message.sources.push(...event.items);
       break;
+    case "attribution":
+      message.attribution = event;
+      break;
     case "tool":
       message.tools.push(event);
       if (event.sources) message.sources.push(...event.sources.map((s) => ({ ...s, query: event.args.query })));
@@ -875,6 +893,7 @@ function handleEvent(event, message) {
       message.chips = event.items;
       break;
     case "error":
+      message.attribution = null;
       message.raw = event.message;
       message.bubble.classList.add("error");
       if (event.detail) message.tools.push({ ok: false, name: "error", args: event.detail });
@@ -924,6 +943,7 @@ async function send(text) {
     }
   } catch (error) {
     message.raw = t("network_error");
+    message.attribution = null;
     message.bubble.classList.add("error");
   }
   message.status = null;
