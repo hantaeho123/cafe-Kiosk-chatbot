@@ -6,6 +6,7 @@
   <title>공차 키오스크</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/kiosk.css">
 </head>
 <body data-view="chat">
   <!-- 낮은 화면을 켜면 이 빈 공간이 위를 차지하고, 키오스크 전체가 아래로 내려온다 -->
@@ -29,7 +30,6 @@
         <button class="ghost" id="low-screen-toggle" type="button" aria-pressed="false" data-i18n="low_screen"></button>
         <button class="ghost" id="help-button" type="button" data-i18n="help"></button>
         <button class="ghost" id="staff-button" type="button" data-i18n="call_staff"></button>
-        <button class="ghost" id="evidence-toggle" type="button" aria-pressed="false" data-i18n="evidence"></button>
       </div>
     </header>
 
@@ -44,7 +44,10 @@
       </section>
 
       <section class="panel chat" aria-labelledby="chat-title">
-        <h2 class="panel-title" id="chat-title" data-i18n="chat_title"></h2>
+        <div class="panel-head">
+          <h2 class="panel-title" id="chat-title" data-i18n="chat_title"></h2>
+          <button class="ghost" id="evidence-toggle" type="button" aria-pressed="false" data-i18n="evidence"></button>
+        </div>
         <div class="notice" id="notice" hidden></div>
         <div class="messages" id="messages" aria-live="polite"></div>
         <div class="chips" id="chips"></div>

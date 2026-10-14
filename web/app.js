@@ -101,18 +101,27 @@ function escapeHtml(text) {
 
 // 모델 답변에서 쓰는 최소한의 서식만 그린다: **굵게**, "- " 목록, 줄바꿈.
 function renderText(raw) {
-  const bold = (line) => line.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  // Escape first: model output is text, never trusted HTML. Only explicit
+  // emphasis and currency values receive inline styling; wording stays intact.
+  const inline = (line) => line
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/(?:₩\s*\d[\d,]*|\d[\d,]*\s*원)/g, '<span class="message-price">$&</span>');
+  const lines = escapeHtml(raw).split("\n");
+  const last = lines.findLastIndex((line) => line.trim());
   let html = "";
   let inList = false;
-  for (const line of escapeHtml(raw).split("\n")) {
+  for (const [index, line] of lines.entries()) {
     const item = line.match(/^\s*[-•*]\s+(.*)$/);
     if (item) {
-      html += (inList ? "" : "<ul>") + `<li>${bold(item[1])}</li>`;
+      html += (inList ? "" : "<ul>") + `<li>${inline(item[1])}</li>`;
       inList = true;
     } else {
       html += inList ? "</ul>" : "";
       inList = false;
-      if (line.trim()) html += `<p>${bold(line)}</p>`;
+      // A short, separate closing question is the next conversational step.
+      // Do not promote long explanations or every final paragraph to a heading.
+      const question = index === last && line.length <= 120 && /^[^.!?。！？]*[?？]\s*$/.test(line);
+      if (line.trim()) html += `<p${question ? ' class="message-question"' : ""}>${inline(line)}</p>`;
     }
   }
   return html + (inList ? "</ul>" : "");
@@ -177,7 +186,7 @@ function ask(name, { title, body, yes, onYes }) {
   const close = () => closeScreen(name);
   openScreen({ name, render: () => sheet({ title, sub: body, close,
     actions: [el("button", { class: "secondary", type: "button", onclick: close }, t("keep_ordering")),
-      el("button", { class: "primary", type: "button", onclick: () => { close(); onYes(); } }, yes)] }) });
+      el("button", { class: "secondary danger-confirm", type: "button", onclick: () => { close(); onYes(); } }, yes)] }) });
 }
 
 // ------------------------------------------------------------ 시작 화면: 언어, 큰 글씨·낮은 화면, 매장·포장
@@ -244,7 +253,7 @@ function menuCard(item, onPick) {
   const price = prices.length ? money(Math.min(...prices)) + (prices.length > 1 ? "~" : "") : t("price_ask");
   const cls = "card" + (item.orderable ? "" : " unavailable") + (item.sold_out ? " sold-out" : "");
   return el("button", { class: cls, type: "button", onclick: () => (onPick ? onPick(item) : openDetail(item.id)) },
-    el("div", { class: "badges" }, item.badges.map((b) => el("span", { class: "badge" + (b.startsWith("인기") ? "" : " soft") }, badgeLabel(b)))),
+    el("div", { class: "badges" }, item.badges.filter((b) => b !== "베스트" || !item.badges.some((badge) => badge.startsWith("인기"))).map((b) => el("span", { class: "badge" + (b.startsWith("인기") ? "" : " soft") }, badgeLabel(b)))),
     el("div", { class: "photo" }, item.image && el("img", { src: item.image, alt: "", loading: "lazy" }),
       item.sold_out && el("span", { class: "sold-out-mark" }, t("sold_out"))),
     el("div", { class: "info" }, el("div", { class: "name" }, menuName(item)), el("div", { class: "price" }, price)));
@@ -493,7 +502,7 @@ function openSuggest(item, session) {
     title: `✓ ${t("suggest_title", { name: menuName(item) })}`, sub: t("suggest_sub"), close,
     body: el("div", { class: "suggest-cards" }, session.suggestions.map((card) =>
       menuCard(card, () => { closeScreen("suggest"); openDetail(card.id, null, { fromSuggestion: true }); }))),
-    actions: [el("button", { class: "primary", type: "button", onclick: close }, t("suggest_no"))],
+    actions: [el("button", { class: "secondary", type: "button", onclick: close }, t("suggest_no"))],
   }) });
 }
 
@@ -774,7 +783,7 @@ async function undo() {
 
 function renderChips(chips) {
   $("#chips").replaceChildren(...(chips || []).map((chip) =>
-    el("button", { type: "button", class: chip.action ? "action" : "", disabled: state.busy,
+    el("button", { type: "button", class: chip.action ? "action" : "", "data-action": chip.action, disabled: state.busy,
       onclick: () => (chip.action ? ACTIONS[chip.action]() : send(chip.text)) }, chip.label)));
 }
 
@@ -883,6 +892,7 @@ function setBusy(busy) {
 async function send(text) {
   text = text.trim();
   if (!text || state.busy) return;
+  if (window.kioskChatPreview) return window.kioskChatPreview.reply(text);
   state.started = true;
   document.body.dataset.view = "chat";
   $("#input").placeholder = t("placeholder");
@@ -1117,6 +1127,12 @@ async function init() {
     } catch (error) { /* 다음 번에 다시 묻는다 */ }
   }, 4000);
   $("#input").focus();
+  if (["localhost", "127.0.0.1", "[::1]"].includes(location.hostname) &&
+      new URLSearchParams(location.search).get("preview") === "chat") {
+    const script = document.createElement("script");
+    script.src = "/static/chat-preview.js";
+    document.head.append(script);
+  }
 }
 
 init().catch((error) => {
