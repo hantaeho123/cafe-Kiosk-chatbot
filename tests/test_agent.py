@@ -364,7 +364,7 @@ def test_no_match_tells_which_condition_to_drop(talk):
     _, _, client = talk("카페인 적고 덜 단 스무디", tool_chunks(
         ("find_menus", {"caffeine": "low", "sugar_adjustable": True, "flavor": "스무디류"})), text_chunks("조건을 하나 빼면 있어요."))
     result = tool_result(client)
-    assert result["total"] == 0 and result["relaxed"][0]["without"] == "맛 (시원한)" and result["relaxed"][0]["menus"]
+    assert result["total"] == 0 and "맛 (시원한)" in [r["without"] for r in result["relaxed"]] and result["relaxed"][0]["menus"]
     _, _, client = talk("카페인 적고 덜 단 시원한 거", tool_chunks(
         ("find_menus", {"caffeine": "low", "sugar_adjustable": True, "temperature": "ICE", "sort": "sugar"})), text_chunks("이런 메뉴가 있어요."))
     menus = tool_result(client)["menus"]

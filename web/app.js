@@ -241,7 +241,7 @@ function badgeLabel(badge) {
 
 function menuCard(item, onPick) {
   const prices = item.prices.map((p) => p.price);
-  const price = prices.length ? money(Math.min(...prices)) + (prices.length > 1 ? "~" : "") : t("price_ask");
+  const price = prices.length ? money(Math.min(...prices)) + (prices.length > 1 ? "~" : "") : item.price ? money(item.price) : t("price_ask");
   const cls = "card" + (item.orderable ? "" : " unavailable") + (item.sold_out ? " sold-out" : "");
   return el("button", { class: cls, type: "button", onclick: () => (onPick ? onPick(item) : openDetail(item.id)) },
     el("div", { class: "badges" }, item.badges.map((b) => el("span", { class: "badge" + (b.startsWith("인기") ? "" : " soft") }, badgeLabel(b)))),
@@ -293,7 +293,7 @@ function radioOptions(name, choices, selected, onPick) {
 
 function menuFacts(item) {
   const facts = [];
-  if (!item.orderable) facts.push([t("price"), t("price_ask")]);
+  if (!item.orderable) facts.push([t("price"), item.price ? money(item.price) : t("price_ask")]);
   if (item.kind === "drink") {
     if (item.included_toppings.length) facts.push([t("toppings_included"), words(item.included_toppings)]);
     if (item.flavors.length) facts.push([t("flavor"), words(item.flavors)]);
@@ -812,7 +812,7 @@ function compareTable(items) {
       el("thead", {}, el("tr", {}, el("th", {}), items.map((m) => el("th", {},
         m.image && el("img", { src: m.image, alt: "" }), el("div", {}, menuName(m)), m.sold_out && el("span", { class: "tag warn" }, t("sold_out")))))),
       el("tbody", {},
-        row(t("cmp_price"), (m) => (m.prices.length ? m.prices.map((p) => `${p.size} ${money(p.price)}`).join(" / ") : t("price_ask"))),
+        row(t("cmp_price"), (m) => (m.prices.length ? m.prices.map((p) => `${p.size} ${money(p.price)}`).join(" / ") : m.price ? money(m.price) : t("price_ask"))),
         row(t("cmp_flavor"), (m) => words(m.flavors || []) || "-"),
         row(t("cmp_caffeine"), (m) => number(m.caffeine_mg, "mg")),
         row(t("cmp_kcal"), (m) => number(m.kcal, "kcal")),

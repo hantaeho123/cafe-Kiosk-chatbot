@@ -163,6 +163,7 @@ class Catalog:
             "orderable": self.orderable(m),
             "sold_out": bool(sold_out),
             "prices": [{"size": s["size"], "price": s["price"], "volume_ml": s.get("volume_ml")} for s in m["sizes"]],
+            "price": m.get("price"),  # 푸드·MD 의 단품 가격 (확인된 것만). 음료는 prices 를 쓴다
             "temperatures": m.get("temperatures", []),
             "badges": badges,
         }
@@ -202,7 +203,7 @@ class Catalog:
         """두 메뉴를 나란히 비교할 때 쓰는 값. 설명은 공식 문구, 수치는 공식 영양정보에서 온다."""
         if m["kind"] != "drink":
             return {"name": m["name"], "category": m["category"], "description": m["description"], "orderable": False,
-                    "price": "가격 정보 없음", "allergens": m["allergens"], "sold_out": False}
+                    "price": f"{m['price']:,}원" if m.get("price") else "가격 정보 없음", "allergens": m["allergens"], "sold_out": False}
         tags, opt = m["tags"], m["options"]
         sugar = opt["sugar"]
         return {

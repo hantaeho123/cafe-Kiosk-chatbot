@@ -79,7 +79,8 @@ class Order:
         cat, name = self.catalog, menu["name"]
         if not cat.orderable(menu):
             reason = ("시연 매장(시흥배곧점) 판매 목록에 없는 메뉴" if menu["kind"] == "drink"
-                      else "가격 정보가 없어 키오스크에서 주문할 수 없는 메뉴")
+                      else "음료가 아니어서 키오스크에서 주문할 수 없고 카운터에서 주문하는 메뉴"
+                      + (f"(가격 {won(menu['price'])})" if menu.get("price") else "(가격 정보 없음)"))
             raise OrderError("not_for_sale", f"'{name}'은(는) {reason}입니다. 직원에게 문의하도록 안내하거나 다른 메뉴를 제안하세요.")
         if self.stock and self.stock.is_sold_out(menu["id"]):
             raise OrderError("sold_out", f"'{name}'은(는) 지금 품절이라 주문할 수 없습니다. 품절이라고 알리고 비슷한 다른 메뉴를 제안하세요.")

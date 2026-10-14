@@ -269,7 +269,7 @@ class ToolBox:
             raise OrderError("bad_arguments", "서로 다른 메뉴가 두 개 이상 필요합니다.")
         facts = [{**self.catalog.facts(m, self._sold_out(session, m)), **self._local(session, m)} for m in menus]
         cards = [self.catalog.card(m) for m in menus]
-        view = [{**f, "id": m["id"], "names": c["names"], "image": c["image"], "prices": c["prices"],
+        view = [{**f, "id": m["id"], "names": c["names"], "image": c["image"], "prices": c["prices"], "price": c["price"],
                  "sugar": m["options"]["sugar"] if m["kind"] == "drink" else {"adjustable": None, "recommended": None}}
                 for f, m, c in zip(facts, menus, cards)]
         return {"ok": True, "menus": facts, "view": {"items": view},
@@ -279,7 +279,8 @@ class ToolBox:
         cat, menu = self.catalog, self._find_menu(menu_name)
         if not cat.orderable(menu):
             return {"ok": True, "menu": menu["name"], "orderable": False,
-                    "message": "가격 정보가 없어 키오스크에서 주문할 수 없는 메뉴입니다. 직원에게 문의하도록 안내하세요."}
+                    "price": won(menu["price"]) if menu.get("price") else "가격 정보 없음",
+                    "message": "키오스크에서 주문할 수 없는 메뉴입니다(푸드·MD 는 카운터에서 주문). 가격을 알면 알려 주고 카운터에서 주문하도록 안내하세요."}
         sugar, ice = menu["options"]["sugar"], menu["options"]["ice"]
         adjustable = {True: "조절 가능", False: "고정(바꿀 수 없음)", None: "조절 가능 여부가 확인되지 않음(요청은 받되 매장 확인 필요)"}
         return {

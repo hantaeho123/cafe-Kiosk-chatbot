@@ -19,6 +19,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 PRICE_SOURCE = "배달의민족 공차 시흥배곧점 (2026-10-12 캡처, 배달앱 판매가)"
+STORE_PRICE_SOURCE = "공차 매장 메뉴판·키오스크 화면 사진 (매장 판매가, data/raw/store/)"
 NUTRITION_BASIS = "기본 레시피(당도 0%, 스무디는 당도 고정) 및 컵 사이즈 기준"
 
 # 재료·맛 태그는 공식 값이 아니라 메뉴명/설명에서 규칙으로 뽑은 파생 값이다.
@@ -93,6 +94,17 @@ def build_menu():
         for row in csv.DictReader(f):
             prices[int(row["official_no"])].append(row)
 
+    # 매장 메뉴판·키오스크 사진에서 옮긴 가격. 배민 목록에 없어 가격이 비어 있던 메뉴만 채운다(음료는 사이즈별, 푸드는 단품).
+    store_prices = defaultdict(list)
+    with open(DATA / "raw/store/prices.csv", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            if row["official_no"]:
+                store_prices[int(row["official_no"])].append(row)
+    for no, rows in store_prices.items():
+        if rows[0]["kind"] == "drink" and no not in prices:
+            prices[no] = [{"section": "매장 메뉴판", "app_name": r["name"], "size": r["size"], "price": r["price"],
+                           "rec_sugar": "", "ice": "", "badge": "", "store": True} for r in rows]
+
     # 공식 사이트에 같은 메뉴가 탭별로 따로 등록된 경우 하나로 합친다.
     by_name = {}
     merged = []
@@ -136,6 +148,7 @@ def build_menu():
             "image_url": p["image_url"],
             "on_sale": bool(rows),
             "price_status": "확인됨" if rows else "가격 미확인",
+            "price_source": None if not rows else "store" if rows[0].get("store") else "baemin",  # 매장 판매가 / 배달앱 판매가
             "allergens": p["allergens"],
             "source_url": p["source_url"],
         }
@@ -143,6 +156,11 @@ def build_menu():
         if p["kind"] != "drink":
             item["nutrition"] = p["nutrition"]
             item["sizes"] = []
+            # 푸드·MD 는 단품 가격만 있다. 키오스크의 주문(사이즈·옵션 선택)은 음료만 받으므로 가격을 알아도 on_sale 은 그대로 둔다.
+            store = store_prices.get(p["no"])
+            item["price"] = int(store[0]["price"]) if store else None
+            if store:
+                item.update(price_status="확인됨", price_source="store")
             menu.append(item)
             continue
 
@@ -229,7 +247,8 @@ def menu_doc(m, options):
     if m["description"]:
         lines.append(f"설명: {m['description']}")
     if m["kind"] != "drink":
-        lines.append("가격: 가격 정보가 수집되지 않았습니다(매장 확인 필요).")
+        lines.append(f"가격: {won(m['price'])} (키오스크 대화로는 주문할 수 없고 카운터에서 주문합니다)" if m["price"]
+                     else "가격: 가격 정보가 수집되지 않았습니다(매장 확인 필요).")
         for n in m["nutrition"]:
             lines.append("영양정보: " + ", ".join(f"{k} {v}" for k, v in n.items()))
     else:
@@ -272,7 +291,7 @@ def menu_doc(m, options):
             "menu_id": m["id"], "kind": m["kind"], "category": m["category"], "series": m["series"],
             "on_sale": m["on_sale"], "min_price": min((s["price"] for s in m["sizes"]), default=None),
         },
-        "source": [m["source_url"]] + ([PRICE_SOURCE] if m["on_sale"] else []),
+        "source": [m["source_url"]] + ([STORE_PRICE_SOURCE] if m["price_source"] == "store" else [PRICE_SOURCE] if m["on_sale"] else []),
     }
 
 
@@ -298,9 +317,12 @@ def build_documents(menu, options, store, policies, flow, info):
     for cat in dict.fromkeys(m["category"] for m in food):
         items = [m for m in food if m["category"] == cat]
         add(f"category:{cat}", "category", f"푸드 - {cat}",
-            f"공차 푸드({cat}) 메뉴입니다. 가격은 수집되지 않았습니다.\n" +
-            "\n".join(f"- {m['name']}" + (f": {m['description']}" if m["description"] else "") for m in items),
-            ["https://www.gong-cha.co.kr/brand/menu/product?category=002001"], category=cat)
+            # 첫 줄은 검색(임베딩)에 쓰이므로 무엇의 목록인지만 짧게 적는다.
+            f"공차 푸드({cat}) 메뉴와 확인된 가격입니다.\n"
+            "괄호 안은 매장 키오스크 화면에서 확인한 가격이고, 가격이 없는 것은 매장에서 확인해야 합니다. 푸드는 카운터에서 주문합니다.\n" +
+            "\n".join(f"- {m['name']}" + (f" ({won(m['price'])})" if m["price"] else "") +
+                      (f": {m['description']}" if m["description"] else "") for m in items),
+            ["https://www.gong-cha.co.kr/brand/menu/product?category=002001", STORE_PRICE_SOURCE], category=cat)
 
     # 추천용 문서 (태그·영양정보에서 파생)
     def rec(doc_id, title, intro, items, fmt=price_line):
@@ -310,7 +332,7 @@ def build_documents(menu, options, store, policies, flow, info):
 
     ranked = sorted((m for m in drinks if any(b.startswith("인기") for b in m["badges"])),
                     key=lambda m: min(b for b in m["badges"] if b.startswith("인기")))
-    rec("popular", "인기 메뉴 순위", "시흥배곧점에서 한 달간 주문이 많은 인기 메뉴 순위입니다.", ranked,
+    rec("popular", "인기 메뉴 순위", "시흥배곧점에서 한 달간 주문이 많은 인기 메뉴 순위입니다. 요즘 가장 잘 나가는(많이 팔리는) 메뉴입니다.", ranked,
         lambda m: f"- {next(b for b in m['badges'] if b.startswith('인기'))}: {m['name']} ({won(m['sizes'][0]['price'])})")
     rec("best", "베스트셀러", "공차 고객들이 즐겨 찾는 티와 토핑 조합(베스트셀러)입니다.", [m for m in drinks if m["is_best_seller"]])
     rec("owner", "사장님 추천 메뉴", "매장에서 추천하는 메뉴입니다.", [m for m in drinks if "사장님추천" in m["badges"]])
@@ -337,10 +359,11 @@ def build_documents(menu, options, store, policies, flow, info):
     rec("season", "신메뉴·시즌 메뉴", "지금 판매 중인 신메뉴(시즌 한정) 음료입니다.", [m for m in drinks if m["is_new_season"]],
         lambda m: price_line(m) + (f" ({m['series']})" if m["series"] else ""))
     add("recommend:dessert", "recommendation", "음료와 곁들이기 좋은 디저트·푸드",
-        "음료와 함께 곁들일 수 있는 디저트(푸드) 메뉴입니다. 디저트 가격은 수집되지 않아 매장에서 확인해야 합니다.\n" +
-        "\n".join(f"- {cat}: " + ", ".join(m["name"] for m in food if m["category"] == cat)
+        "음료와 함께 곁들일 수 있는 디저트(푸드) 메뉴입니다.\n"
+        "괄호 안은 매장 키오스크 화면에서 확인한 가격이고, 가격이 없는 것은 매장에서 확인해야 합니다. 푸드는 카운터에서 주문합니다.\n" +
+        "\n".join(f"- {cat}: " + ", ".join(m["name"] + (f"({won(m['price'])})" if m["price"] else "") for m in food if m["category"] == cat)
                   for cat in dict.fromkeys(m["category"] for m in food)),
-        ["https://www.gong-cha.co.kr/brand/menu/product?category=002001"])
+        ["https://www.gong-cha.co.kr/brand/menu/product?category=002001", STORE_PRICE_SOURCE])
 
     # 옵션
     sugar, ice, top = options["sugar"], options["ice"], options["toppings"]

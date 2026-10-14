@@ -95,3 +95,14 @@ def test_menus_can_be_found_by_their_foreign_names(catalog):
     assert catalog.resolve("Black Milk Tea with Pearls")[0]["name"] == "블랙 밀크티 + 펄"
     assert catalog.resolve("芋头奶茶")[0]["name"] == "타로 밀크티" and catalog.resolve("タロミルクティー")[0]["name"] == "타로 밀크티"
     assert [m["name"] for m in catalog.find_mentions("One Americano and a Taro Milk Tea, please")] == ["아메리카노", "타로 밀크티"]
+
+
+def test_prices_read_from_the_store_photos(catalog):
+    """매장 메뉴판·키오스크 사진에서 옮긴 가격(data/raw/store/prices.csv). 배민 목록에 없던 메뉴만 채운다."""
+    cake = catalog.resolve("스틱 치즈케익")[0]
+    assert cake["price"] == 2600 and cake["price_source"] == "store" and not catalog.orderable(cake)  # 푸드는 카운터에서 주문
+    assert catalog.card(cake)["price"] == 2600 and catalog.facts(cake)["price"] == "2,600원"
+    guava = catalog.resolve("핑크구아바 봉봉 아이스티")[0]
+    assert [(s["size"], s["price"]) for s in guava["sizes"]] == [("L", 5300), ("J", 6400)] and catalog.orderable(guava)
+    assert catalog.resolve("블랙 밀크티")[0]["price_source"] == "baemin"  # 이미 있던 가격은 그대로 둔다
+    assert catalog.resolve("시그니처 스콘")[0]["price"] is None  # 사진에 없는 것은 비워 둔다
