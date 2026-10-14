@@ -150,7 +150,12 @@ main {
 }
 .badges { position: absolute; z-index: 1; top: 6px; left: 6px; display: flex; flex-direction: column; gap: 3px; align-items: flex-start; }
 .badge { background: var(--accent); color: #fff; font-size: .69rem; font-weight: 700; padding: 1px 7px; border-radius: 999px; }
-.badge.soft { background: var(--ink); }
+.badge.new { background: #c8102e; }
+.badge.season { background: var(--ink); }
+.marks { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 4px; }
+.mark { font-size: .625rem; font-weight: 700; line-height: 1.5; padding: 0 5px; border-radius: 3px; color: #fff; }
+.mark.caffeine_free { background: #e8742a; }
+.mark.iced_only { background: #2f7fc1; }
 
 /* ------------------------------------------------------------ 대화 */
 .notice { margin: 0 .9rem .5rem; padding: .6rem .75rem; border-radius: 12px; background: var(--warn-soft); color: #6b4e00; font-size: .875rem; }

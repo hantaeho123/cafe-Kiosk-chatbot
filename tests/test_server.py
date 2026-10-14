@@ -79,7 +79,7 @@ def test_chat_proposal_is_applied_only_after_confirming_on_screen(kiosk):
     events = chat(client, "타로 밀크티 아이스 L 하나 주세요")
     assert [e["type"] for e in events][-1] == "done"
     proposal = next(e for e in events if e["type"] == "proposal")
-    assert proposal["changes"][0]["after"]["name"] == "타로 밀크티" and proposal["after"]["total"] == 4900
+    assert proposal["changes"][0]["after"]["name"] == "타로 밀크티" and proposal["after"]["total"] == 4600
     waiting = post(client, "/api/session").json()
     assert waiting["order"]["lines"] == [] and waiting["pending"]["changes"][0]["type"] == "add"
     assert [c["action"] for c in waiting["chips"]] == ["confirm", "reject"]
@@ -87,7 +87,7 @@ def test_chat_proposal_is_applied_only_after_confirming_on_screen(kiosk):
 
     confirmed = post(client, "/api/order/confirm").json()
     line = confirmed["order"]["lines"][0]
-    assert (line["name"], line["sugar"], line["cup"], line["line_total"]) == ("타로 밀크티", 50, "store", 4900)
+    assert (line["name"], line["sugar"], line["cup"], line["line_total"]) == ("타로 밀크티", 50, "store", 4600)
     assert confirmed["applied"][0]["type"] == "add" and confirmed["pending"] is None and confirmed["can_undo"] is True
     assert confirmed["chips"][0] == {"label": "결제하기", "action": "pay"}
     assert error_code(post(client, "/api/order/confirm")) == "nothing_pending"
@@ -104,7 +104,7 @@ def test_customer_edits_the_order_with_buttons(kiosk):
     added = post(client, "/api/order/item", menu_id=menu_id(client, "타로 밀크티"), size="L", temperature="ICE").json()
     line_id = added["line_id"]
     more = post(client, "/api/order/line", line_id=line_id, quantity=3).json()
-    assert more["order"]["totals"]["subtotal"] == 14700 and more["can_undo"] is True
+    assert more["order"]["totals"]["subtotal"] == 13800 and more["can_undo"] is True
     takeout = post(client, "/api/order/options", dine_option="takeout", straw=True).json()
     assert takeout["order"]["lines"][0]["cup"] == "disposable" and takeout["order"]["straw"] is True
     undone = post(client, "/api/order/undo").json()  # 되돌리기: 직전 변경 하나
@@ -129,17 +129,17 @@ def test_option_screen_adds_edits_and_suggests(kiosk):
                  toppings=["pearl", "cheese_foam"], quantity=2).json()
     line = added["order"]["lines"][0]
     assert added["line_id"] == line["line_id"]
-    assert line["unit_price"] == 6000 + 600 + 900 and line["line_total"] == 15000
+    assert line["unit_price"] == 5700 + 800 + 1100 and line["line_total"] == 15200
     assert (line["sugar"], line["ice"], [t["id"] for t in line["toppings"]]) == (70, "less", ["pearl", "cheese_foam"])
     # 추가 제안 창: 아직 담지 않은 인기 메뉴 (품절 제외)
-    assert len(added["suggestions"]) == 3 and added["suggestions"][0]["name"] == "딸기 쥬얼리 밀크티"
+    assert len(added["suggestions"]) == 3 and added["suggestions"][0]["name"] == "타로 쥬얼리 시그니처 밀크티"
     assert black not in [s["id"] for s in added["suggestions"]]
 
     edited = post(client, "/api/order/item", line_id=line["line_id"], size="L", temperature="HOT", sugar=30, toppings=[],
                   quantity=1, cup="personal").json()
     line = edited["order"]["lines"][0]
     assert (line["size"], line["temperature"], line["ice"], line["toppings"], line["cup"]) == ("L", "HOT", None, [], "personal")
-    assert edited["order"]["totals"]["subtotal"] == 4900 and "suggestions" not in edited
+    assert edited["order"]["totals"]["subtotal"] == 4600 and "suggestions" not in edited
 
     too_many = dict(menu_id=black, size="L", temperature="ICE", toppings=["pearl", "aloe", "coconut", "milk_foam"])
     assert error_code(post(client, "/api/order/item", **too_many)) == "too_many_toppings"
@@ -153,7 +153,7 @@ def test_option_screen_adds_edits_and_suggests(kiosk):
     fixed = post(client, "/api/order/item", draft=True, line_id=pending["line_id"], size="J", temperature="ICE", sugar=30,
                  ice="regular", toppings=["pearl"], quantity=1).json()
     after = fixed["pending"]["changes"][0]["after"]
-    assert (after["size"], after["sugar"], after["line_total"]) == ("J", 30, 6600) and len(fixed["order"]["lines"]) == 1
+    assert (after["size"], after["sugar"], after["line_total"]) == ("J", 30, 6500) and len(fixed["order"]["lines"]) == 1
     assert len(post(client, "/api/order/confirm").json()["order"]["lines"]) == 2
     assert error_code(post(client, "/api/order/item", draft=True, line_id=1, size="L", temperature="ICE")) == "nothing_pending"
 
@@ -170,7 +170,7 @@ def test_customer_pays_with_the_terminal(kiosk):
 
     assert error_code(post(client, "/api/scan", purpose="membership", code="DAMAGED")) == "barcode_unreadable"
     scanned = post(client, "/api/scan", purpose="membership", code="SKT-1001").json()
-    assert scanned["scan"]["label"] == "SKT T멤버십 바코드" and scanned["order"]["totals"]["total"] == 4410
+    assert scanned["scan"]["label"] == "SKT T멤버십 바코드" and scanned["order"]["totals"]["total"] == 4140
     post(client, "/api/scan", purpose="stamp", code="GC-APP-1001")
     removed = post(client, "/api/pay/benefit", kind="discount").json()
     assert removed["order"]["discount"] is None and removed["order"]["stamp"] is True
@@ -181,11 +181,11 @@ def test_customer_pays_with_the_terminal(kiosk):
     assert back["order"]["status"] == "ordering"
     post(client, "/api/pay/start")
     gift = post(client, "/api/scan", purpose="gift_card", code="GV-3000").json()
-    assert gift["scan"]["amount"] == 3000 and gift["order"]["totals"]["due"] == 1900
+    assert gift["scan"]["amount"] == 3000 and gift["order"]["totals"]["due"] == 1600
     paid = post(client, "/api/pay/tender", method="card").json()
     assert paid["approved"] is True and paid["order"]["status"] == "paid" and paid["chips"] == []
     receipt = paid["order"]["receipt"]
-    assert [p["amount"] for p in receipt["payments"]] == [3000, 1900] and receipt["print_receipt"] is None
+    assert [p["amount"] for p in receipt["payments"]] == [3000, 1600] and receipt["print_receipt"] is None
     assert paid["order"]["totals"]["stamps"] == 1
     printed = post(client, "/api/pay/receipt", print_receipt=True).json()
     assert printed["order"]["receipt"]["print_receipt"] is True
@@ -206,7 +206,7 @@ def test_menu_voucher_is_scanned_from_the_ordering_screen(kiosk):
     scanned = post(client, "/api/scan", purpose="menu_voucher", code="MV-AMERICANO-L").json()
     line = scanned["order"]["lines"][0]
     assert scanned["scan"]["menu"] == "아메리카노" and line["voucher"]["label"] == "아메리카노 L 교환권"
-    assert (line["covered"], scanned["order"]["totals"]["total"]) == (4200, 0)
+    assert (line["covered"], scanned["order"]["totals"]["total"]) == (3900, 0)
     assert error_code(post(client, "/api/scan", purpose="menu_voucher", code="GV-3000")) == "barcode_wrong_kind"
     assert error_code(post(client, "/api/order/line", line_id=line["line_id"], quantity=2)) == "voucher_locked"
     post(client, "/api/pay/start")
@@ -219,7 +219,7 @@ def test_staff_screen_calls_and_sold_out(kiosk):
     called = post(client, "/api/staff", reason="바코드가 읽히지 않아요").json()
     assert called["staff_call"]["status"] == "waiting"
     board = client.get("/api/staff/board").json()
-    assert board["calls"][0]["reason"] == "바코드가 읽히지 않아요" and len(board["menus"]) == 91
+    assert board["calls"][0]["reason"] == "바코드가 읽히지 않아요" and len(board["menus"]) == 76
     client.post("/api/staff/call", json={"id": board["calls"][0]["id"]})
     live = client.get("/api/live", params=SESSION).json()
     assert live["staff_call"]["status"] == "coming"  # 직원이 확인하면 키오스크에도 보인다

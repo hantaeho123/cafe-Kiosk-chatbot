@@ -13,12 +13,14 @@
 import csv
 import json
 import re
-from collections import defaultdict
+from collections import Counter, defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
-PRICE_SOURCE = "배달의민족 공차 시흥배곧점 (2026-10-12 캡처, 배달앱 판매가)"
+# 가격은 매장 판매가로 통일한다(2026-10-14 팀 결정). 배민 가격은 추천 당도·얼음 고정·인기 순위를 읽는 데만 쓴다.
+PRICE_SOURCE = "공차 시흥배곧점 매장 판매가 (매장 메뉴판·키오스크 화면 사진, 2026-10-13 촬영)"
+DELIVERY_SOURCE = "배달의민족 공차 시흥배곧점 (2026-10-12 캡처, 배달앱 판매가)"
 NUTRITION_BASIS = "기본 레시피(당도 0%, 스무디는 당도 고정) 및 컵 사이즈 기준"
 
 # 재료·맛 태그는 공식 값이 아니라 메뉴명/설명에서 규칙으로 뽑은 파생 값이다.
@@ -93,6 +95,15 @@ def build_menu():
         for row in csv.DictReader(f):
             prices[int(row["official_no"])].append(row)
 
+    # 매장 판매가(raw/store/prices.csv). 가격은 모두 이것으로 쓴다.
+    # 매장 메뉴판·키오스크 화면 사진에 있는 메뉴만 판다. 다이닝코드 행은 갱신일을 알 수 없어(지난 시즌 메뉴, 1리터 배달 메뉴가 섞여 있다) 기록만 하고 쓰지 않는다.
+    # 배민에도 있는 음료는 배민 행의 추천 당도·얼음·배지는 그대로 두고 가격만 매장가로 바꾼다. 매장가가 없는 메뉴는 판매하지 않는 것으로 본다.
+    store_prices = defaultdict(list)
+    with open(DATA / "raw/store/prices.csv", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            if row["official_no"] and row["source"] != "diningcode":
+                store_prices[int(row["official_no"])].append(row)
+
     # 공식 사이트에 같은 메뉴가 탭별로 따로 등록된 경우 하나로 합친다.
     by_name = {}
     merged = []
@@ -101,11 +112,25 @@ def build_menu():
         if twin:
             twin["categories"] += p["categories"]
             twin["merged_official_nos"].append(p["no"])
+            # 배민 행과 매장 가격이 서로 다른 번호에 붙어 있을 수 있다(허니 자몽 블랙티: 배민 584, 메뉴판 551). 둘 다 옮긴다.
             prices[twin["no"]] += prices.pop(p["no"], [])
+            store_prices[twin["no"]] += store_prices.pop(p["no"], [])
             continue
         p["merged_official_nos"] = [p["no"]]
         by_name[(p["kind"], p["name"])] = p
         merged.append(p)
+
+    drink_nos = {p["no"] for p in merged if p["kind"] == "drink"}
+    for no in drink_nos:
+        store = [r for r in store_prices.get(no, []) if r["kind"] == "drink"]
+        if not store:
+            prices.pop(no, None)
+            continue
+        base = prices.get(no) or [{"section": "매장 메뉴판", "app_name": store[0]["name"], "rec_sugar": "", "ice": "", "badge": ""}]
+        prices[no] = [{**base[0], "size": r["size"], "price": r["price"], "store": True} for r in store]
+
+    # 매장 메뉴판에 따로 묶인 메뉴(BEST SELLER, NEW, SEASON MENU). 배민의 인기 순위·사장님추천 배지는 쓰지 않는다.
+    board = load("curated/menu_board.json")
 
     menu = []
     for p in merged:
@@ -129,13 +154,18 @@ def build_menu():
             "official_tabs": tabs,
             "series": series,
             "app_section": app_section,
-            "is_new_season": "New 시즌 메뉴" in tabs,
-            "is_best_seller": "베스트셀러" in tabs,
-            "badges": sorted({b for r in rows for b in r["badge"].split("|") if b}),
+            "is_new": p["name"] in board["new"],
+            "is_season": p["name"] in board["season"],
+            "is_new_season": p["name"] in board["new"] + board["season"],
+            "is_best_seller": p["name"] in board["best_seller"],
+            "best_order": board["best_seller"].index(p["name"]) + 1 if p["name"] in board["best_seller"] else None,
+            "badges": [label for label, names in (("NEW", board["new"]), ("BEST", board["best_seller"]), ("SEASON", board["season"]))
+                       if p["name"] in names],
             "image": f"images/{p['no']}{Path(p['image_url']).suffix}" if p["image_url"] else None,
             "image_url": p["image_url"],
             "on_sale": bool(rows),
             "price_status": "확인됨" if rows else "가격 미확인",
+            "price_source": None if not rows else "store" if rows[0].get("store") else "baemin",  # 매장 판매가 / 배달앱 판매가
             "allergens": p["allergens"],
             "source_url": p["source_url"],
         }
@@ -143,6 +173,11 @@ def build_menu():
         if p["kind"] != "drink":
             item["nutrition"] = p["nutrition"]
             item["sizes"] = []
+            # 푸드·MD 는 단품 가격만 있다. 키오스크의 주문(사이즈·옵션 선택)은 음료만 받으므로 가격을 알아도 on_sale 은 그대로 둔다.
+            store = store_prices.get(p["no"])
+            item["price"] = int(store[0]["price"]) if store else None
+            if store:
+                item.update(price_status="확인됨", price_source="store")
             menu.append(item)
             continue
 
@@ -168,6 +203,12 @@ def build_menu():
             # 공식 영양정보 안내의 '스무디 당도 고정' + 배민의 다른 스무디가 모두 Sugar고정/Ice고정인 점으로 추정
             rec = ice = "fixed"
             option_source = "inferred"
+        elif rows and not rec and not ice:
+            # 조절 여부를 알려 주는 자료가 없다. 메뉴판 안내(당도 0~100%, 얼음 적게·보통·많이)대로 고를 수 있다고 보고, 추천 당도는 가장 흔한 50%로 둔다.
+            rec, ice = "50", "regular"
+            option_source = "assumed"
+        elif rows and rec and not ice and rec != "fixed":
+            ice = "regular"  # 추천 당도만 적혀 있고 얼음 표기가 없는 메뉴도 얼음을 고를 수 있다고 본다
         rep = pick_nutrition(nut, official_sizes[0] if official_sizes else None)
         included = [label for key, label in TOPPINGS_IN_NAME if key in p["name"]]
         if re.search(r"(?<!미니)(?<!화이트)펄", p["name"]):
@@ -217,6 +258,15 @@ def nutrition_sentence(n):
             f"단백질 {n['protein_g']}g, 포화지방 {n['saturated_fat_g']}g, 나트륨 {n['sodium_mg']}mg, 카페인 {n['caffeine_mg']}mg")
 
 
+def size_gap_text(drinks):
+    """J 가 L 보다 얼마나 비싼지(매장가 기준)를 데이터에서 센다."""
+    gaps = Counter(next(s["price"] for s in m["sizes"] if s["size"] == "J") - next(s["price"] for s in m["sizes"] if s["size"] == "L")
+                   for m in drinks if {"L", "J"} <= {s["size"] for s in m["sizes"]})
+    common = gaps.most_common(1)[0][0]
+    others = sorted(g for g in gaps if g != common)
+    return (f"J 는 L 보다 대부분 {won(common)} 비싸고, 메뉴에 따라 " + ", ".join(won(g) for g in others) + " 차이가 나기도 합니다.")
+
+
 def menu_doc(m, options):
     lines = [f"메뉴명: {m['name']}"]
     foreign = [f"{label} {m['i18n'][lang]['name']}" for lang, label in (("en", "영어"), ("zh", "중국어"), ("ja", "일본어"))
@@ -229,7 +279,8 @@ def menu_doc(m, options):
     if m["description"]:
         lines.append(f"설명: {m['description']}")
     if m["kind"] != "drink":
-        lines.append("가격: 가격 정보가 수집되지 않았습니다(매장 확인 필요).")
+        lines.append(f"가격: {won(m['price'])} (키오스크 대화로는 주문할 수 없고 카운터에서 주문합니다)" if m["price"]
+                     else "가격: 가격 정보가 수집되지 않았습니다(매장 확인 필요).")
         for n in m["nutrition"]:
             lines.append("영양정보: " + ", ".join(f"{k} {v}" for k, v in n.items()))
     else:
@@ -260,9 +311,10 @@ def menu_doc(m, options):
             lines.append(f"영양정보 [{NUTRITION_BASIS}]")
             lines += [" - " + nutrition_sentence(n) for n in m["nutrition"]]
     lines.append("알레르기 유발물질: " + (", ".join(m["allergens"]) if m["allergens"] else "표기 없음"))
-    badges = m["badges"] + (["베스트셀러"] if m["is_best_seller"] else []) + (["시즌 메뉴"] if m["is_new_season"] else [])
+    badges = (["신메뉴(NEW)"] if m["is_new"] else []) + (["베스트셀러(BEST SELLER)"] if m["is_best_seller"] else []) \
+        + (["시즌 메뉴"] if m["is_season"] else [])
     if badges:
-        lines.append(f"특이사항: {', '.join(badges)}")
+        lines.append(f"매장 메뉴판 표시: {', '.join(badges)}")
     return {
         "id": f"menu:{m['id']}",
         "type": "menu",
@@ -272,7 +324,7 @@ def menu_doc(m, options):
             "menu_id": m["id"], "kind": m["kind"], "category": m["category"], "series": m["series"],
             "on_sale": m["on_sale"], "min_price": min((s["price"] for s in m["sizes"]), default=None),
         },
-        "source": [m["source_url"]] + ([PRICE_SOURCE] if m["on_sale"] else []),
+        "source": [m["source_url"]] + ([PRICE_SOURCE] if m["price_source"] == "store" else []),
     }
 
 
@@ -298,9 +350,12 @@ def build_documents(menu, options, store, policies, flow, info):
     for cat in dict.fromkeys(m["category"] for m in food):
         items = [m for m in food if m["category"] == cat]
         add(f"category:{cat}", "category", f"푸드 - {cat}",
-            f"공차 푸드({cat}) 메뉴입니다. 가격은 수집되지 않았습니다.\n" +
-            "\n".join(f"- {m['name']}" + (f": {m['description']}" if m["description"] else "") for m in items),
-            ["https://www.gong-cha.co.kr/brand/menu/product?category=002001"], category=cat)
+            # 첫 줄은 검색(임베딩)에 쓰이므로 무엇의 목록인지만 짧게 적는다.
+            f"공차 푸드({cat}) 메뉴와 확인된 가격입니다.\n"
+            "괄호 안은 매장 키오스크 화면에서 확인한 가격이고, 가격이 없는 것은 매장에서 확인해야 합니다. 푸드는 카운터에서 주문합니다.\n" +
+            "\n".join(f"- {m['name']}" + (f" ({won(m['price'])})" if m["price"] else "") +
+                      (f": {m['description']}" if m["description"] else "") for m in items),
+            ["https://www.gong-cha.co.kr/brand/menu/product?category=002001", PRICE_SOURCE], category=cat)
 
     # 추천용 문서 (태그·영양정보에서 파생)
     def rec(doc_id, title, intro, items, fmt=price_line):
@@ -308,12 +363,8 @@ def build_documents(menu, options, store, policies, flow, info):
             add(f"recommend:{doc_id}", "recommendation", title, intro + "\n" + "\n".join(fmt(m) for m in items),
                 ["build_dataset.py 파생 (공식 영양정보·메뉴 설명 기반)"])
 
-    ranked = sorted((m for m in drinks if any(b.startswith("인기") for b in m["badges"])),
-                    key=lambda m: min(b for b in m["badges"] if b.startswith("인기")))
-    rec("popular", "인기 메뉴 순위", "시흥배곧점에서 한 달간 주문이 많은 인기 메뉴 순위입니다.", ranked,
-        lambda m: f"- {next(b for b in m['badges'] if b.startswith('인기'))}: {m['name']} ({won(m['sizes'][0]['price'])})")
-    rec("best", "베스트셀러", "공차 고객들이 즐겨 찾는 티와 토핑 조합(베스트셀러)입니다.", [m for m in drinks if m["is_best_seller"]])
-    rec("owner", "사장님 추천 메뉴", "매장에서 추천하는 메뉴입니다.", [m for m in drinks if "사장님추천" in m["badges"]])
+    rec("best", "베스트셀러·인기 메뉴", "요즘 가장 잘 나가는(많이 팔리는) 인기 메뉴입니다. 매장 메뉴판의 BEST SELLER 에 놓인 순서이고, 판매 순위는 아닙니다.",
+        sorted((m for m in drinks if m["is_best_seller"]), key=lambda m: m["best_order"]))
     for flavor in FLAVORS:
         rec(f"flavor-{flavor}", f"{flavor} 음료 추천", f"'{flavor}' 맛 특징을 가진 음료입니다.",
             [m for m in drinks if flavor in m["tags"]["flavors"]])
@@ -334,13 +385,15 @@ def build_documents(menu, options, store, policies, flow, info):
         [m for m in drinks if not m["tags"]["contains_milk"]])
     rec("cheapest", "가격이 저렴한 음료", "가격이 낮은 순서입니다.",
         sorted(drinks, key=lambda m: m["sizes"][0]["price"])[:15])
-    rec("season", "신메뉴·시즌 메뉴", "지금 판매 중인 신메뉴(시즌 한정) 음료입니다.", [m for m in drinks if m["is_new_season"]],
-        lambda m: price_line(m) + (f" ({m['series']})" if m["series"] else ""))
+    rec("season", "신메뉴·시즌 메뉴", "지금 판매 중인 신메뉴와 시즌 한정 음료입니다(매장 메뉴판의 NEW, SEASON MENU).",
+        sorted((m for m in drinks if m["is_new_season"]), key=lambda m: not m["is_new"]),
+        lambda m: price_line(m) + (" (신메뉴)" if m["is_new"] else " (시즌 메뉴)"))
     add("recommend:dessert", "recommendation", "음료와 곁들이기 좋은 디저트·푸드",
-        "음료와 함께 곁들일 수 있는 디저트(푸드) 메뉴입니다. 디저트 가격은 수집되지 않아 매장에서 확인해야 합니다.\n" +
-        "\n".join(f"- {cat}: " + ", ".join(m["name"] for m in food if m["category"] == cat)
+        "음료와 함께 곁들일 수 있는 디저트(푸드) 메뉴입니다.\n"
+        "괄호 안은 매장 키오스크 화면에서 확인한 가격이고, 가격이 없는 것은 매장에서 확인해야 합니다. 푸드는 카운터에서 주문합니다.\n" +
+        "\n".join(f"- {cat}: " + ", ".join(m["name"] + (f"({won(m['price'])})" if m["price"] else "") for m in food if m["category"] == cat)
                   for cat in dict.fromkeys(m["category"] for m in food)),
-        ["https://www.gong-cha.co.kr/brand/menu/product?category=002001"])
+        ["https://www.gong-cha.co.kr/brand/menu/product?category=002001", PRICE_SOURCE])
 
     # 옵션
     sugar, ice, top = options["sugar"], options["ice"], options["toppings"]
@@ -355,7 +408,8 @@ def build_documents(menu, options, store, policies, flow, info):
         [ice["source"]])
     add("option:toppings", "option", "토핑 종류와 가격",
         f"토핑은 최대 {top['max_count']}가지까지 추가할 수 있습니다. 샷추가는 토핑 개수에 세지 않습니다.\n" +
-        "\n".join(f"- {t['name']}({t['name_en']}) +{won(t['price'])}: {t['description']}" for t in top["items"]) +
+        "\n".join(f"- {t['name']}({t['name_en']}) " + " / ".join(f"{s} +{won(p)}" for s, p in t["price_by_size"].items())
+                  + f": {t['description']}" for t in top["items"]) +
         "\n음료 이름에 이미 '+펄' 처럼 토핑이 적힌 메뉴는 그 토핑이 기본 포함된 가격입니다.",
         [top["source"]])
     cups = options["cups"]
@@ -367,12 +421,13 @@ def build_documents(menu, options, store, policies, flow, info):
         [cups["source"]])
     for t in top["items"]:
         add(f"option:topping:{t['id']}", "option", f"토핑 - {t['name']}",
-            f"{t['name']}({t['name_en']}) 토핑은 {t['description']}입니다. 추가 요금은 {won(t['price'])}입니다.", [top["source"]])
+            f"{t['name']}({t['name_en']}) 토핑은 {t['description']}입니다. 추가 요금은 "
+            + ", ".join(f"{s} 사이즈 {won(p)}" for s, p in t["price_by_size"].items()) + "입니다.", [top["source"]])
     on_sale_sizes = [s["id"] for s in options["sizes"]["items"] if any(x["size"] == s["id"] for m in drinks for x in m["sizes"])]
     add("option:size", "option", "사이즈 안내",
         "공차 음료 사이즈는 L(라지), J(점보), G(기가)가 있습니다. 이 매장에서는 " + ", ".join(on_sale_sizes) + " 사이즈를 판매합니다. "
         "J(점보)는 L(라지)보다 큰 사이즈입니다. ICE 기준 L 473ml, J 651ml, G 946ml 이고 HOT L 은 414ml 입니다. "
-        "메뉴마다 주문 가능한 사이즈가 다르며, 스무디·크러쉬·쥬얼리 음료는 대부분 L 사이즈만 있습니다. J 는 L 보다 보통 1,100원~1,300원 비쌉니다(아메리카노류는 500원).",
+        "메뉴마다 주문 가능한 사이즈가 다르며, 스무디·크러쉬·쥬얼리 음료는 대부분 L 사이즈만 있습니다. " + size_gap_text(drinks),
         [options["sizes"]["source"], PRICE_SOURCE])
     add("option:temperature", "option", "HOT / ICE 안내", options["temperature"]["rule"], [options["temperature"]["source"]])
 

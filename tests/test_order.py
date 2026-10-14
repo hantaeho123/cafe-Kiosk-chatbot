@@ -91,10 +91,10 @@ def test_cup_follows_the_dine_option(catalog):
 def test_prices_toppings_and_discount(catalog):
     order = Order(catalog)
     order.add(menu(catalog, "블랙 밀크티"), size="J", temperature="ICE", toppings=["펄", "extra_shot"], quantity=2)
-    assert order.totals()["subtotal"] == (6000 + 600 + 500) * 2
+    assert order.totals()["subtotal"] == (5700 + 800 + 500) * 2
     order.discount, order.stamp = "skt", {"code": "x", "label": "앱"}
     totals = order.totals()
-    assert totals["discount"] == (6000 + 600) * 2 // 10  # 샷추가는 기본 토핑이 아니라 할인 대상이 아니다
+    assert totals["discount"] == (5700 + 800) * 2 // 10  # 샷추가는 기본 토핑이 아니라 할인 대상이 아니다
     assert totals["total"] == totals["due"] == totals["subtotal"] - totals["discount"]
     assert totals["stamps"] == 2
 
@@ -181,7 +181,7 @@ def test_changes_between_the_order_and_a_draft(catalog):
     by_type = {c["type"]: c for c in diff}
     assert [c["type"] for c in diff] == ["update", "add", "remove", "note_add", "dine"]
     assert by_type["update"]["fields"] == ["sugar", "quantity", "cup"]  # 포장으로 바뀌며 컵도 일회용컵이 된다
-    assert (by_type["update"]["before"]["line_total"], by_type["update"]["after"]["line_total"]) == (4900, 9800)
+    assert (by_type["update"]["before"]["line_total"], by_type["update"]["after"]["line_total"]) == (4600, 9200)
     assert by_type["add"]["after"]["name"] == "타로 밀크티" and by_type["add"]["after"]["notes"][0]["text"] == "펄 조금만"
     assert by_type["remove"]["before"]["name"] == "아메리카노"
     assert by_type["note_add"]["note"]["text"] == "빨대 두 개"  # 새 줄에 붙은 메모는 그 줄과 함께 보여 준다

@@ -269,7 +269,7 @@ class ToolBox:
             raise OrderError("bad_arguments", "서로 다른 메뉴가 두 개 이상 필요합니다.")
         facts = [{**self.catalog.facts(m, self._sold_out(session, m)), **self._local(session, m)} for m in menus]
         cards = [self.catalog.card(m) for m in menus]
-        view = [{**f, "id": m["id"], "names": c["names"], "image": c["image"], "prices": c["prices"],
+        view = [{**f, "id": m["id"], "names": c["names"], "image": c["image"], "prices": c["prices"], "price": c["price"],
                  "sugar": m["options"]["sugar"] if m["kind"] == "drink" else {"adjustable": None, "recommended": None}}
                 for f, m, c in zip(facts, menus, cards)]
         return {"ok": True, "menus": facts, "view": {"items": view},
@@ -279,7 +279,8 @@ class ToolBox:
         cat, menu = self.catalog, self._find_menu(menu_name)
         if not cat.orderable(menu):
             return {"ok": True, "menu": menu["name"], "orderable": False,
-                    "message": "가격 정보가 없어 키오스크에서 주문할 수 없는 메뉴입니다. 직원에게 문의하도록 안내하세요."}
+                    "price": won(menu["price"]) if menu.get("price") else "가격 정보 없음",
+                    "message": "키오스크에서 주문할 수 없는 메뉴입니다(푸드·MD 는 카운터에서 주문). 가격을 알면 알려 주고 카운터에서 주문하도록 안내하세요."}
         sugar, ice = menu["options"]["sugar"], menu["options"]["ice"]
         adjustable = {True: "조절 가능", False: "고정(바꿀 수 없음)", None: "조절 가능 여부가 확인되지 않음(요청은 받되 매장 확인 필요)"}
         return {
@@ -291,7 +292,8 @@ class ToolBox:
             "ice": {"status": adjustable[ice["adjustable"]], "levels": list(cat.ice_levels.values()) if ice["adjustable"] is not False else [],
                     "not_selectable": "얼음 없이 (요청 메모로만 전달 가능, 약속할 수 없음)", "hot": "HOT 에는 얼음 옵션이 없음"},
             "toppings": {"max": f"샷추가를 빼고 {cat.max_toppings}가지", "included": menu["included_toppings"],
-                         "choices": [{"name": t["name"], "price": won(t["price"])} for t in cat.toppings.values()]},
+                         "choices": [{"name": t["name"], "price": " / ".join(f"{s} +{won(cat.topping_price(tid, s))}" for s in [x["size"] for x in menu["sizes"]])}
+                                     for tid, t in cat.toppings.items()]},
             "cups": [c["name"] for c in cat.cups.values()],
             "note": "여기에 없는 옵션(시럽 추가, 샷 빼기 등)은 고를 수 없습니다. 가까운 대안을 제시하고, 원하면 요청 메모로 남길 수 있다고 안내하세요.",
         }

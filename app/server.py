@@ -280,7 +280,7 @@ def create_app(client=None, index_dir=config.INDEX_DIR):
                            "levels": {str(l["value"]): l["description"] for l in options["sugar"]["levels"]}},
             "ice_levels": list(catalog.ice_levels),
             "sizes": {s["id"]: {"name": s["name"], "name_en": s["name_en"]} for s in options["sizes"]["items"]},
-            "toppings": [{"id": tid, "name": t["name"], "name_en": t["name_en"], "price": t["price"], "basic": t["basic"],
+            "toppings": [{"id": tid, "name": t["name"], "name_en": t["name_en"], "price": t["price"], "price_by_size": t.get("price_by_size", {}), "basic": t["basic"],
                           "description": t["description"]} for tid, t in catalog.toppings.items()],
             "cups": [{"id": cid, "name": c["name"], "name_en": c["name_en"], "description": c["description"],
                       "dine_in_only": c.get("dine_in_only", False)} for cid, c in catalog.cups.items()],

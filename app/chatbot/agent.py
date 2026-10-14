@@ -23,7 +23,7 @@ def _sources(hits):
 
 class KioskAgent:
     def __init__(self, client, retriever, catalog, model=config.CHAT_MODEL, temperature=config.TEMPERATURE,
-                 moderation=config.USE_MODERATION):
+                 reasoning_effort=config.REASONING_EFFORT, moderation=config.USE_MODERATION):
         self.client = client
         self.retriever = retriever
         self.catalog = catalog
@@ -32,6 +32,7 @@ class KioskAgent:
         self.system = system_prompt(catalog)
         self.model = model
         self.temperature = temperature
+        self.reasoning_effort = reasoning_effort
         self.moderation = moderation
         self._pool = ThreadPoolExecutor(max_workers=4)
 
@@ -40,7 +41,7 @@ class KioskAgent:
         try:
             self.retriever.search("안녕하세요")
             self.client.chat.completions.create(
-                model=self.model, tools=self.specs, max_completion_tokens=16,
+                **self._model_params(), tools=self.specs, max_completion_tokens=16,
                 messages=[{"role": "system", "content": self.system}, {"role": "user", "content": "안녕하세요"}])
             log.info("모델 연결 준비 완료")
         except Exception:
@@ -79,6 +80,10 @@ class KioskAgent:
 
         waiting = session.pending_text()  # 이번 턴에 변경안이 달라졌는지 보려고 처음 모습을 남겨 둔다
         conflict, warnings = checks.request_warnings(user_text)  # 서로 부딪치는 말, 없는 사이즈
+        # 음료를 둘 이상 말했으면("아이스 아메리카노랑 따뜻한 블랙 밀크티") 온도가 음료마다 다른 것이지 부딪치는 말이 아니다.
+        # 모델이 두 잔을 한 라운드에 묶지 않고 하나씩 올려도 막히지 않고, 모델이 망설이지 않게 <주의>에도 넣지 않는다.
+        if sum(m["kind"] == "drink" for m in self.catalog.find_mentions(user_text)) >= 2:
+            conflict = None
         warnings += self._fixed_options(user_text)
         flagged = self._pool.submit(self._flagged, user_text) if self.moderation else None
         hits = self.retriever.search(user_text, context=self._context(session.history, user_text))
@@ -236,7 +241,8 @@ class KioskAgent:
         mentioned = self.catalog.find_mentions(spoken, limit=5)
         if mentioned:
             session.shown = [m["name"] for m in mentioned]
-        cards = [self.catalog.card(m, bool(session.stock and session.stock.is_sold_out(m["id"]))) for m in mentioned[:4]]
+        cards = [self.catalog.card(m, bool(session.stock and session.stock.is_sold_out(m["id"])))
+                 for m in mentioned if self.catalog.visible(m)][:4]  # 가격을 모르는 메뉴는 화면에 띄우지 않는다
         if cards:
             yield {"type": "cards", "items": cards}
         pending = session.pending()
@@ -267,13 +273,20 @@ class KioskAgent:
 
     # ------------------------------------------------------------ 모델 호출·도구
 
-    def _stream(self, messages, allow_tools, attribution=None):
-        """모델을 스트리밍으로 호출한다. 글 조각은 바로 내보내고, (전체 글, 도구 호출 목록) 을 돌려준다."""
-        params = {"model": self.model, "messages": messages, "tools": self.specs, "stream": True}
-        if not allow_tools:
-            params["tool_choice"] = "none"
+    def _model_params(self):
+        """모델마다 받는 값이 달라서, 설정된 값만 넣는다."""
+        params = {"model": self.model}
         if self.temperature is not None:
             params["temperature"] = self.temperature
+        if self.reasoning_effort is not None:
+            params["reasoning_effort"] = self.reasoning_effort
+        return params
+
+    def _stream(self, messages, allow_tools, attribution=None):
+        """모델을 스트리밍으로 호출한다. 글 조각은 바로 내보내고, (전체 글, 도구 호출 목록) 을 돌려준다."""
+        params = {**self._model_params(), "messages": messages, "tools": self.specs, "stream": True}
+        if not allow_tools:
+            params["tool_choice"] = "none"
         text, calls = "", {}
         footer = SourceFooter()
         for chunk in self.client.chat.completions.create(**params):

@@ -149,7 +149,7 @@ SCENARIOS = [
         ]),
         ("아이스로 L 사이즈요", [
             ("이제 ICE · L 로 올린다", lambda t, c: [(a["name"], a["size"], a["temperature"]) for a in t.added()] == [("아메리카노", "L", "ICE")]),
-            ("얼음량은 고정이라 반영하지 못했다고 밝힌다", lambda t, c: says(t, "고정|바꿀 수 없|반영하지 못")),
+            ("얼음량은 고정이라 반영하지 못했다고 밝힌다", lambda t, c: says(t, "고정|바꿀 수 없|조절할 수 없|조절이 안|반영하지 못")),
         ]),
     ]),
     ("애매한 요청: 여러 잔의 온도", "여러 잔 한 번에 말하기 (막지 않아야 하는 경우)", [
@@ -224,7 +224,7 @@ SCENARIOS = [
         ]),
     ]),
     ("중국어 주문", "내 언어로 입력하기 (L9) · 화면과 같은 메뉴 이름", [
-        ("推荐一款不含咖啡因的饮料", [
+        ("推荐几款不含咖啡因的饮料", [
             ("화면 언어가 중국어로 바뀐다", lambda t, c: t.session.language == "zh"),
             ("메뉴판과 같은 중국어 이름으로 추천한다", lambda t, c: remember_menus(t, c) and all(
                 t.catalog.names(t.catalog.resolve(m)[0])["zh"] in t.reply for m in t.menus)),

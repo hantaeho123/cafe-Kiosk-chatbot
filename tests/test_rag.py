@@ -7,7 +7,7 @@ def test_documents_cover_what_the_kiosk_must_answer():
     types = {d["type"] for d in docs}
     assert {"menu", "recommendation", "option", "category", "policy", "guide", "store", "knowledge"} <= types
     ids = {d["id"] for d in docs}
-    assert {"recommend:season", "recommend:dessert", "recommend:popular", "option:toppings", "store:info"} <= ids
+    assert {"recommend:season", "recommend:dessert", "recommend:best", "option:toppings", "store:info"} <= ids
     # 이용 안내 문서: 사용법, 결제 방법과 기기 위치, 적립·할인, 교환권·금액권, 요청 사항 처리 방침, 직원 호출, 알레르기
     assert {f"guide:{name}" for name in ("kiosk", "payment", "benefits", "voucher", "requests", "staff", "allergy")} <= ids
     text = {d["id"]: d["text"] for d in docs}
@@ -21,7 +21,7 @@ def test_documents_cover_what_the_kiosk_must_answer():
 def test_embedding_text_drops_nutrition_rows_only():
     doc = next(d for d in load_documents() if d["title"] == "초콜렛 밀크티")
     text = embedding_text(doc)
-    assert "가격: L 사이즈 5,000원" in text and "kcal" not in text
+    assert "가격: L 사이즈 4,700원" in text and "kcal" not in text
     assert "kcal" in doc["text"]  # 모델에게 주는 본문에는 영양정보가 남아 있다
 
 

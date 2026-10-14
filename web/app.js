@@ -242,21 +242,22 @@ function openStart() {
 
 // ------------------------------------------------------------ 메뉴판
 
+// 매장 메뉴판의 묶음(BEST SELLER, NEW, SEASON MENU)과 표시(CAFFEINE FREE, ICED ONLY)를 그대로 붙인다.
 function badgeLabel(badge) {
-  const rank = badge.match(/^인기(\d)위$/);
-  if (rank) return state.lang === "ko" ? badge : `No.${rank[1]}`;
-  return { 베스트: t("badge_best"), 신메뉴: t("badge_new") }[badge] || badge;
+  return { BEST: t("badge_best"), NEW: t("badge_new"), SEASON: t("badge_season") }[badge] || badge;
 }
 
 function menuCard(item, onPick) {
   const prices = item.prices.map((p) => p.price);
-  const price = prices.length ? money(Math.min(...prices)) + (prices.length > 1 ? "~" : "") : t("price_ask");
+  const price = prices.length ? money(Math.min(...prices)) + (prices.length > 1 ? "~" : "") : item.price ? money(item.price) : t("price_ask");
   const cls = "card" + (item.orderable ? "" : " unavailable") + (item.sold_out ? " sold-out" : "");
   return el("button", { class: cls, type: "button", onclick: () => (onPick ? onPick(item) : openDetail(item.id)) },
-    el("div", { class: "badges" }, item.badges.filter((b) => b !== "베스트" || !item.badges.some((badge) => badge.startsWith("인기"))).map((b) => el("span", { class: "badge" + (b.startsWith("인기") ? "" : " soft") }, badgeLabel(b)))),
+    el("div", { class: "badges" }, item.badges.map((b) => el("span", { class: "badge " + b.toLowerCase() }, badgeLabel(b)))),
     el("div", { class: "photo" }, item.image && el("img", { src: item.image, alt: "", loading: "lazy" }),
       item.sold_out && el("span", { class: "sold-out-mark" }, t("sold_out"))),
-    el("div", { class: "info" }, el("div", { class: "name" }, menuName(item)), el("div", { class: "price" }, price)));
+    el("div", { class: "info" }, el("div", { class: "name" }, menuName(item)), el("div", { class: "price" }, price),
+      (item.marks || []).length > 0 && el("div", { class: "marks" },
+        item.marks.map((m) => el("span", { class: "mark " + m }, t("mark_" + m))))));
 }
 
 function renderBoard() {
@@ -278,6 +279,7 @@ async function reloadMenu() {
 
 // ------------------------------------------------------------ 메뉴 상세 · 옵션 화면
 
+const toppingPrice = (x, size) => (x.price_by_size && x.price_by_size[size]) || x.price;
 const toppingName = (x) => (I18N[state.lang] || {})[`topping_${x.id}`] || x.name;
 const toppingDescription = (x) => (I18N[state.lang] || {})[`topping_desc_${x.id}`] || x.description;
 const sizeName = (size) => {
@@ -302,7 +304,7 @@ function radioOptions(name, choices, selected, onPick) {
 
 function menuFacts(item) {
   const facts = [];
-  if (!item.orderable) facts.push([t("price"), t("price_ask")]);
+  if (!item.orderable) facts.push([t("price"), item.price ? money(item.price) : t("price_ask")]);
   if (item.kind === "drink") {
     if (item.included_toppings.length) facts.push([t("toppings_included"), words(item.included_toppings)]);
     if (item.flavors.length) facts.push([t("flavor"), words(item.flavors)]);
@@ -339,18 +341,20 @@ function optionForm(item, line, onChange) {
         toppings: new Set(), quantity: 1, cup: order.dine_option === "dine_in" ? "store" : "disposable" };
   choice.price = () => {
     const base = item.prices.find((p) => p.size === choice.size).price;
-    const extra = config.toppings.filter((x) => choice.toppings.has(x.id)).reduce((sum, x) => sum + x.price, 0);
+    const extra = config.toppings.filter((x) => choice.toppings.has(x.id)).reduce((sum, x) => sum + toppingPrice(x, choice.size), 0);
     return (base + extra) * choice.quantity - (locked ? base : 0);
   };
 
   const quantity = el("span", {}, String(choice.quantity));
   const boxes = [];
+  const toppingPrices = [];  // 사이즈를 바꾸면 토핑 요금도 바뀐다 (펄 L +600원 / J +800원)
   let iceSection = null;
   const basicCount = () => config.toppings.filter((x) => x.basic && choice.toppings.has(x.id)).length;
   const refresh = () => {
     quantity.textContent = String(choice.quantity);
     if (iceSection) iceSection.hidden = choice.temperature !== "ICE";
     for (const box of boxes) box.disabled = !box.checked && basicCount() >= config.max_toppings;
+    for (const [x, span] of toppingPrices) span.textContent = `+${money(toppingPrice(x, choice.size))}`;
     onChange(choice);
   };
   const pick = (key) => (value) => { choice[key] = value; refresh(); };
@@ -383,8 +387,9 @@ function optionForm(item, line, onChange) {
     if (x.basic) boxes.push(box);  // 샷추가는 최대 개수에 세지 않는다
     return el("label", { class: "option" }, box,
       el("span", { class: "label" }, toppingName(x), el("small", { class: "desc" }, toppingDescription(x))),
-      el("span", { class: "extra" }, `+${money(x.price)}`));
+      remember(x, el("span", { class: "extra" }, `+${money(toppingPrice(x, choice.size))}`)));
   };
+  const remember = (x, span) => { toppingPrices.push([x, span]); return span; };
   const sizes = item.prices.map((p) => {
     const ml = p.volume_ml && (p.volume_ml.ICE || p.volume_ml.HOT);
     return { value: p.size, label: p.size, desc: ml ? t("size_volume", { name: sizeName(p.size), ml }) : sizeName(p.size),
@@ -834,7 +839,7 @@ function compareTable(items) {
       el("thead", {}, el("tr", {}, el("th", {}), items.map((m) => el("th", {},
         m.image && el("img", { src: m.image, alt: "" }), el("div", {}, menuName(m)), m.sold_out && el("span", { class: "tag warn" }, t("sold_out")))))),
       el("tbody", {},
-        row(t("cmp_price"), (m) => (m.prices.length ? m.prices.map((p) => `${p.size} ${money(p.price)}`).join(" / ") : t("price_ask"))),
+        row(t("cmp_price"), (m) => (m.prices.length ? m.prices.map((p) => `${p.size} ${money(p.price)}`).join(" / ") : m.price ? money(m.price) : t("price_ask"))),
         row(t("cmp_flavor"), (m) => words(m.flavors || []) || "-"),
         row(t("cmp_caffeine"), (m) => number(m.caffeine_mg, "mg")),
         row(t("cmp_kcal"), (m) => number(m.kcal, "kcal")),
