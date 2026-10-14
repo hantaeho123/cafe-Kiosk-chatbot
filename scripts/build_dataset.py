@@ -19,7 +19,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 # 가격은 매장 판매가로 통일한다(2026-10-14 팀 결정). 배민 가격은 추천 당도·얼음 고정·인기 순위를 읽는 데만 쓴다.
-PRICE_SOURCE = "공차 시흥배곧점 매장 판매가 (매장 메뉴판·키오스크 화면 사진)"
+PRICE_SOURCE = "공차 시흥배곧점 매장 판매가 (매장 메뉴판·키오스크 화면 사진, 2026-10-13 촬영)"
 DELIVERY_SOURCE = "배달의민족 공차 시흥배곧점 (2026-10-12 캡처, 배달앱 판매가)"
 NUTRITION_BASIS = "기본 레시피(당도 0%, 스무디는 당도 고정) 및 컵 사이즈 기준"
 
