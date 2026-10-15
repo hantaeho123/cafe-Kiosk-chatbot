@@ -311,8 +311,8 @@ input[type="checkbox"] { width: 1.1rem; height: 1.1rem; accent-color: var(--acce
 .tile:hover, .tile.selected { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
 
 /* 메뉴 상세 · 옵션 화면 */
-.sheet .photo { background: var(--soft); border-radius: 16px; display: grid; place-items: center; height: 11rem; margin-bottom: .9rem; }
-.sheet .photo img { max-width: 100%; max-height: 10.5rem; object-fit: contain; }
+.sheet .detail-photo { background: var(--soft); border-radius: 16px; display: grid; place-items: center; height: 11rem; margin-bottom: .9rem; }
+.sheet .detail-photo img { max-width: 100%; max-height: 10.5rem; object-fit: contain; }
 .sheet .description { margin: .5rem 0 .4rem; }
 .quick-facts { margin: 0 0 .75rem; font-weight: 700; }
 .quick-facts small { display: block; color: var(--muted); font-weight: 400; font-size: .75rem; }

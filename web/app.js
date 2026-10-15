@@ -455,7 +455,7 @@ async function openDetail(id, line = null, { draft = false, fromSuggestion = fal
   const askButton = el("button", { class: "secondary", type: "button",
     onclick: () => { close(); send(t("ask_template", { name: item.name })); } }, t("ask_menu"));
   const header = [
-    el("div", { class: "photo" }, item.image && el("img", { src: item.image, alt: item.name })),
+    el("div", { class: "photo detail-photo" }, item.image && el("img", { src: item.image, alt: item.name })),
     el("h3", {}, menuName(item)),
     el("div", { class: "muted" }, word(item.category)),
     item.description && el("p", { class: "description" }, (state.lang !== "ko" && item.descriptions[state.lang]) || item.description),
