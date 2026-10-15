@@ -33,7 +33,7 @@ def test_board_has_best_season_and_category_tabs(catalog):
     assert all(i["badges"] == ["BEST"] for i in tabs["best"]) and tabs["best"][0]["marks"] == ["caffeine_free", "iced_only"]
     assert [i["badges"] for i in tabs["new"][:2]] == [["NEW"], ["NEW"]] and tabs["new"][2]["badges"] == ["SEASON"]
     assert all(item["orderable"] for item in tabs["커피"])
-    assert not any(item["orderable"] for item in tabs["dessert"])  # 디저트는 가격 정보가 없다
+    assert all(item["orderable"] for item in tabs["dessert"])  # 매장 키오스크 화면에 가격이 있는 푸드만 보이고 주문할 수 있다
 
 
 def test_sold_out_shows_on_the_board_and_is_left_out_of_suggestions(catalog):
@@ -103,7 +103,7 @@ def test_menus_can_be_found_by_their_foreign_names(catalog):
 def test_prices_are_store_prices_and_unpriced_menus_are_hidden(catalog):
     """가격은 매장 판매가(data/raw/store/prices.csv: 메뉴판·키오스크 사진, 다이닝코드)로 통일한다. 못 찾은 메뉴는 숨긴다."""
     cake = catalog.resolve("스틱 치즈케익")[0]
-    assert cake["price"] == 2600 and cake["price_source"] == "store" and not catalog.orderable(cake)  # 푸드는 카운터에서 주문
+    assert cake["price"] == 2600 and cake["price_source"] == "store" and catalog.orderable(cake)  # 키오스크 화면에 가격이 있는 푸드는 주문할 수 있다
     assert catalog.card(cake)["price"] == 2600 and catalog.facts(cake)["price"] == "2,600원" and catalog.visible(cake)
     guava = catalog.resolve("핑크구아바 봉봉 아이스티")[0]
     assert [(s["size"], s["price"]) for s in guava["sizes"]] == [("L", 5300), ("J", 6400)] and catalog.orderable(guava)

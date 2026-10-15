@@ -111,7 +111,7 @@ class Pos:
     def _scan_coupon(self, order, item):
         if order.discount:
             raise OrderError("conflict_discount", "쿠폰은 통신사 할인과 함께 쓸 수 없습니다. 통신사 할인을 빼고 다시 찍어 주세요.")
-        if item["benefit"] == "free_drink" and all(l["voucher"] for l in order.lines):
+        if item["benefit"] == "free_drink" and all(l["voucher"] or not order._is_drink(l) for l in order.lines):
             raise OrderError("coupon_not_applicable", "이 쿠폰을 쓸 수 있는 음료가 주문에 없습니다.")
         if order.coupon:  # 쿠폰은 한 주문에 한 장: 새로 찍은 쿠폰으로 바꾼다
             order.scanned.discard(order.coupon["code"])

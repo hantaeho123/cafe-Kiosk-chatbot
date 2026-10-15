@@ -79,11 +79,13 @@ class Order:
         cat, name = self.catalog, menu["name"]
         if not cat.orderable(menu):
             reason = ("시연 매장(시흥배곧점) 판매 목록에 없는 메뉴" if menu["kind"] == "drink"
-                      else "음료가 아니어서 키오스크에서 주문할 수 없고 카운터에서 주문하는 메뉴"
-                      + (f"(가격 {won(menu['price'])})" if menu.get("price") else "(가격 정보 없음)"))
+                      else "시연 매장(시흥배곧점) 키오스크에서 팔지 않는 메뉴(가격 정보 없음)")
             raise OrderError("not_for_sale", f"'{name}'은(는) {reason}입니다. 직원에게 문의하도록 안내하거나 다른 메뉴를 제안하세요.")
         if self.stock and self.stock.is_sold_out(menu["id"]):
             raise OrderError("sold_out", f"'{name}'은(는) 지금 품절이라 주문할 수 없습니다. 품절이라고 알리고 비슷한 다른 메뉴를 제안하세요.")
+
+        if menu["kind"] != "drink":
+            return self._validate_food(menu, size, temperature, sugar, ice, toppings, quantity, cup)
 
         sizes = [s["size"] for s in menu["sizes"]]
         temps = menu["temperatures"]
@@ -144,19 +146,32 @@ class Order:
         if sum(cat.toppings[t]["basic"] for t in toppings) > cat.max_toppings:
             raise OrderError("too_many_toppings", f"토핑은 최대 {cat.max_toppings}가지까지 추가할 수 있습니다.")
 
-        try:
-            quantity = int(quantity)
-        except (TypeError, ValueError):
-            raise OrderError("invalid_quantity", "수량은 숫자로 알려 주세요.") from None
-        if not 1 <= quantity <= MAX_QUANTITY:
-            raise OrderError("invalid_quantity", f"수량은 1~{MAX_QUANTITY}잔 사이로 주문할 수 있습니다.")
-
+        quantity = self._parse_quantity(quantity)
         cup, cup_default = self._parse_cup(cup)
         if cup_default:
             defaults.append(cat.cups[cup]["name"])
         chosen = {"menu_id": menu["id"], "size": size, "temperature": temperature, "sugar": sugar, "ice": ice,
                   "toppings": toppings, "quantity": quantity, "cup": cup}
         return chosen, defaults, notes
+
+    def _validate_food(self, menu, size, temperature, sugar, ice, toppings, quantity, cup):
+        """푸드는 고를 옵션이 없고 수량만 정한다. 음료 옵션을 말했으면 반영하지 않았다고 알린다."""
+        notes = []
+        if any(v not in (None, "", []) for v in (size, temperature, sugar, ice, toppings, cup)):
+            notes.append(f"'{menu['name']}'은(는) 푸드라 사이즈·온도·당도·얼음·토핑·컵을 고를 수 없어 수량만 담았습니다.")
+        chosen = {"menu_id": menu["id"], "size": None, "temperature": None, "sugar": None, "ice": None,
+                  "toppings": [], "quantity": self._parse_quantity(quantity), "cup": None}
+        return chosen, [], notes
+
+    @staticmethod
+    def _parse_quantity(quantity):
+        try:
+            quantity = int(quantity)
+        except (TypeError, ValueError):
+            raise OrderError("invalid_quantity", "수량은 숫자로 알려 주세요.") from None
+        if not 1 <= quantity <= MAX_QUANTITY:
+            raise OrderError("invalid_quantity", f"수량은 1~{MAX_QUANTITY}개 사이로 주문할 수 있습니다.")
+        return quantity
 
     def _parse_sugar(self, sugar):
         if sugar is None or sugar == "":
@@ -226,7 +241,7 @@ class Order:
         same = None if voucher else next((l for l in self.lines if all(l[k] == chosen[k] for k in chosen if k != "quantity")), None)
         if same:
             if same["quantity"] + chosen["quantity"] > MAX_QUANTITY:
-                raise OrderError("invalid_quantity", f"같은 메뉴는 한 번에 {MAX_QUANTITY}잔까지 담을 수 있습니다.")
+                raise OrderError("invalid_quantity", f"같은 메뉴는 한 번에 {MAX_QUANTITY}개까지 담을 수 있습니다.")
             same["quantity"] += chosen["quantity"]
             line = same
         else:
@@ -308,7 +323,7 @@ class Order:
             # 기본 컵은 이용 방식을 따른다: 매장이면 매장컵, 포장이면 일회용컵. 개인컵은 그대로 둔다.
             swap = {"takeout": ("store", "disposable"), "dine_in": ("disposable", "store")}[value]
             for line in self.lines:
-                if line["cup"] == swap[0]:
+                if line["cup"] is not None and line["cup"] == swap[0]:
                     line["cup"] = swap[1]
             if value == "dine_in":
                 self.straw = self.carrier = None
@@ -346,13 +361,22 @@ class Order:
 
     # ------------------------------------------------------------ 금액·표시
 
+    def _is_drink(self, line):
+        return self.catalog.by_id[line["menu_id"]]["kind"] == "drink"
+
     def _base(self, line):
-        return next(s["price"] for s in self.catalog.by_id[line["menu_id"]]["sizes"] if s["size"] == line["size"])
+        menu = self.catalog.by_id[line["menu_id"]]
+        if menu["kind"] != "drink":
+            return menu["price"]
+        return next(s["price"] for s in menu["sizes"] if s["size"] == line["size"])
 
     def _prices(self, line):
-        """(한 잔 가격, 그중 제휴 할인 대상 금액). 샷추가는 기본 토핑이 아니라 할인 대상에서 빠진다."""
+        """(한 잔 가격, 그중 제휴 할인 대상 금액). 샷추가는 기본 토핑이 아니라 할인 대상에서 빠진다.
+        통신사 할인은 제조 음료와 기본 토핑에만 붙어 푸드는 할인 대상이 아니다."""
         cat = self.catalog
         base = self._base(line)
+        if not self._is_drink(line):
+            return base, 0
         extra = sum(cat.topping_price(t, line["size"]) for t in line["toppings"])
         basic = sum(cat.topping_price(t, line["size"]) for t in line["toppings"] if cat.toppings[t]["basic"])
         return base + extra, base + basic
@@ -361,7 +385,7 @@ class Order:
         if not self.coupon:
             return 0
         if self.coupon["benefit"] == "free_drink":  # 교환권으로 받지 않은 음료 중 가장 비싼 한 잔의 메뉴 가격
-            return max((self._base(l) for l in self.lines if not l["voucher"]), default=0)
+            return max((self._base(l) for l in self.lines if not l["voucher"] and self._is_drink(l)), default=0)
         return min(self.coupon["amount"], max(remaining, 0))
 
     def totals(self):
@@ -373,30 +397,34 @@ class Order:
         discount = min(int(eligible * DISCOUNT_RATE), DISCOUNT_CAP) if self.discount else 0
         total = subtotal - voucher - coupon - discount
         paid = sum(t["amount"] for t in self.tenders)
+        drinks = sum(l["quantity"] for l in self.lines if self._is_drink(l))  # 스탬프는 제조 음료 1잔당 1개
         return {"count": count, "subtotal": subtotal, "voucher": voucher, "coupon": coupon, "discount": discount,
-                "total": total, "paid": paid, "due": total - paid, "stamps": count if self.stamp else 0}
+                "total": total, "paid": paid, "due": total - paid, "stamps": drinks if self.stamp else 0}
 
     def line_view(self, line):
         cat = self.catalog
         menu = cat.by_id[line["menu_id"]]
-        opt = menu["options"]
         unit = self._prices(line)[0]
-        sugar_note = None if line["sugar"] is not None else ("fixed" if opt["sugar"]["adjustable"] is False else "default")
-        if line["temperature"] == "HOT":
-            ice_note = "hot"
-        elif line["ice"] is not None:
-            ice_note = None
-        else:
-            ice_note = "fixed" if opt["ice"]["adjustable"] is False else "default"
+        sugar_note = ice_note = None
+        if menu["kind"] == "drink":
+            opt = menu["options"]
+            sugar_note = None if line["sugar"] is not None else ("fixed" if opt["sugar"]["adjustable"] is False else "default")
+            if line["temperature"] == "HOT":
+                ice_note = "hot"
+            elif line["ice"] is not None:
+                ice_note = None
+            else:
+                ice_note = "fixed" if opt["ice"]["adjustable"] is False else "default"
         return {
             **line,
             "name": menu["name"],
+            "kind": menu["kind"],
             "names": self.catalog.names(menu),
             "image": f"/{menu['image']}" if menu["image"] else None,
             "toppings": [{"id": t, "name": cat.toppings[t]["name"], "price": cat.topping_price(t, line["size"])} for t in line["toppings"]],
             "sugar_note": sugar_note,
             "ice_note": ice_note,
-            "cup_name": cat.cups[line["cup"]]["name"],
+            "cup_name": cat.cups[line["cup"]]["name"] if line["cup"] else None,
             "unit_price": unit,
             "line_total": unit * line["quantity"],
             "covered": self._base(line) if line["voucher"] else 0,  # 교환권이 대신 내는 금액
@@ -405,8 +433,10 @@ class Order:
         }
 
     def option_parts(self, line):
-        """한 줄의 옵션을 한국어 낱말로: 사이즈, 온도, 당도, 얼음, 토핑, 컵."""
+        """한 줄의 옵션을 한국어 낱말로: 사이즈, 온도, 당도, 얼음, 토핑, 컵. 푸드는 옵션이 없다."""
         v = self.line_view(line)
+        if v["kind"] != "drink":
+            return []
         sugar = f"당도 {v['sugar']}%" if v["sugar"] is not None else {"fixed": "당도 고정", "default": "당도 기본"}[v["sugar_note"]]
         ice = (self.catalog.ice_levels[v["ice"]] if v["ice"] else
                {"hot": None, "fixed": "얼음 고정", "default": "얼음 기본"}[v["ice_note"]])
@@ -416,8 +446,9 @@ class Order:
 
     def line_text(self, line):
         v = self.line_view(line)
-        text = (f"#{v['line_id']} {v['name']} | " + " | ".join(self.option_parts(line)) +
-                f" | {v['quantity']}잔 | {won(v['line_total'])}")
+        unit = "잔" if v["kind"] == "drink" else "개"
+        text = (f"#{v['line_id']} {v['name']} | " + "".join(p + " | " for p in self.option_parts(line)) +
+                f"{v['quantity']}{unit} | {won(v['line_total'])}")
         if v["voucher"]:
             text += f" | 교환권 사용(메뉴 가격 {won(v['covered'])} 처리)"
         if v["sold_out"]:
@@ -440,7 +471,7 @@ class Order:
     def summary_text(self):
         """모델에게 매 턴 보여 주는 주문 상태. 금액은 모두 여기(POS)에서 계산한 값이다."""
         t = self.totals()
-        lines = ["장바구니: " + (f"{len(self.lines)}줄, {t['count']}잔" if self.lines else "비어 있음")]
+        lines = ["장바구니: " + (f"{len(self.lines)}줄, {t['count']}개" if self.lines else "비어 있음")]
         lines += ["  " + self.line_text(l) for l in self.lines]
         for note in self.notes:
             if note["line_id"] is None:

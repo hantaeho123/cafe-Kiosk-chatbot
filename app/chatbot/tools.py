@@ -58,7 +58,7 @@ class ToolBox:
                                    + ". 말하지 않았으면 넣지 않는다. '얼음 없이'는 고를 수 없는 값이다."},
             "toppings": {"type": "array", "items": {"type": "string", "enum": list(cat.toppings)},
                          "description": f"추가할 토핑 전체 목록(샷추가를 빼고 최대 {cat.max_toppings}가지). {toppings}"},
-            "quantity": {"type": "integer", "minimum": 1, "description": "수량(잔)."},
+            "quantity": {"type": "integer", "minimum": 1, "description": "수량(음료는 잔, 푸드는 개)."},
             "cup": {"type": "string", "enum": list(cat.cups),
                     "description": "컵: " + ", ".join(f"{k}={c['name']}" for k, c in cat.cups.items())
                                    + ". 말하지 않았으면 넣지 않는다(매장이면 매장컵, 포장이면 일회용컵)."},
@@ -119,7 +119,7 @@ class ToolBox:
                 ["items"]),
             _fn("add_to_cart",
                 "메뉴를 담는 변경안을 변경 확인 화면에 올린다(손님이 [확인]을 눌러야 담긴다). 사이즈·HOT/ICE 가 빠졌고 선택지가 여러 개면 "
-                "올리지 않고 need 로 알려 준다. 여러 메뉴는 메뉴마다 한 번씩 호출한다.",
+                "올리지 않고 need 로 알려 준다. 여러 메뉴는 메뉴마다 한 번씩 호출한다. 푸드(디저트)는 옵션 없이 menu_name 과 quantity 만 넣는다.",
                 {"menu_name": {"type": "string", "description": "메뉴판의 공식 메뉴명. 예: '블랙 밀크티 + 펄'"}, **item_options,
                  "request_note": {"type": "string", "description": "이 메뉴에 붙일 요청 메모(옵션으로 고를 수 없는 요청만, 60자 이내)"},
                  "dine_option": {"type": "string", "enum": ["매장", "포장"],
@@ -278,9 +278,12 @@ class ToolBox:
     def _menu_options(self, session, menu_name):
         cat, menu = self.catalog, self._find_menu(menu_name)
         if not cat.orderable(menu):
-            return {"ok": True, "menu": menu["name"], "orderable": False,
-                    "price": won(menu["price"]) if menu.get("price") else "가격 정보 없음",
-                    "message": "키오스크에서 주문할 수 없는 메뉴입니다(푸드·MD 는 카운터에서 주문). 가격을 알면 알려 주고 카운터에서 주문하도록 안내하세요."}
+            return {"ok": True, "menu": menu["name"], "orderable": False, "price": "가격 정보 없음",
+                    "message": "이 매장 키오스크에서 팔지 않는 메뉴입니다. 직원에게 문의하도록 안내하거나 다른 메뉴를 제안하세요."}
+        if menu["kind"] != "drink":
+            return {"ok": True, "menu": menu["name"], **self._local(session, menu), "orderable": True, "sold_out": self._sold_out(session, menu),
+                    "price": won(menu["price"]),
+                    "note": "푸드는 사이즈·온도·당도·얼음·토핑·컵을 고르지 않고 수량만 정해 담습니다. 데우기 같은 요청은 요청 메모로만 전달할 수 있습니다."}
         sugar, ice = menu["options"]["sugar"], menu["options"]["ice"]
         adjustable = {True: "조절 가능", False: "고정(바꿀 수 없음)", None: "조절 가능 여부가 확인되지 않음(요청은 받되 매장 확인 필요)"}
         return {
@@ -316,7 +319,8 @@ class ToolBox:
         def priced(line):
             v = scratch.line_view(line)
             extra = " + " + ", ".join(t["name"] for t in v["toppings"]) if v["toppings"] else ""
-            return f"{v['name']} {v['size']}{extra}: {won(v['unit_price'])} × {v['quantity']}잔 = {won(v['line_total'])}"
+            unit = "잔" if v["kind"] == "drink" else "개"
+            return f"{v['name']}{' ' + v['size'] if v['size'] else ''}{extra}: {won(v['unit_price'])} × {v['quantity']}{unit} = {won(v['line_total'])}"
 
         result = {"ok": True, "lines": [priced(l) for l in scratch.lines], "total": won(total), "assumed": assumed,
                   "basis": "할인·쿠폰을 적용하기 전 금액. 주문은 바뀌지 않았습니다."}
@@ -336,7 +340,7 @@ class ToolBox:
 
     def _doubled(self, line):
         """'블랙 밀크티 + 펄'에 펄을 또 추가한 것처럼, 메뉴에 이미 든 토핑을 한 번 더 넣었을 때의 안내."""
-        included = self.catalog.by_id[line["menu_id"]]["included_toppings"]
+        included = self.catalog.by_id[line["menu_id"]].get("included_toppings", [])
         doubled = [self.catalog.toppings[t]["name"] for t in line["toppings"] if self.catalog.toppings[t]["name"] in included]
         if not doubled:
             return []
@@ -351,7 +355,8 @@ class ToolBox:
         ids = ", ".join(f"#{l['line_id']}" for l in existing)
         merged = next((l for l in existing if l["line_id"] == line["line_id"]), None)
         if merged:
-            fix = (f"같은 옵션이라 #{line['line_id']} 줄의 수량이 {merged['quantity']}잔에서 {line['quantity']}잔으로 늘어나는 변경안입니다. "
+            unit = "잔" if menu["kind"] == "drink" else "개"
+            fix = (f"같은 옵션이라 #{line['line_id']} 줄의 수량이 {merged['quantity']}{unit}에서 {line['quantity']}{unit}으로 늘어나는 변경안입니다. "
                    f"더 담으려던 것이 아니면 update_cart_item(line_id={line['line_id']}, quantity={merged['quantity']})에 바꿀 옵션을 넣어 고치세요.")
         else:
             fix = (f"새 줄 #{line['line_id']}로 더 담는 변경안입니다. 더 담으려던 것이 아니라 이미 담긴 줄({ids})을 바꾸려던 것이면 "
@@ -373,6 +378,8 @@ class ToolBox:
     def _unapplied(line, sugar, ice):
         """손님이 말했지만 이 메뉴에서 바꿀 수 없어 반영되지 않은 옵션."""
         missed = []
+        if line["temperature"] is None:  # 푸드: 옵션이 없다는 것은 도구 결과의 notes 로 알린다
+            return missed
         if sugar is not None and line["sugar"] is None:
             missed.append("sugar")
         if ice and ice != "regular" and line["temperature"] == "ICE" and line["ice"] is None:

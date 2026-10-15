@@ -3,7 +3,7 @@
   "nutrition_basis": "기본 레시피(당도 0%, 스무디는 당도 고정) 및 컵 사이즈 기준",
   "counts": {
     "total": 175,
-    "on_sale": 76
+    "on_sale": 88
   },
   "items": [
     {
@@ -2823,7 +2823,7 @@
       "badges": [],
       "image": "images/83.jpg",
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20170413/2FMI94sK8dHeLglj_20170413.jpg",
-      "on_sale": false,
+      "on_sale": true,
       "price_status": "확인됨",
       "price_source": "store",
       "allergens": [
@@ -4003,7 +4003,7 @@
       "badges": [],
       "image": "images/306.png",
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20210707/VCAplkR1qiOG0vux_20210707.png",
-      "on_sale": false,
+      "on_sale": true,
       "price_status": "확인됨",
       "price_source": "store",
       "allergens": [
@@ -4066,7 +4066,7 @@
       "badges": [],
       "image": "images/312.png",
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20210707/VnFgtC2ePj7lzLME_20210707.png",
-      "on_sale": false,
+      "on_sale": true,
       "price_status": "확인됨",
       "price_source": "store",
       "allergens": [
@@ -4129,7 +4129,7 @@
       "badges": [],
       "image": "images/313.png",
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20250623/isojcVDp2arB7l0O_20250623.png",
-      "on_sale": false,
+      "on_sale": true,
       "price_status": "확인됨",
       "price_source": "store",
       "allergens": [
@@ -7175,7 +7175,7 @@
       "badges": [],
       "image": "images/486.png",
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20240424/j6FXIS9lWOovzM8B_20240424.png",
-      "on_sale": false,
+      "on_sale": true,
       "price_status": "확인됨",
       "price_source": "store",
       "allergens": [
@@ -7239,7 +7239,7 @@
       "badges": [],
       "image": "images/487.png",
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20240424/2W0SgyFHeND8x43h_20240424.png",
-      "on_sale": false,
+      "on_sale": true,
       "price_status": "확인됨",
       "price_source": "store",
       "allergens": [
@@ -7303,7 +7303,7 @@
       "badges": [],
       "image": "images/488.png",
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20240424/uq6JcFEsHMkyp3UR_20240424.png",
-      "on_sale": false,
+      "on_sale": true,
       "price_status": "확인됨",
       "price_source": "store",
       "allergens": [
@@ -9920,7 +9920,7 @@
       "badges": [],
       "image": "images/615.png",
       "image_url": "https://www.gong-cha.co.kr/uploads/product/20250623/t1KWpYrlONymbjME_20250623.png",
-      "on_sale": false,
+      "on_sale": true,
       "price_status": "확인됨",
       "price_source": "store",
       "allergens": [
@@ -10823,7 +10823,7 @@
       "badges": [],
       "image": "images/1052.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/921ceb8d8e7b212dc4c4614ee0c77c6a.png",
-      "on_sale": false,
+      "on_sale": true,
       "price_status": "확인됨",
       "price_source": "store",
       "allergens": [
@@ -11140,7 +11140,7 @@
       "badges": [],
       "image": "images/1067.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/0a5b1daab71ef115f8a5df03446bdff9.png",
-      "on_sale": false,
+      "on_sale": true,
       "price_status": "확인됨",
       "price_source": "store",
       "allergens": [
@@ -13984,7 +13984,7 @@
       "badges": [],
       "image": "images/1100.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/0fedabbbd06b803ecc00af2f02657a51.png",
-      "on_sale": false,
+      "on_sale": true,
       "price_status": "확인됨",
       "price_source": "store",
       "allergens": [
@@ -17990,7 +17990,7 @@
       "badges": [],
       "image": "images/1147.png",
       "image_url": "https://www.gong-cha.co.kr/upload/product/8007975d9e0d5aa5ff686b57379072eb.png",
-      "on_sale": false,
+      "on_sale": true,
       "price_status": "확인됨",
       "price_source": "store",
       "allergens": [

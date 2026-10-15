@@ -49,8 +49,8 @@ class Catalog:
 
     @staticmethod
     def orderable(menu):
-        """가격이 확인된 메뉴만 주문할 수 있다 (푸드·MD·미판매 음료는 가격이 없다)."""
-        return bool(menu["sizes"])
+        """가격이 확인된 메뉴만 주문할 수 있다. 음료는 사이즈별 가격, 푸드는 매장 키오스크 화면의 단품 가격이 있어야 한다(MD 는 가격이 없다)."""
+        return bool(menu["sizes"]) or (menu["kind"] == "food" and bool(menu.get("price")))
 
     # ------------------------------------------------------------ 이름으로 찾기
 
@@ -215,7 +215,7 @@ class Catalog:
     def facts(self, m, sold_out=False):
         """두 메뉴를 나란히 비교할 때 쓰는 값. 설명은 공식 문구, 수치는 공식 영양정보에서 온다."""
         if m["kind"] != "drink":
-            return {"name": m["name"], "category": m["category"], "description": m["description"], "orderable": False,
+            return {"name": m["name"], "category": m["category"], "description": m["description"], "orderable": self.orderable(m),
                     "price": f"{m['price']:,}원" if m.get("price") else "가격 정보 없음", "allergens": m["allergens"], "sold_out": False}
         tags, opt = m["tags"], m["options"]
         sugar = opt["sugar"]

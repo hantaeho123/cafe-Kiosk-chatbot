@@ -173,11 +173,11 @@ def build_menu():
         if p["kind"] != "drink":
             item["nutrition"] = p["nutrition"]
             item["sizes"] = []
-            # 푸드·MD 는 단품 가격만 있다. 키오스크의 주문(사이즈·옵션 선택)은 음료만 받으므로 가격을 알아도 on_sale 은 그대로 둔다.
+            # 푸드·MD 는 단품 가격만 있다. 매장 키오스크 화면에 가격이 있는 푸드는 옵션 없이 수량만 골라 주문한다.
             store = store_prices.get(p["no"])
             item["price"] = int(store[0]["price"]) if store else None
             if store:
-                item.update(price_status="확인됨", price_source="store")
+                item.update(on_sale=True, price_status="확인됨", price_source="store")
             menu.append(item)
             continue
 
@@ -279,8 +279,8 @@ def menu_doc(m, options):
     if m["description"]:
         lines.append(f"설명: {m['description']}")
     if m["kind"] != "drink":
-        lines.append(f"가격: {won(m['price'])} (키오스크 대화로는 주문할 수 없고 카운터에서 주문합니다)" if m["price"]
-                     else "가격: 가격 정보가 수집되지 않았습니다(매장 확인 필요).")
+        lines.append(f"가격: {won(m['price'])} (키오스크에서 수량만 골라 주문할 수 있습니다)" if m["price"]
+                     else "가격: 시연 매장(시흥배곧점) 키오스크에서 팔지 않아 가격이 확인되지 않은 메뉴입니다(매장 확인 필요).")
         for n in m["nutrition"]:
             lines.append("영양정보: " + ", ".join(f"{k} {v}" for k, v in n.items()))
     else:
@@ -352,7 +352,7 @@ def build_documents(menu, options, store, policies, flow, info):
         add(f"category:{cat}", "category", f"푸드 - {cat}",
             # 첫 줄은 검색(임베딩)에 쓰이므로 무엇의 목록인지만 짧게 적는다.
             f"공차 푸드({cat}) 메뉴와 확인된 가격입니다.\n"
-            "괄호 안은 매장 키오스크 화면에서 확인한 가격이고, 가격이 없는 것은 매장에서 확인해야 합니다. 푸드는 카운터에서 주문합니다.\n" +
+            "괄호 안은 매장 키오스크 화면에서 확인한 가격이고, 가격이 있는 푸드는 키오스크에서 주문할 수 있습니다. 가격이 없는 것은 이 매장 키오스크에서 팔지 않습니다.\n" +
             "\n".join(f"- {m['name']}" + (f" ({won(m['price'])})" if m["price"] else "") +
                       (f": {m['description']}" if m["description"] else "") for m in items),
             ["https://www.gong-cha.co.kr/brand/menu/product?category=002001", PRICE_SOURCE], category=cat)
@@ -388,11 +388,12 @@ def build_documents(menu, options, store, policies, flow, info):
     rec("season", "신메뉴·시즌 메뉴", "지금 판매 중인 신메뉴와 시즌 한정 음료입니다(매장 메뉴판의 NEW, SEASON MENU).",
         sorted((m for m in drinks if m["is_new_season"]), key=lambda m: not m["is_new"]),
         lambda m: price_line(m) + (" (신메뉴)" if m["is_new"] else " (시즌 메뉴)"))
+    sold = [m for m in food if m["price"]]  # 이 매장 키오스크에서 파는 푸드
     add("recommend:dessert", "recommendation", "음료와 곁들이기 좋은 디저트·푸드",
         "음료와 함께 곁들일 수 있는 디저트(푸드) 메뉴입니다.\n"
-        "괄호 안은 매장 키오스크 화면에서 확인한 가격이고, 가격이 없는 것은 매장에서 확인해야 합니다. 푸드는 카운터에서 주문합니다.\n" +
-        "\n".join(f"- {cat}: " + ", ".join(m["name"] + (f"({won(m['price'])})" if m["price"] else "") for m in food if m["category"] == cat)
-                  for cat in dict.fromkeys(m["category"] for m in food)),
+        "이 매장 키오스크에서 파는 푸드와 가격(매장 키오스크 화면 기준)이고, 옵션 없이 수량만 골라 주문합니다.\n" +
+        "\n".join(f"- {cat}: " + ", ".join(f"{m['name']}({won(m['price'])})" for m in sold if m["category"] == cat)
+                  for cat in dict.fromkeys(m["category"] for m in sold)),
         ["https://www.gong-cha.co.kr/brand/menu/product?category=002001", PRICE_SOURCE])
 
     # 옵션

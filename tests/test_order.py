@@ -49,7 +49,7 @@ def test_rejects_invalid_choices(catalog):
         order.add(menu(catalog, "망고 스무디"), temperature="HOT")
     assert error.value.result["error"] == "invalid_temperature"
     with pytest.raises(OrderError) as error:
-        order.add(menu(catalog, "스틱 치즈케익"))
+        order.add(menu(catalog, "머쉬룸 수프"))  # 키오스크 화면에 없는 푸드
     assert error.value.result["error"] == "not_for_sale"
     assert not order.lines
 
@@ -97,6 +97,27 @@ def test_prices_toppings_and_discount(catalog):
     assert totals["discount"] == (5700 + 800) * 2 // 10  # 샷추가는 기본 토핑이 아니라 할인 대상이 아니다
     assert totals["total"] == totals["due"] == totals["subtotal"] - totals["discount"]
     assert totals["stamps"] == 2
+
+
+def test_food_is_ordered_by_quantity_only(catalog):
+    """매장 키오스크 화면에 가격이 있는 푸드는 수량만 골라 담는다. 통신사 할인·스탬프·무료 음료 쿠폰은 음료에만 붙는다."""
+    order = Order(catalog)
+    order.set_options(dine_option="포장")
+    cake, _, notes = order.add(menu(catalog, "쿠키 앤 크림 스틱 치즈케익"), quantity=2)
+    assert (cake["size"], cake["temperature"], cake["cup"], cake["toppings"]) == (None, None, None, []) and not notes
+    _, _, notes = order.add(menu(catalog, "쿠키 앤 크림 스틱 치즈케익"), size="L", temperature="ICE")
+    assert len(order.lines) == 1 and order.lines[0]["quantity"] == 3 and "수량만" in notes[0]  # 음료 옵션은 반영하지 않고 알린다
+    order.add(menu(catalog, "블랙 밀크티"), size="L", temperature="ICE")
+    order.set_options(dine_option="매장")  # 컵을 바꿔도 푸드 줄은 그대로다
+    assert order.lines[0]["cup"] is None and order.lines[1]["cup"] == "store"
+    order.discount, order.stamp = "skt", {"code": "x", "label": "앱"}
+    totals = order.totals()
+    assert totals["subtotal"] == 2600 * 3 + 4600 and totals["discount"] == 460 and totals["stamps"] == 1 and totals["count"] == 4
+    order.discount, order.coupon = None, {"code": "y", "label": "무료 음료", "benefit": "free_drink", "amount": 0}
+    assert order.totals()["coupon"] == 4600  # 가장 비싼 '음료' 한 잔
+    assert order.option_parts(order.lines[0]) == [] and "| 3개 | 7,800원" in order.line_text(order.lines[0])
+    order.update(order.lines[0]["line_id"], quantity=1)
+    assert order.lines[0]["quantity"] == 1 and order.line_view(order.lines[0])["kind"] == "food"
 
 
 def test_same_item_merges_into_one_line(catalog):

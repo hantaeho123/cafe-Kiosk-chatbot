@@ -304,7 +304,7 @@ function radioOptions(name, choices, selected, onPick) {
 
 function menuFacts(item) {
   const facts = [];
-  if (!item.orderable) facts.push([t("price"), item.price ? money(item.price) : t("price_ask")]);
+  if (!item.orderable || item.kind !== "drink") facts.push([t("price"), item.price ? money(item.price) : t("price_ask")]);
   if (item.kind === "drink") {
     if (item.included_toppings.length) facts.push([t("toppings_included"), words(item.included_toppings)]);
     if (item.flavors.length) facts.push([t("flavor"), words(item.flavors)]);
@@ -420,6 +420,26 @@ function optionForm(item, line, onChange) {
   return { node, choice };
 }
 
+// 푸드는 고를 옵션이 없고 수량만 정한다.
+function foodForm(item, line, onChange) {
+  const choice = { size: null, temperature: null, sugar: null, ice: null, toppings: new Set(), cup: null,
+    quantity: line ? line.quantity : 1, price: () => item.price * choice.quantity };
+  const quantity = el("span", {}, String(choice.quantity));
+  const step = (delta) => () => {
+    choice.quantity = Math.min(state.config.max_quantity, Math.max(1, choice.quantity + delta));
+    quantity.textContent = String(choice.quantity);
+    onChange(choice);
+  };
+  const node = el("div", { class: "option-form" },
+    el("div", { class: "quantity-row" }, el("strong", {}, t("quantity")),
+      el("span", { class: "stepper" },
+        el("button", { type: "button", "aria-label": "-", onclick: step(-1) }, "−"), quantity,
+        el("button", { type: "button", "aria-label": "+", onclick: step(1) }, "+"))),
+    el("p", { class: "muted" }, t("food_no_options")));
+  onChange(choice);
+  return { node, choice };
+}
+
 // 메뉴 카드를 누르면 열린다. line 을 주면 담긴 줄의 옵션을 바꾸는 화면이 된다.
 // draft: 변경 확인 화면에서 온 것(변경안의 줄을 고친다) / fromSuggestion: 추가 제안 창에서 고른 메뉴
 async function openDetail(id, line = null, { draft = false, fromSuggestion = false } = {}) {
@@ -451,7 +471,8 @@ async function openDetail(id, line = null, { draft = false, fromSuggestion = fal
       el("footer", { class: "sheet-actions" }, closeButton, askButton));
   } else {
     const submit = el("button", { class: "primary", type: "button" });
-    const form = optionForm(item, line, (choice) => {
+    const food = item.kind !== "drink";
+    const form = (food ? foodForm : optionForm)(item, line, (choice) => {
       submit.textContent = t(draft ? "draft_button" : line ? "save_button" : "add_button", { price: money(choice.price()) });
     });
     submit.addEventListener("click", async () => {
@@ -486,7 +507,7 @@ async function openDetail(id, line = null, { draft = false, fromSuggestion = fal
       close();
       send(line ? t("say_edit", { n: line.line_id, name: item.name, text }) : t("say_new", { name: item.name, text }));
     };
-    const talk = !draft && el("section", { class: "option-group talk" },
+    const talk = !draft && !food && el("section", { class: "option-group talk" },
       el("div", { class: "option-head" }, el("span", {}, t("say_options"))),
       el("form", { class: "say", onsubmit: say }, sayInput, el("button", { class: "secondary", type: "submit" }, t("say_send"))),
       el("button", { class: "link", type: "button",
@@ -513,7 +534,9 @@ function openSuggest(item, session) {
 
 // ------------------------------------------------------------ 주문 내역
 
+// 푸드는 옵션이 없어 빈 글이 된다.
 function optionText(line) {
+  if (line.kind && line.kind !== "drink") return "";
   const parts = [line.size, line.temperature];
   parts.push(line.sugar != null ? `${t("sugar")} ${line.sugar}%` : t(`sugar_${line.sugar_note}`));
   if (line.ice) parts.push(t(`ice_${line.ice}`));
@@ -522,6 +545,10 @@ function optionText(line) {
   parts.push(t(`cup_${line.cup}`));
   return parts.join(" · ");
 }
+
+// 수량: 음료는 "2잔", 푸드는 "2개"
+const quantityText = (line) => t(line.kind && line.kind !== "drink" ? "items_unit" : "cups_unit", { n: line.quantity });
+const optionLine = (line) => [optionText(line), quantityText(line)].filter(Boolean).join(" · ");
 
 function noteRow(note, removable) {
   return el("li", { class: "note" }, el("span", {}, note.text),
@@ -565,7 +592,7 @@ function renderCart() {
         el("div", { class: "name" }, menuName(line),
           line.voucher && el("span", { class: "tag" }, t("voucher_tag")),
           line.sold_out && el("span", { class: "tag warn" }, t("line_sold_out"))),
-        el("div", { class: "options" }, optionText(line)),
+        optionText(line) && el("div", { class: "options" }, optionText(line)),
         line.notes.length ? el("ul", { class: "notes" }, line.notes.map((n) => noteRow(n, editable))) : null,
         el("div", { class: "bottom" },
           el("span", { class: "stepper" },
@@ -656,7 +683,7 @@ function fieldChange(field, before, after) {
     sugar: line.sugar != null ? `${line.sugar}%` : t(`sugar_${line.sugar_note}`),
     ice: line.ice ? t(`ice_${line.ice}`) : line.ice_note === "hot" ? "HOT" : t(`ice_${line.ice_note}`),
     toppings: line.toppings.length ? line.toppings.map(toppingName).join(", ") : t("no_toppings"),
-    quantity: t("cups_unit", { n: line.quantity }), cup: t(`cup_${line.cup}`),
+    quantity: quantityText(line), cup: t(`cup_${line.cup}`),
   })[field];
   return el("li", {}, el("span", { class: "field" }, t(`field_${field}`)),
     el("s", {}, value(before)), " → ", el("strong", {}, value(after)));
@@ -672,18 +699,18 @@ function changeCard(change) {
   switch (change.type) {
     case "add":
       return el("li", { class: "change" }, head("add", t("change_add"), menuName(change.after), money(change.after.line_total - change.after.covered)),
-        el("div", { class: "options" }, optionText(change.after), " · ", t("cups_unit", { n: change.after.quantity })),
+        el("div", { class: "options" }, optionLine(change.after)),
         lineNotes(change.after), editButton(change.after));
     case "update":
       return el("li", { class: "change" },
         head("update", t("change_update"), menuName(change.after),
           change.before.line_total !== change.after.line_total ? `${money(change.before.line_total)} → ${money(change.after.line_total)}` : money(change.after.line_total)),
         el("ul", { class: "fields" }, change.fields.map((f) => fieldChange(f, change.before, change.after))),
-        el("div", { class: "options muted" }, optionText(change.after), " · ", t("cups_unit", { n: change.after.quantity })),
+        el("div", { class: "options muted" }, optionLine(change.after)),
         editButton(change.after));
     case "remove":
       return el("li", { class: "change removed" }, head("remove", t("change_remove"), menuName(change.before), `−${money(change.before.line_total - change.before.covered)}`),
-        el("div", { class: "options" }, optionText(change.before), " · ", t("cups_unit", { n: change.before.quantity })));
+        el("div", { class: "options" }, optionLine(change.before)));
     case "note_add":
     case "note_remove":
       return el("li", { class: "change" + (change.type === "note_remove" ? " removed" : "") },

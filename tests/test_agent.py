@@ -247,6 +247,18 @@ def test_menu_options_tell_what_can_be_chosen(talk):
     assert options["temperatures"] == ["ICE"] and options["cups"] == ["매장컵", "일회용컵", "개인컵"]
 
 
+def test_food_is_added_by_quantity_through_chat(talk):
+    """키오스크 화면에 가격이 있는 푸드는 대화로도 담는다. 옵션 없이 수량만 올라간다."""
+    _, session, client = talk("쿠키 앤 크림 스틱 치즈케익 두 개 주세요",
+                              tool_chunks(("add_to_cart", {"menu_name": "쿠키 앤 크림 스틱 치즈케익", "quantity": 2})), text_chunks("올렸어요."))
+    result = tool_result(client)
+    assert result["ok"] and result["proposed"].endswith("| 2개 | 5,200원") and not result["unapplied"]
+    session.confirm()
+    assert [(l["size"], l["quantity"]) for l in session.order.lines] == [(None, 2)]
+    _, _, client = talk("치즈케익은 옵션 뭐 있어요?", tool_chunks(("menu_options", {"menu_name": "스틱 치즈케익"})), text_chunks("수량만 고르시면 돼요."))
+    assert tool_result(client)["orderable"] and tool_result(client)["price"] == "2,600원" and "수량만" in tool_result(client)["note"]
+
+
 def test_order_cannot_change_while_the_payment_screen_is_open(talk, catalog):
     _, session, _ = talk("블랙 밀크티 L 아이스 하나", tool_chunks(BLACK), text_chunks("올렸어요."))
     session.confirm()
