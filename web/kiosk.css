@@ -48,7 +48,7 @@ button:active:not(:disabled) { filter: brightness(.95); }
 .tabs { gap: .25rem; padding-bottom: .9rem; scrollbar-width: thin; }
 .tabs button { border-color: transparent; border-radius: 10px; color: var(--muted); min-height: 2.75rem; padding-inline: .8rem; }
 .tabs button[aria-selected="true"] { background: var(--ink); color: #fff; }
-.grid { gap: .75rem; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); }
+.grid { gap: .75rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }  /* 화면 폭·스크롤바와 상관없이 메뉴판은 항상 2열 */
 .card { border-radius: 14px; }
 .card .photo { aspect-ratio: 1.28; overflow: hidden; }
 .card img { min-height: 0; }
