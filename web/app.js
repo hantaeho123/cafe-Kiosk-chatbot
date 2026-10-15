@@ -101,18 +101,27 @@ function escapeHtml(text) {
 
 // 모델 답변에서 쓰는 최소한의 서식만 그린다: **굵게**, "- " 목록, 줄바꿈.
 function renderText(raw) {
-  const bold = (line) => line.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  // Escape first: model output is text, never trusted HTML. Only explicit
+  // emphasis and currency values receive inline styling; wording stays intact.
+  const inline = (line) => line
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/(?:₩\s*\d[\d,]*|\d[\d,]*\s*원)/g, '<span class="message-price">$&</span>');
+  const lines = escapeHtml(raw).split("\n");
+  const last = lines.findLastIndex((line) => line.trim());
   let html = "";
   let inList = false;
-  for (const line of escapeHtml(raw).split("\n")) {
+  for (const [index, line] of lines.entries()) {
     const item = line.match(/^\s*[-•*]\s+(.*)$/);
     if (item) {
-      html += (inList ? "" : "<ul>") + `<li>${bold(item[1])}</li>`;
+      html += (inList ? "" : "<ul>") + `<li>${inline(item[1])}</li>`;
       inList = true;
     } else {
       html += inList ? "</ul>" : "";
       inList = false;
-      if (line.trim()) html += `<p>${bold(line)}</p>`;
+      // A short, separate closing question is the next conversational step.
+      // Do not promote long explanations or every final paragraph to a heading.
+      const question = index === last && line.length <= 120 && /^[^.!?。！？]*[?？]\s*$/.test(line);
+      if (line.trim()) html += `<p${question ? ' class="message-question"' : ""}>${inline(line)}</p>`;
     }
   }
   return html + (inList ? "</ul>" : "");
@@ -177,7 +186,7 @@ function ask(name, { title, body, yes, onYes }) {
   const close = () => closeScreen(name);
   openScreen({ name, render: () => sheet({ title, sub: body, close,
     actions: [el("button", { class: "secondary", type: "button", onclick: close }, t("keep_ordering")),
-      el("button", { class: "primary", type: "button", onclick: () => { close(); onYes(); } }, yes)] }) });
+      el("button", { class: "secondary danger-confirm", type: "button", onclick: () => { close(); onYes(); } }, yes)] }) });
 }
 
 // ------------------------------------------------------------ 시작 화면: 언어, 큰 글씨·낮은 화면, 매장·포장
@@ -498,7 +507,7 @@ function openSuggest(item, session) {
     title: `✓ ${t("suggest_title", { name: menuName(item) })}`, sub: t("suggest_sub"), close,
     body: el("div", { class: "suggest-cards" }, session.suggestions.map((card) =>
       menuCard(card, () => { closeScreen("suggest"); openDetail(card.id, null, { fromSuggestion: true }); }))),
-    actions: [el("button", { class: "primary", type: "button", onclick: close }, t("suggest_no"))],
+    actions: [el("button", { class: "secondary", type: "button", onclick: close }, t("suggest_no"))],
   }) });
 }
 
@@ -779,11 +788,11 @@ async function undo() {
 
 function renderChips(chips) {
   $("#chips").replaceChildren(...(chips || []).map((chip) =>
-    el("button", { type: "button", class: chip.action ? "action" : "", disabled: state.busy,
+    el("button", { type: "button", class: chip.action ? "action" : "", "data-action": chip.action, disabled: state.busy,
       onclick: () => (chip.action ? ACTIONS[chip.action]() : send(chip.text)) }, chip.label)));
 }
 
-// "근거 보기"를 켜면 답변마다 어떤 문서를 찾았고 어떤 도구를 불렀는지 보여 준다.
+// "근거 보기"를 켜면 답변마다 참고 문서와 나머지 검색 결과를 보여 준다.
 // 답변을 코드로 다시 확인한 결과(금액·알레르기 안내·요청 메모 안내)를 한 줄로.
 function verifiedRow(v) {
   if (!v) return null;
@@ -795,14 +804,27 @@ function verifiedRow(v) {
 }
 
 function evidence(message) {
-  if (!message.sources.length && !message.tools.length && !message.verified) return null;
+  if (!message.sources.length && !message.verified) return null;
+  const sources = [...new Map(message.sources.map(s => [s.id || s.title, s])).values()];
+  const byId = new Map(sources.map(s => [s.id, s]));
+  const used = (message.attribution?.ids || []).map(id => byId.get(id)).filter(Boolean);
+  const usedIds = new Set(used.map(s => s.id));
+  const other = sources.filter(s => !usedIds.has(s.id));
   const sourceRow = (s) => el("li", {},
-    el("span", { class: "tag" }, (s.match === "vector" ? "" : `${t(`match_${s.match}`)} `) + s.score.toFixed(2)),
-    ` ${s.title} (${s.type})${s.query ? ` ← "${s.query}"` : ""}`);
-  const toolRow = (c) => el("li", {}, el("code", {}, `${c.ok ? "✓" : "✗"} ${c.name}(${JSON.stringify(c.args)})`));
-  return el("details", { class: "evidence" },
-    el("summary", {}, t("evidence_summary", { docs: message.sources.length, tools: message.tools.length })),
-    el("ul", {}, message.sources.map(sourceRow), message.tools.map(toolRow), verifiedRow(message.verified)));
+    el("span", { class: "source-title" }, s.title),
+    ` — ${t("evidence_similarity")} ${s.score.toFixed(2)}`,
+    s.match !== "vector" && el("span", { class: "tag" }, t(`match_${s.match}`)),
+    s.query && el("span", { class: "source-query" }, ` ← "${s.query}"`));
+  return el("details", { class: "evidence", open: true },
+    el("summary", {}, t("evidence_summary", { docs: sources.length })),
+    el("section", { class: "evidence-used" },
+      el("h4", {}, t("evidence_used")),
+      used.length ? el("ul", {}, used.map(sourceRow)) : el("p", {}, t("evidence_no_used")),
+      el("p", { class: "evidence-note" }, t("evidence_attribution_note")),
+      message.attribution?.status !== "reported" && el("p", { class: "evidence-note" }, t("evidence_unavailable"))),
+    other.length > 0 && el("details", { class: "evidence-other" },
+      el("summary", {}, t("evidence_other", { n: other.length })), el("ul", {}, other.map(sourceRow))),
+    !!message.verified && el("ul", { class: "evidence-checks" }, verifiedRow(message.verified)));
 }
 
 // 메뉴끼리 비교해 물으면 답변 아래에 나란히 놓은 표가 붙는다.
@@ -851,6 +873,9 @@ function handleEvent(event, message) {
     case "sources":
       message.sources.push(...event.items);
       break;
+    case "attribution":
+      message.attribution = event;
+      break;
     case "tool":
       message.tools.push(event);
       if (event.sources) message.sources.push(...event.sources.map((s) => ({ ...s, query: event.args.query })));
@@ -871,6 +896,7 @@ function handleEvent(event, message) {
       message.chips = event.items;
       break;
     case "error":
+      message.attribution = null;
       message.raw = event.message;
       message.bubble.classList.add("error");
       if (event.detail) message.tools.push({ ok: false, name: "error", args: event.detail });
@@ -888,6 +914,7 @@ function setBusy(busy) {
 async function send(text) {
   text = text.trim();
   if (!text || state.busy) return;
+  if (window.kioskChatPreview) return window.kioskChatPreview.reply(text);
   state.started = true;
   document.body.dataset.view = "chat";
   $("#input").placeholder = t("placeholder");
@@ -919,6 +946,7 @@ async function send(text) {
     }
   } catch (error) {
     message.raw = t("network_error");
+    message.attribution = null;
     message.bubble.classList.add("error");
   }
   message.status = null;
@@ -1122,6 +1150,12 @@ async function init() {
     } catch (error) { /* 다음 번에 다시 묻는다 */ }
   }, 4000);
   $("#input").focus();
+  if (["localhost", "127.0.0.1", "[::1]"].includes(location.hostname) &&
+      new URLSearchParams(location.search).get("preview") === "chat") {
+    const script = document.createElement("script");
+    script.src = "/static/chat-preview.js";
+    document.head.append(script);
+  }
 }
 
 init().catch((error) => {

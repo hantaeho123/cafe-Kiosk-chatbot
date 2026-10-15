@@ -193,7 +193,7 @@ class ToolBox:
         hits = self.retriever.search(query, doc_types=[doc_type] if doc_type else None)
         sold_out = set(session.stock.ids()) if session.stock else set()
         return {"ok": True, "hits": hits,  # hits 는 에이전트가 화면 표시용으로 꺼내 쓰고 모델에게는 results 만 보낸다
-                "results": [{"title": h.doc["title"], "type": h.doc["type"], "text": h.doc["text"],
+                "results": [{"id": h.doc["id"], "title": h.doc["title"], "type": h.doc["type"], "text": h.doc["text"],
                              **({"sold_out": True} if h.doc["metadata"].get("menu_id") in sold_out else {})} for h in hits]}
 
     def _local(self, session, m):
